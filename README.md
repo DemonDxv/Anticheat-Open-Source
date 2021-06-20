@@ -1,2 +1,2 @@
-# Anticheat-Open-Source
- A free anticheat for the community
+# Open Source Anticheat
+ A free anticheat for the community that is open source.
