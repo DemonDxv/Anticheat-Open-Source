@@ -1,4 +1,4 @@
-name: BedrockAnticheat
-version: 0.2
-main: me.rhys.bedrock.Bedrock
-description: Basic anticheat for Bedrock clients.
+name: Anticheat
+version: 1.0
+main: me.rhys.anticheat.Anticheat
+description: A free open source anticheat for the community to prevent cheating
