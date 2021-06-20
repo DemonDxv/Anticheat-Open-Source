@@ -1,10 +1,10 @@
-Prefix: '&7[&cBAC&7]&r'
+Prefix: '&7[&cAnticheat&7]&r'
 Punishment:
   LagBack: true
   Command:
     Enabled: true
-    Execute: '/kick %PLAYER% %PREFIX% &cunfair advantage.'
+    Execute: '/kick %PLAYER% %PREFIX% &cUnfair Advantage.'
   Announce:
     Enabled: true
-    Message: '%PREFIX% &cRemoved &7%PLAYER% &cfor having an unfair advantage.'
+    Message: '%PREFIX% &chas removed &7%PLAYER% &cfor using unfair advantages.'
 
