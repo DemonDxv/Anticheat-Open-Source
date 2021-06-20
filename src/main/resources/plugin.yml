@@ -1,0 +1,4 @@
+name: BedrockAnticheat
+version: 0.2
+main: me.rhys.bedrock.Bedrock
+description: Basic anticheat for Bedrock clients.

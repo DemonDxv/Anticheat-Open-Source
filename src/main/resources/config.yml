@@ -1,0 +1,10 @@
+Prefix: '&7[&cBAC&7]&r'
+Punishment:
+  LagBack: true
+  Command:
+    Enabled: true
+    Execute: '/kick %PLAYER% %PREFIX% &cunfair advantage.'
+  Announce:
+    Enabled: true
+    Message: '%PREFIX% &cRemoved &7%PLAYER% &cfor having an unfair advantage.'
+
