@@ -2,6 +2,7 @@
  A free anticheat for the community that is open source.
  
 Developers: demon & rhys
+
 Credits: darkandblue (prediction processing)
 
 Feel free to report any issues in the "Issues" tab
