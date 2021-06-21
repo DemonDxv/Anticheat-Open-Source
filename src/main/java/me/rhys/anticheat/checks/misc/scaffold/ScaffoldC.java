@@ -6,7 +6,7 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 
-@CheckInformation(checkName = "Scaffold", checkType = "C", lagBack = false, punishmentVL = 10)
+@CheckInformation(checkName = "Scaffold", checkType = "C", lagBack = false, punishmentVL = 10, canPunish = false)
 public class ScaffoldC extends Check {
 
     private long lastFlying;

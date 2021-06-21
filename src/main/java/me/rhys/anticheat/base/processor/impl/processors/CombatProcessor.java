@@ -51,6 +51,10 @@ public class CombatProcessor extends Processor {
                     velocity = new Vector(wrappedOutVelocityPacket.getX(), wrappedOutVelocityPacket.getY(),
                             wrappedOutVelocityPacket.getZ());
 
+                    velocityH = Math.hypot(velocity.getX(), velocity.getZ());
+
+                    velocityV = Math.pow(velocity.getY() + 2.0, 2.0) * 5.0;
+
                     velocityNoTransTicks = 0;
 
                     WrappedOutTransaction transaction = new WrappedOutTransaction(0, (short) (Anticheat.getInstance().getKeepaliveHandler().getTime() - 1), false);
@@ -66,7 +70,7 @@ public class CombatProcessor extends Processor {
                         event.getUser().getPlayer());
 
                 if (transaction.getAction() == ((short) Anticheat.getInstance().getKeepaliveHandler().getTime() - 1)) {
-                    velocityH = (int) Math.hypot(velocity.getX(), velocity.getZ());
+                    velocityH = Math.hypot(velocity.getX(), velocity.getZ());
                     velocityV = Math.pow(velocity.getY() + 2.0, 2.0) * 5.0;
                     velocityTicks = 0;
                 }

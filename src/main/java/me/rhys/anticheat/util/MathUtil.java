@@ -5,6 +5,9 @@ import me.rhys.anticheat.base.user.User;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,6 +36,19 @@ public class MathUtil {
 
         location.add(0, .05, 0);
         return location;
+    }
+
+    public static float getBaseSpeed(Player player) {
+        return 0.26f + (getPotionEffectLevel(player, PotionEffectType.SPEED) * 0.062f) + ((player.getWalkSpeed() - 0.2f) * 1.6f);
+    }
+
+    public static int getPotionEffectLevel(Player player, PotionEffectType pet) {
+        for (PotionEffect pe : player.getActivePotionEffects()) {
+            if (pe.getType().getName().equalsIgnoreCase(pet.getName())) {
+                return pe.getAmplifier() + 1;
+            }
+        }
+        return 0;
     }
 
     public static double getAverage(Collection<? extends Number> values) {

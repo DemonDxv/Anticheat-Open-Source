@@ -10,8 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-@CheckInformation(checkName = "Flight", checkType = "B", description = "Spoof Ground Check (ghost block fly)", canPunish = false)
-public class FlightB extends Check {
+@CheckInformation(checkName = "Flight", checkType = "F", description = "Checks if the player tries to spoof on ground.")
+public class FlightF extends Check {
 
     private double threshold;
 
@@ -31,19 +31,14 @@ public class FlightB extends Check {
                     return;
                 }
 
-                Location groundLocation = MathUtil.getGroundLocation(user);
-
                 if (!user.getBlockData().onGround && !user.getBlockData().lastOnGround) {
-                    if (user.getCurrentLocation().isClientGround() && !user.getMovementProcessor().isServerYGround()) {
-                        user.getPlayer().teleport(groundLocation,
-                                PlayerTeleportEvent.TeleportCause.PLUGIN);
+                    if (user.getMovementProcessor().isOnGround()) {
 
-                        threshold++;
-
-                        if (threshold > 7
-                                && !user.getMovementProcessor().getLastBlockPlacePacketTimer().hasNotPassed(20)) {
-                            flag(user, "Ghost Block / Ghost Block Fly");
+                        if ((threshold += 1.25) >= 4.3) {
+                            flag(user, "Spoofing Ground");
                         }
+                    } else {
+                        threshold -= Math.min(threshold, 0.001f);
                     }
                 }
             }

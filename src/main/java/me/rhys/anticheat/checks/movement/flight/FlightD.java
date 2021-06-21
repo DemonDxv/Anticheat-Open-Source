@@ -25,7 +25,7 @@ public class FlightD extends Check {
                 if (user.shouldCancel()
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
                         || user.getLastTeleportTimer().hasNotPassed(20)
-                        || user.getCombatProcessor().getVelocityTicks() <= 20
+                        || user.getCombatProcessor().getPreVelocityTimer().hasNotPassed(20)
                         || checkConditions(user)) {
                     return;
                 }

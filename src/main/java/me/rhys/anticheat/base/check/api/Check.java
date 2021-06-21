@@ -78,7 +78,7 @@ public class Check implements CallableEvent {
 
         if (Anticheat.getInstance().getConfigValues().isLagBack()) {
             // LOL
-            user.getMovementProcessor().setLagBackTicks((this.lagBack ? 5 : 0));
+            user.getMovementProcessor().setLagBackTicks((this.lagBack ? 3 : 0));
         }
     }
 

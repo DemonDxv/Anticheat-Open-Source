@@ -32,7 +32,7 @@ public class KillauraC extends Check {
 
                 if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
                     if (block || dig) {
-                        flag(user);
+                        flag(user, "AutoBlock");
                     }
                 }
 
@@ -51,7 +51,6 @@ public class KillauraC extends Check {
 
             case Packet.Client.BLOCK_PLACE: {
                 block = true;
-
                 break;
             }
         }

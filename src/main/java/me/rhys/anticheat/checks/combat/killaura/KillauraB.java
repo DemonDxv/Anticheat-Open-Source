@@ -7,7 +7,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 
-@CheckInformation(checkName = "Killaura", checkType = "B", lagBack = false, description = "Post Swing Check")
+@CheckInformation(checkName = "Killaura", checkType = "B", lagBack = false, description = "Post Swing Check", canPunish = false)
 public class KillauraB extends Check {
 
     private long lastFlyingPacket;

@@ -25,7 +25,7 @@ public class MovementProcessor extends Processor {
     private EventTimer lastGroundTimer, lastBlockPlacePacketTimer;
 
     private boolean wasFlying, onGround, lastGround, positionYGround, lastPositionYGround, bouncedOnSlime, dead, sprinting,
-            lastSprinting;
+            lastSprinting, serverYGround;
     private int groundTicks, airTicks, lagBackTicks, serverAirTicks, serverGroundTicks, ignoreServerPositionTicks;
     private double deltaY, lastDeltaY, deltaXZ, lastDeltaXZ, deltaX, deltaZ, serverPositionSpeed, serverPositionDeltaY;
     private PlayerLocation lastSlimeLocation;
@@ -100,7 +100,17 @@ public class MovementProcessor extends Processor {
                 this.dead = user.getPlayer().isDead();
                 this.ignoreServerPositionTicks -= (this.ignoreServerPositionTicks > 0 ? 1 : 0);
 
+                if (user.getCurrentLocation().getY() % 0.015625 < 0.0001D) {
+                    serverYGround = true;
+                } else {
+                    serverYGround = false;
+                }
+
+                this.lastGround = this.onGround;
+                this.onGround = ground;
+
                 if (wrappedInFlyingPacket.isPos()) {
+
 
                     user.setLastLastLocation(user.getLastLocation());
                     user.setLastLocation(user.getCurrentLocation());
@@ -113,8 +123,8 @@ public class MovementProcessor extends Processor {
                     this.lastPositionYGround = this.positionYGround;
                     this.positionYGround = y % 0.015625 < 0.009;
 
-                    this.lastGround = this.onGround;
-                    this.onGround = ground;
+                   // this.lastGround = this.onGround;
+                  //  this.onGround = ground;
 
                     if (ground) {
                         this.lastGroundTimer.reset();
@@ -137,7 +147,7 @@ public class MovementProcessor extends Processor {
                 this.processBlocks();
                 this.user.setTick(this.user.getTick() + 1);
 
-                if (this.lagBackTicks-- > 0 && user.getTick() % 5 == 0) {
+                if (this.lagBackTicks-- > 0 && user.getTick() % 3 == 0) {
                     Location groundLocation = MathUtil.getGroundLocation(user);
 
                     //Have to teleport off main thread because spigot retarded
