@@ -14,8 +14,8 @@ public class CommandManager {
     private List<Command> commandList = new ArrayList<>();
 
     public CommandManager() {
-        addCommand(new Command(new MainCommand("ac"), "anticheat", null, "Main command.", true));
-        addCommand(new Command(new MainCommand("ac"), "anticheat alerts", "/anticheat alerts", "Toggle on, and off alerts.", true));
+        addCommand(new Command(new MainCommand("ac"), "ac", null, "Main command.", true));
+        addCommand(new Command(new MainCommand("ac"), "ac alerts", "/ac alerts", "Toggle on, and off alerts.", true));
     }
 
     private void addCommand(Command... commands) {
