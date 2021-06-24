@@ -41,7 +41,7 @@ public class User {
     private final Map<Long, Long> connectionMap = new EvictingMap<>(100);
     private int tick;
 
-    private boolean chunkLoaded = false;
+    private boolean chunkLoaded = false, alerts = true;
 
     private BoundingBox boundingBox = new BoundingBox(0f, 0f, 0f, 0f, 0f, 0f);
     private PlayerLocation currentLocation = new PlayerLocation(null, 0, 0, 0, 0, 0,

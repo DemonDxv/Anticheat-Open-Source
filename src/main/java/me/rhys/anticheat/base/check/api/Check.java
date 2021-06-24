@@ -72,8 +72,8 @@ public class Check implements CallableEvent {
                 + (data.length > 0 ? ChatColor.GRAY + " ["
                 + ChatColor.GRAY + stringBuilder.toString().trim() + ChatColor.GRAY + "]" : "");
 
-        Bukkit.getServer().getOnlinePlayers().parallelStream().filter(player -> player.hasPermission("bac.alerts")
-                || player.isOp()).forEach(player ->
+        Bukkit.getServer().getOnlinePlayers().parallelStream().filter(player -> user.isAlerts() && (player.hasPermission("anticheat.alerts")
+                || player.isOp())).forEach(player ->
                 player.sendMessage(alert));
 
         if (Anticheat.getInstance().getConfigValues().isLagBack()) {

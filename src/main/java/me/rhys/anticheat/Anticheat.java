@@ -1,6 +1,7 @@
 package me.rhys.anticheat;
 
 import lombok.Getter;
+import me.rhys.anticheat.base.command.CommandManager;
 import me.rhys.anticheat.base.connection.KeepaliveHandler;
 import me.rhys.anticheat.base.listener.BukkitListener;
 import me.rhys.anticheat.base.user.UserManager;
@@ -18,13 +19,17 @@ import java.util.concurrent.TimeUnit;
 @Getter
 public class Anticheat extends JavaPlugin {
     @Getter private static Anticheat instance;
+
     private UserManager userManager;
+    private CommandManager commandManager;
+
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     private KeepaliveHandler keepaliveHandler;
     private TinyProtocolHandler tinyProtocolHandler;
     public String bukkitVersion;
     private final ConfigValues configValues = new ConfigValues();
     private final ConfigLoader configLoader = new ConfigLoader();
+
 
     @Override
     public void onEnable() {
@@ -41,6 +46,8 @@ public class Anticheat extends JavaPlugin {
         this.bukkitVersion = Bukkit.getServer().getClass().getPackage().getName().substring(23);
         this.keepaliveHandler = new KeepaliveHandler();
         this.userManager = new UserManager();
+        this.commandManager = new CommandManager();
+
         getServer().getPluginManager().registerEvents(new BukkitListener(), this);
 
         getServer().getOnlinePlayers().forEach(player -> {
