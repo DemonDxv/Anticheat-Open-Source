@@ -15,3 +15,11 @@ Tested Game Versions: 1.8.x
 
 (Highly recommended to use 1.8.x as all version above have not been tested)
 
+
+Permissions:
+anticheat.command - use "/ac" command(s)
+anticheat.alerts - see alerts permission
+
+Commands:
+/ac - displays anticheat commands and information
+/ac alerts - toggles on and off alerts
