@@ -25,6 +25,8 @@ public class CombatProcessor extends Processor {
 
     private int velocityTicks, velocityNoTransTicks;
 
+    private short velocityID = 9000;
+
     @Override
     public void onPacket(PacketEvent event) {
         switch (event.getType()) {
@@ -57,9 +59,15 @@ public class CombatProcessor extends Processor {
 
                     velocityNoTransTicks = 0;
 
-                    WrappedOutTransaction transaction = new WrappedOutTransaction(0, (short) (Anticheat.getInstance().getKeepaliveHandler().getTime() - 1), false);
+                    velocityID--;
+
+                    WrappedOutTransaction transaction = new WrappedOutTransaction(0, (short) velocityID, false);
 
                     TinyProtocolHandler.sendPacket(user.getPlayer(), transaction.getObject());
+
+                    if (velocityID <= -1) {
+                        velocityID = 9000;
+                    }
 
                 }
                 break;
@@ -69,7 +77,7 @@ public class CombatProcessor extends Processor {
                 WrappedOutTransaction transaction = new WrappedOutTransaction(event.getPacket(),
                         event.getUser().getPlayer());
 
-                if (transaction.getAction() == ((short) Anticheat.getInstance().getKeepaliveHandler().getTime() - 1)) {
+                if (transaction.getAction() == velocityID) {
                     velocityH = Math.hypot(velocity.getX(), velocity.getZ());
                     velocityV = Math.pow(velocity.getY() + 2.0, 2.0) * 5.0;
                     velocityTicks = 0;

@@ -31,6 +31,12 @@ public class KillauraC extends Check {
                 WrappedInUseEntityPacket useEntityPacket = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
 
                 if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
+
+                    if (user.shouldCancel()
+                            || user.getTick() < 60) {
+                        return;
+                    }
+
                     if (block || dig) {
                         flag(user, "AutoBlock");
                     }

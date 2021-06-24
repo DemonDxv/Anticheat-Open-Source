@@ -31,6 +31,11 @@ public class KillauraA extends Check {
 
                 if (attack.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
 
+                    if (user.shouldCancel()
+                            || user.getTick() < 60) {
+                        return;
+                    }
+
                     if ((System.currentTimeMillis() - lastFlyingPacket) <= 5L) {
                         if (threshold++ > 10) {
                             flag(user, "Sent attack packet late");

@@ -157,8 +157,35 @@ public class MathUtil {
         float var3 = (0.6F * 0.91F);
         float getAIMoveSpeed = 0.13000001F;
 
-        if (user.getMovementProcessor().isLastSprinting()) {
-         //   getAIMoveSpeed = 0.13000001F;
+        if (user.getMovementProcessor().getSpeedPotionTicks() > 0) {
+            switch (MathUtil.getPotionEffectLevel(user.getPlayer(), PotionEffectType.SPEED)) {
+                case 0: {
+                    getAIMoveSpeed = 0.23400002F;
+                    break;
+                }
+
+
+                case 1: {
+                    getAIMoveSpeed = 0.156F;
+                    break;
+                }
+
+                case 2: {
+                    getAIMoveSpeed = 0.18200001F;
+                    break;
+                }
+
+                case 3: {
+                    getAIMoveSpeed = 0.208F;
+                    break;
+                }
+
+                case 4: {
+                    getAIMoveSpeed = 0.23400001F;
+                    break;
+                }
+
+            }
         }
 
         float var4 = 0.16277136F / (var3 * var3 * var3);
@@ -185,5 +212,11 @@ public class MathUtil {
         }
 
         return 0;
+    }
+
+
+    public static long gcd(long current, long last) {
+        if (last <= 16384) return current;
+        return gcd(last, current % last);
     }
 }

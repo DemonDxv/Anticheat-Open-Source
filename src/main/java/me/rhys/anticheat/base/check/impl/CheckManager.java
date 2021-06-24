@@ -12,6 +12,7 @@ import me.rhys.anticheat.checks.misc.scaffold.*;
 import me.rhys.anticheat.checks.misc.timer.*;
 import me.rhys.anticheat.checks.movement.flight.*;
 import me.rhys.anticheat.checks.movement.speed.*;
+import me.rhys.anticheat.checks.movement.step.StepA;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -34,6 +35,7 @@ public class CheckManager {
         this.checkList.add(new AimAssistA());
         this.checkList.add(new AimAssistB());
         this.checkList.add(new AimAssistC());
+        this.checkList.add(new AimAssistD());
 
         this.checkList.add(new KillauraA());
         this.checkList.add(new KillauraB());
@@ -49,8 +51,11 @@ public class CheckManager {
         this.checkList.add(new FlightD());
         this.checkList.add(new FlightE());
         this.checkList.add(new FlightF());
+        this.checkList.add(new FlightG());
 
         this.checkList.add(new Speed());
+
+        this.checkList.add(new StepA());
 
         this.checkList.add(new ScaffoldA());
         this.checkList.add(new ScaffoldB());

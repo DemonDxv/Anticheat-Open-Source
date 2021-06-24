@@ -1,4 +1,4 @@
-package me.rhys.anticheat.checks.movement.speed;
+package me.rhys.anticheat.checks.movement.step;
 
 import me.rhys.anticheat.base.check.api.Check;
 import me.rhys.anticheat.base.check.api.CheckInformation;
@@ -7,8 +7,8 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "Speed", lagBack = true, description = "Detecting if the players MotionXZ matched with the predicted calculated speed.")
-public class Speed extends Check {
+@CheckInformation(checkName = "Step", description = "Checks if player goes up blocks higher than legit", canPunish = false)
+public class StepA extends Check {
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -23,6 +23,13 @@ public class Speed extends Check {
                 if (user.getBlockData().liquidTicks > 0
                         || user.getTick() < 60
                         || user.shouldCancel()
+                        || user.getBlockData().bedTicks > 0
+                        || user.getBlockData().slabTicks > 0
+                        || user.getBlockData().stairTicks > 0
+                        || user.getBlockData().fenceTicks > 0
+                        || user.getBlockData().snowTicks > 0
+                        || user.getBlockData().piston
+                        || user.getCombatProcessor().getVelocityTicks() <= 20
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
@@ -30,17 +37,16 @@ public class Speed extends Check {
                     return;
                 }
 
-                double motionXZ = user.getPredictionProcessor().getMotionXZ();
+                double deltaY = user.getMovementProcessor().getDeltaY();
+                double lastDeltaY = user.getMovementProcessor().getLastDeltaY();
 
-                double deltaXZ = user.getMovementProcessor().getDeltaXZ();
+                boolean ground = user.getMovementProcessor().isOnGround();
 
-                if (motionXZ > 0.005) {
-                    if (deltaXZ > 0.2) {
-                        flag(user, "MotionXZ -> "+motionXZ);
-                    }
+                if (deltaY > 0.0 && lastDeltaY > 0.0 && ground) {
+                    flag(user);
+                } else if (deltaY > 0.42f && ground) {
+                    flag(user);
                 }
-
-                break;
             }
         }
     }

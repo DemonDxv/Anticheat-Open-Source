@@ -17,6 +17,7 @@ import me.rhys.anticheat.util.block.BlockChecker;
 import me.rhys.anticheat.util.box.BoundingBox;
 import org.bukkit.Location;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 @ProcessorInformation(name = "Movement")
@@ -26,7 +27,7 @@ public class MovementProcessor extends Processor {
 
     private boolean wasFlying, onGround, lastGround, positionYGround, lastPositionYGround, bouncedOnSlime, dead, sprinting,
             lastSprinting, serverYGround;
-    private int groundTicks, airTicks, lagBackTicks, serverAirTicks, serverGroundTicks, ignoreServerPositionTicks;
+    private int speedPotionTicks, groundTicks, airTicks, lagBackTicks, serverAirTicks, serverGroundTicks, ignoreServerPositionTicks;
     private double deltaY, lastDeltaY, deltaXZ, lastDeltaXZ, deltaX, deltaZ, serverPositionSpeed, serverPositionDeltaY;
     private PlayerLocation lastSlimeLocation;
 
@@ -220,6 +221,13 @@ public class MovementProcessor extends Processor {
             this.serverGroundTicks = 0;
             if (this.serverAirTicks < 20) this.serverAirTicks++;
         }
+
+        if (user.getPlayer().hasPotionEffect(PotionEffectType.SPEED)) {
+            if (this.speedPotionTicks < 20) this.speedPotionTicks++;
+        } else {
+            if (this.speedPotionTicks > 20) this.speedPotionTicks--;
+        }
+
 
         if (this.isOnGround() && user.getBlockData().slime) {
             this.lastSlimeLocation = user.getCurrentLocation().clone();

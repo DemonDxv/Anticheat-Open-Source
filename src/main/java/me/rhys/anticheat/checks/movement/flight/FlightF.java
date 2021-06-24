@@ -26,6 +26,7 @@ public class FlightF extends Check {
 
                 if (this.checkConditions(user)
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
+                        || user.getMovementProcessor().getLastBlockPlacePacketTimer().hasNotPassed(20)
                         || user.getLastTeleportTimer().hasNotPassed(20)) {
                     this.threshold = 0;
                     return;

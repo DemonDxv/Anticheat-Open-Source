@@ -1,6 +1,6 @@
 Prefix: '&7[&cAnticheat&7]&r'
 Punishment:
-  LagBack: true
+  LagBack: false
   Command:
     Enabled: true
     Execute: '/kick %PLAYER% %PREFIX% &cUnfair Advantage.'

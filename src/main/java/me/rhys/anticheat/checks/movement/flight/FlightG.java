@@ -5,11 +5,13 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
+import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "Flight", checkType = "D", description = "Checks if the player is to far up from the ground")
-public class FlightD extends Check {
+@CheckInformation(checkName = "Flight", checkType = "G", lagBack = true, description = "Checks if player is using yPort")
+public class FlightG extends Check {
 
-    private double serverGroundY;
+    private int groundTime, airTime;
+
     private double threshold;
 
     @Override
@@ -31,30 +33,32 @@ public class FlightD extends Check {
                     return;
                 }
 
-                double currentY = user.getCurrentLocation().getY();
                 double deltaY = user.getMovementProcessor().getDeltaY();
 
-                if (user.getBlockData().onGround) {
-                    serverGroundY = currentY;
-                }
+                double lastDeltaY = user.getMovementProcessor().getLastDeltaY();
 
-                double change = currentY - serverGroundY;
+                double prediction = (lastDeltaY - 0.08D) * 0.98D;
 
-                if (!user.getBlockData().onGround) {
-                    if (change > 1.25 && deltaY > 0.0) {
-                        if (++threshold > 3) {
-                            flag(user, "Flying up to high? " + change);
+                double total = Math.abs(deltaY - prediction);
+
+                if (deltaY < 0.0) {
+                    if (total > 0.35) {
+                        if (threshold++ > 1.25) {
+                            flag(user);
                         }
                     } else {
-                        threshold -= Math.min(threshold, 0.1);
+                        threshold -= Math.min(threshold, 0.025f);
                     }
+                } else {
+                    threshold -= Math.min(threshold, 0.125f);
                 }
+
             }
         }
     }
     boolean checkConditions(User user) {
         return user.getBlockData().liquidTicks > 0
-                || user.getTick() < 100
+                || user.getTick() < 60
                 || user.shouldCancel()
                 || user.getBlockData().climbableTicks > 0
                 || user.getBlockData().climbableTimer.hasNotPassed();

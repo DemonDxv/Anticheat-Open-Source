@@ -22,7 +22,7 @@ public class FlightE extends Check {
                 if (user.shouldCancel()
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
                         || user.getLastTeleportTimer().hasNotPassed(20)
-                        || user.getCombatProcessor().getPreVelocityTimer().hasNotPassed(20)
+                        || user.getCombatProcessor().getVelocityTicks() <= 20
                         || checkConditions(user)) {
                     return;
                 }
@@ -31,8 +31,8 @@ public class FlightE extends Check {
 
                 double maxJumpHeight = 0.42F;
 
-                if (user.getBlockData().underBlock) {
-                    maxJumpHeight = 0.2F;
+                if (user.getBlockData().underBlockTicks > 0) {
+                    maxJumpHeight = 0.2D;
                 }
 
                 if (!user.getCurrentLocation().isClientGround() && user.getLastLocation().isClientGround()) {

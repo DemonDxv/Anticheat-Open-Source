@@ -31,8 +31,13 @@ public class KillauraB extends Check {
             case Packet.Client.ARM_ANIMATION: {
                 WrappedInUseEntityPacket attack = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
 
-
                 if (attack.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
+
+
+                    if (user.shouldCancel()
+                            || user.getTick() < 60) {
+                        return;
+                    }
 
                     if ((System.currentTimeMillis() - lastFlyingPacket) <= 5L) {
                         if (threshold++ > 10) {

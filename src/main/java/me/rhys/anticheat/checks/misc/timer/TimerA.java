@@ -7,7 +7,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.RollingAverageDouble;
 
-@CheckInformation(checkName = "Timer", lagBack = false, description = "Timer Speeds of 0.9")
+@CheckInformation(checkName = "Timer", lagBack = false, description = "Timer Speeds of 0.9", canPunish = false)
 public class TimerA extends Check {
 
     private Long lastMove;

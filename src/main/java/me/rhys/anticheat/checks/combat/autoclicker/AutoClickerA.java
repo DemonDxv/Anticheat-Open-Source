@@ -21,6 +21,10 @@ public class AutoClickerA extends Check {
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
 
+                if (user.shouldCancel()
+                        || user.getTick() < 60) {
+                    return;
+                }
 
                 if (movements++ == 20) {
                     if (clicks > 22) {

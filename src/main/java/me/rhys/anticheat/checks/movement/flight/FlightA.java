@@ -5,6 +5,7 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
+import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "Flight", lagBack = true, description = "Checks if the players predicted y delta")
 public class FlightA extends Check {
@@ -22,42 +23,38 @@ public class FlightA extends Check {
             case Packet.Client.POSITION: {
 
                 if (user.shouldCancel()
-                        || user.getBlockData().insideBlock
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
                         || user.getLastTeleportTimer().hasNotPassed(20)
-                        || user.getCombatProcessor().getPreVelocityTimer().hasNotPassed(20)
+                        || user.getMovementProcessor().isBouncedOnSlime()
+                        || user.getCombatProcessor().getVelocityTicks() <= 20
                         || checkConditions(user)) {
                     return;
                 }
+
 
                 double deltaY = user.getMovementProcessor().getDeltaY();
 
                 double lastDeltaY = user.getMovementProcessor().getLastDeltaY();
 
-                if (user.getBlockData().nearLiquid) {
-                    motionChange = 0.02D;
-                    motionMultiply = 0.800000011920929D;
-
-                } else {
-                    motionChange = 0.08D;
-                    motionMultiply = 0.9800000190734863D;
-                }
-
-                double prediction = (lastDeltaY - motionChange) * motionMultiply;
+                double prediction = (lastDeltaY - 0.08D) * 0.9800000190734863D;
 
                 if (deltaY >= 0.42f) {
                     prediction += 0.7F;
                 }
 
-
                 double difference = deltaY - prediction;
+
+
+                if (user.getMovementProcessor().getLastBlockPlacePacketTimer().hasNotPassed(20) && (deltaY >= .404f && deltaY <= .405f || lastDeltaY >= .404f && lastDeltaY <= .405F)) {
+                    difference = 0.0;
+                }
 
                 if (!user.getCurrentLocation().isClientGround()
                         && !user.getLastLocation().isClientGround()
                         && !user.getLastLastLocation().isClientGround()) {
 
                     if (difference > 0.005) {
-                        flag(user, ""+difference + " "+deltaY + " "+lastDeltaY + " "+prediction);
+                        flag(user, "Moved the wrong prediction");
                     }
                 }
 
