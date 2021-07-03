@@ -39,6 +39,7 @@ public class User {
     private ElytraProcessor elytraProcessor;
 
     private final Map<Long, Long> connectionMap = new EvictingMap<>(100);
+    private final Map<Long, Long> connectionMap2 = new EvictingMap<>(100);
     private int tick;
 
     private boolean chunkLoaded = false, alerts = true;
@@ -48,7 +49,7 @@ public class User {
             false);
     private PlayerLocation lastLocation = currentLocation, lastLastLocation = lastLocation;
 
-    private EventTimer lastFallDamageTimer = new EventTimer(20, this), lastTeleportTimer = new EventTimer(20, this), lastUnknownTeleportTimer = new EventTimer(20, this);
+    private EventTimer lastBlockPlaceCancelTimer = new EventTimer(20, this), lastBlockPlaceTimer = new EventTimer(20, this), lastFallDamageTimer = new EventTimer(20, this), lastTeleportTimer = new EventTimer(20, this), lastUnknownTeleportTimer = new EventTimer(20, this);
 
     public User(Player player) {
         this.player = player;

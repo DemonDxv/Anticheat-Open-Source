@@ -48,7 +48,7 @@ public class CombatProcessor extends Processor {
 
                     this.preVelocityTimer.reset();
 
-                    user.getActionProcessor().add(ActionProcessor.Actions.VELOCITY);
+             //       user.getActionProcessor().add(ActionProcessor.Actions.VELOCITY);
 
                     velocity = new Vector(wrappedOutVelocityPacket.getX(), wrappedOutVelocityPacket.getY(),
                             wrappedOutVelocityPacket.getZ());

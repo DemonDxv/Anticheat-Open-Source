@@ -5,8 +5,10 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
+import me.rhys.anticheat.util.MathUtil;
+import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "Velocity",  checkType = "D", lagBack = false, description = "99% Vertical Velocity [4 Tick]")
+@CheckInformation(checkName = "Velocity",  checkType = "D", lagBack = false, description = "99% Horizontal Velocity")
 public class VelocityD extends Check {
 
     private double threshold;
@@ -20,37 +22,36 @@ public class VelocityD extends Check {
             case Packet.Client.POSITION: {
                 User user = event.getUser();
 
-                if (user.getLastFallDamageTimer().hasNotPassed(20)
-                        || user.shouldCancel()) {
+                if (user.shouldCancel()
+                        || user.getTick() < 60
+                        || !user.isChunkLoaded()) {
                     threshold = 0;
                     return;
                 }
 
-                double deltaY = user.getMovementProcessor().getDeltaY();
+                /**
+                 * TODO: Need to account for if the player is near a wall to fix false flags.
+                 **/
 
-                double velocity = user.getCombatProcessor().getVelocity().getY();
+                if (user.getCombatProcessor().getVelocityTicks() == 2) {
+                    double deltaXZ = user.getMovementProcessor().getDeltaXZ();
 
-                if (user.getCombatProcessor().getVelocityTicks() == 4) {
+                    double velocityH = user.getCombatProcessor().getVelocityH();
 
-                    double prediction = velocity;
+                    velocityH -= MathUtil.movingFlyingV3(user);
 
-                    prediction -= 0.08D;
+                    double totalVelocity = deltaXZ / velocityH;
 
-                    prediction *= 0.98D;
-
-                    prediction -= 0.08D;
-
-                    prediction *= 0.98D;
-
-                    double ratio = deltaY / prediction;
-
-                    if (ratio <= 0.99) {
-                        if (threshold++ > 2) {
-                            flag(user, "Vertical Knockback: "+ratio);
+                    if (totalVelocity <= 0.99
+                            && !user.getMovementProcessor().isOnGround()
+                            && user.getMovementProcessor().isLastGround()) {
+                        if (threshold++ > 1) {
+                            flag(user, "Horizontal Velocity: "+totalVelocity);
                         }
                     } else {
-                        threshold -= Math.min(threshold, 0.0626f);
+                        threshold -= Math.min(threshold, 0.09f);
                     }
+
                 }
 
                 break;

@@ -10,7 +10,7 @@ import org.bukkit.Bukkit;
 @CheckInformation(checkName = "Flight", lagBack = true, description = "Checks if the players predicted y delta")
 public class FlightA extends Check {
 
-    private double motionChange, motionMultiply;
+    private double threshold;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -23,11 +23,12 @@ public class FlightA extends Check {
             case Packet.Client.POSITION: {
 
                 if (user.shouldCancel()
-                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
+                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(20)
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getCombatProcessor().getVelocityTicks() <= 20
                         || checkConditions(user)) {
+                    threshold = 0;
                     return;
                 }
 
@@ -54,7 +55,11 @@ public class FlightA extends Check {
                         && !user.getLastLastLocation().isClientGround()) {
 
                     if (difference > 0.005) {
-                        flag(user, "Moved the wrong prediction");
+                        if (threshold++ > 3) {
+                            flag(user, "Moved the wrong prediction");
+                        }
+                    } else {
+                        threshold -= Math.min(threshold, 0.001f);
                     }
                 }
 

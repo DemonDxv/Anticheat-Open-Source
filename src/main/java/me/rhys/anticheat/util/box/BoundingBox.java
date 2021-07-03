@@ -240,9 +240,12 @@ public class BoundingBox {
     public boolean collidesHorizontally(Object other) {
         if (other instanceof BoundingBox) {
             BoundingBox otherBox = (BoundingBox) other;
-            return otherBox.maxX >= this.minX && otherBox.minX <= this.maxX
-                    && otherBox.maxY > this.minY && otherBox.minY < this.maxY
-                    && otherBox.maxZ >= this.minZ && otherBox.minZ <= this.maxZ;
+            return otherBox.maxX >= this.minX
+                    && otherBox.minX <= this.maxX
+                    && otherBox.maxY > this.minY
+                    && otherBox.minY < this.maxY
+                    && otherBox.maxZ >= this.minZ
+                    && otherBox.minZ <= this.maxZ;
         } else {
             float otherMinX = (float) (double) ReflectionUtil.getFieldValue(ReflectionUtil.getFieldByName(other.getClass(), "a"), other);
             float otherMinY = (float) (double) ReflectionUtil.getFieldValue(ReflectionUtil.getFieldByName(other.getClass(), "b"), other);

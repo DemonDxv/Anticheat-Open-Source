@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -25,6 +26,11 @@ public class BukkitListener implements Listener {
 
     @EventHandler
     public void onTeleport(PlayerTeleportEvent event) {
+        this.processEvent(event);
+    }
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
         this.processEvent(event);
     }
 
@@ -64,6 +70,20 @@ public class BukkitListener implements Listener {
             if (user != null) {
                 if (((EntityDamageEvent) event).getCause() == EntityDamageEvent.DamageCause.FALL) {
                     user.getLastFallDamageTimer().reset();
+                }
+            }
+        }
+
+        if (event instanceof BlockPlaceEvent) {
+            User user = Anticheat.getInstance().getUserManager().getUser(((BlockPlaceEvent) event).getPlayer());
+
+            if (user != null) {
+                if (((BlockPlaceEvent) event).getItemInHand().getType().isBlock()) {
+                    user.getLastBlockPlaceTimer().reset();
+
+                    if (((BlockPlaceEvent) event).isCancelled()) {
+                        user.getLastBlockPlaceCancelTimer().reset();
+                    }
                 }
             }
         }

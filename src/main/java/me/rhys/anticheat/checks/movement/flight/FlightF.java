@@ -25,11 +25,16 @@ public class FlightF extends Check {
                 User user = event.getUser();
 
                 if (this.checkConditions(user)
-                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
-                        || user.getMovementProcessor().getLastBlockPlacePacketTimer().hasNotPassed(20)
+                        || user.getLastBlockPlaceTimer().hasNotPassed(20)
+                        || user.getLastBlockPlaceCancelTimer().hasNotPassed(5)
                         || user.getLastTeleportTimer().hasNotPassed(20)) {
                     this.threshold = 0;
                     return;
+                }
+
+                if (user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
+                        && user.getMovementProcessor().getDeltaXZ() < 0.39) {
+                    threshold -= Math.min(threshold, 0.90);
                 }
 
                 if (!user.getBlockData().onGround && !user.getBlockData().lastOnGround) {

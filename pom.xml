@@ -22,12 +22,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.geysermc.floodgate</groupId>
-            <artifactId>FloodGate</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.github.spigot</groupId>
             <artifactId>1.8.8</artifactId>
             <version>1.8.8</version>

@@ -23,7 +23,7 @@ public class BlockChecker {
     }
 
     private boolean onGround, nearLiquid, nearIce, climbable, slime, piston, snow, fence, bed,
-            stair, slab, movingUp, underBlock, web, shulker, insideBlock;
+            stair, slab, movingUp, underBlock, web, shulker, insideBlock, collideHorizontal;
 
     public void processBlocks() {
 
@@ -40,6 +40,7 @@ public class BlockChecker {
                 .stream().filter(CollideEntry::isChunkLoaded)
                 .anyMatch(collideEntry -> collideEntry.getBlock().getType().isSolid());
 
+
         collidedBlocks.stream().filter(CollideEntry::isChunkLoaded).forEach(collideEntry -> {
             boolean checkMovingUp = false;
             Class<? extends MaterialData> blockData = collideEntry.getBlock().getType().getData();
@@ -52,7 +53,17 @@ public class BlockChecker {
                 }
             }
 
+            if (collideEntry.getBlock().getType() != null && collideEntry.getBlock().getType().isBlock()) {
+                if (collideEntry.getBoundingBox().grow(1.9f, 0, 1.9f).collidesHorizontally(boundingBox)) {
+          //          collideHorizontal = true;
+                }
+            }
+
             Block block = collideEntry.getBlock();
+
+            if (boundingBox.collidesHorizontally(collideEntry.getBoundingBox())) {
+                collideHorizontal = true;
+            }
 
             switch (block.getType()) {
                 case WATER:

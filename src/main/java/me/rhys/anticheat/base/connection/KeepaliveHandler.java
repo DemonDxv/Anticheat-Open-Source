@@ -35,13 +35,14 @@ public class KeepaliveHandler implements Runnable {
             this.processTransaction();
         } else {
             this.processTransaction();
+            this.processKeepAlive();
         }
     }
 
     void processKeepAlive() {
         WrappedOutKeepAlivePacket wrappedOutKeepAlivePacket = new WrappedOutKeepAlivePacket(this.time);
         Anticheat.getInstance().getUserManager().getUserMap().forEach((uuid, user) -> {
-            user.getConnectionMap().put(this.time, System.currentTimeMillis());
+            user.getConnectionMap2().put(this.time, System.currentTimeMillis());
             user.sendPacket(wrappedOutKeepAlivePacket.getObject());
         });
     }

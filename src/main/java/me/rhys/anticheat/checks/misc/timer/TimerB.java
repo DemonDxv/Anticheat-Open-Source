@@ -26,6 +26,7 @@ public class TimerB extends Check {
             case Packet.Client.POSITION: {
 
                 if (user.getTick() < 60
+                        || user.getConnectionProcessor().isLagging()
                         || user.shouldCancel()
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)) {

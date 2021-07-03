@@ -10,6 +10,7 @@ import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInKeepAlivePacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInTransactionPacket;
 import me.rhys.anticheat.util.evicting.EvictingMap;
+import org.bukkit.Bukkit;
 
 import java.util.Map;
 
@@ -19,16 +20,19 @@ public class ConnectionProcessor extends Processor {
 
     private final Map<Long, Long> sentKeepAlives = new EvictingMap<>(100);
     private final Map<Long, Long> sentTransactions = new EvictingMap<>(100);
-    private int ping;
+    private int ping, transPing;
     private int clientTick;
+    private boolean isLagging = false;
 
     @Override
     public void onPacket(PacketEvent event) {
         switch (event.getType()) {
+
             case Packet.Client.KEEP_ALIVE: {
-                WrappedInKeepAlivePacket wrappedInKeepAlivePacket = new WrappedInKeepAlivePacket(event.getPacket(),
-                        this.user.getPlayer());
-                this.process(user, wrappedInKeepAlivePacket.getTime());
+                WrappedInKeepAlivePacket wrappedInKeepAlivePacket = new WrappedInKeepAlivePacket(
+                        event.getPacket(), event.getUser().getPlayer());
+
+                this.processK(user, wrappedInKeepAlivePacket.getTime());
                 break;
             }
 
@@ -36,18 +40,38 @@ public class ConnectionProcessor extends Processor {
                 WrappedInTransactionPacket wrappedInTransactionPacket = new WrappedInTransactionPacket(
                         event.getPacket(), event.getUser().getPlayer());
 
-                this.process(user, wrappedInTransactionPacket.getAction());
+                this.processT(user, wrappedInTransactionPacket.getAction());
                 break;
             }
         }
     }
 
-    void process(User user, long time) {
+    void processT(User user, long time) {
         if (this.user.getConnectionMap().containsKey(time)) {
-            this.ping = (int) (System.currentTimeMillis() - this.user.getConnectionMap()
+            this.transPing = (int) (System.currentTimeMillis() - this.user.getConnectionMap()
+                    .get(time));
+            this.sentTransactions.put(time, System.currentTimeMillis());
+            this.clientTick = (int) Math.ceil(this.ping / 50.0);
+
+            if (ping >= 800 && user.getTick() > 60) {
+                this.isLagging = true;
+            }
+
+            user.getCheckManager().getCheckList().forEach(check -> check.onConnection(user));
+        }
+    }
+
+    void processK(User user, long time) {
+        if (this.user.getConnectionMap2().containsKey(time)) {
+            this.ping = (int) (System.currentTimeMillis() - this.user.getConnectionMap2()
                     .get(time));
             this.sentKeepAlives.put(time, System.currentTimeMillis());
             this.clientTick = (int) Math.ceil(this.ping / 50.0);
+
+            if (ping >= 800 && user.getTick() > 60) {
+                this.isLagging = true;
+            }
+
             user.getCheckManager().getCheckList().forEach(check -> check.onConnection(user));
         }
     }

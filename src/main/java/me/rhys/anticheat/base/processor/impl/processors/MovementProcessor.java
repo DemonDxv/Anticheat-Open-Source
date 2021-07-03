@@ -199,6 +199,7 @@ public class MovementProcessor extends Processor {
 
         user.getBlockData().lastOnGround = user.getBlockData().onGround;
         user.getBlockData().onGround = blockChecker.isOnGround();
+        user.getBlockData().collidesHorizontal = blockChecker.isCollideHorizontal();
         user.getBlockData().nearLiquid = blockChecker.isNearLiquid();
         user.getBlockData().climbable = blockChecker.isClimbable();
         user.getBlockData().nearIce = blockChecker.isNearIce();

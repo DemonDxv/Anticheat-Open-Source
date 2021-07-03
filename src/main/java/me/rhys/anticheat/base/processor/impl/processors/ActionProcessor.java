@@ -33,7 +33,7 @@ public class ActionProcessor extends Processor {
                 WrappedData wrappedData = this.wrappedDataMap.get(time);
                 switch (wrappedData.getAction()) {
                     case VELOCITY: {
-                        this.velocityTimer.reset();
+                //        this.velocityTimer.reset();
                         break;
                     }
 

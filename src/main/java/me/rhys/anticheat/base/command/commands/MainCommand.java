@@ -2,6 +2,7 @@ package me.rhys.anticheat.base.command.commands;
 
 import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.command.commands.sub.AlertsCommand;
+import me.rhys.anticheat.base.command.commands.sub.ChecksCommand;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -17,6 +18,7 @@ public class MainCommand extends BukkitCommand {
     private String line = ChatColor.GRAY + "§m------------------------------------------";
 
     private AlertsCommand alertsCommand = new AlertsCommand();
+    private ChecksCommand checksCommand = new ChecksCommand();
 
 
     public MainCommand(String name) {
@@ -50,6 +52,11 @@ public class MainCommand extends BukkitCommand {
                     if (s.equalsIgnoreCase("alerts")) {
                         found = true;
                         alertsCommand.execute(args, s, commandSender);
+
+                    } else if (s.equalsIgnoreCase("check")) {
+                        found = true;
+                        checksCommand.execute(args, s, commandSender);
+
                     } else if (s.equalsIgnoreCase("null")) {
                         found = false;
                     }
