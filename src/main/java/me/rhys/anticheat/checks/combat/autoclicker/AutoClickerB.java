@@ -54,9 +54,8 @@ public class AutoClickerB extends Check {
 
                         delays.clear();
                     }
-
-                    movements = 0;
                 }
+                movements = 0;
                 break;
             }
 
