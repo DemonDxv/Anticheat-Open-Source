@@ -11,7 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 
 @Getter @Setter
-public class Check implements CallableEvent {
+public class Check implements CallableEvent, Cloneable {
     private String checkName, checkType, description;
     private boolean enabled, punished, lagBack, canPunish;
     private int violation, maxViolation;
@@ -23,10 +23,6 @@ public class Check implements CallableEvent {
             this.checkName = checkInformation.checkName();
             this.checkType = checkInformation.checkType();
             this.description = checkInformation.description();
-            this.enabled = checkInformation.enabled();
-            this.maxViolation = checkInformation.punishmentVL();
-            this.lagBack = checkInformation.lagBack();
-            this.canPunish = checkInformation.canPunish();
         } else {
             Anticheat.getInstance().getLogger().warning("Unable to find CheckInformation annotation" +
                     " in the class: " + getClass().getSimpleName());
@@ -95,5 +91,19 @@ public class Check implements CallableEvent {
     @Override
     public void onConnection(User user) {
         //
+    }
+
+    public String getFriendlyName() {
+        return this.checkName + this.checkType;
+    }
+
+    public Check clone() {
+        try {
+            return (Check) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

@@ -21,14 +21,6 @@ public class BadPacketsF extends Check {
     @Override
     public void onPacket(PacketEvent event) {
         switch (event.getType()) {
-            case Packet.Client.BLOCK_PLACE: {
-                User user = event.getUser();
-
-                potionTick = 0;
-
-                break;
-            }
-
             case Packet.Client.FLYING:
             case Packet.Client.LOOK:
             case Packet.Client.POSITION_LOOK:

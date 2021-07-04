@@ -8,9 +8,11 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import java.io.File;
 import java.io.IOException;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class ChecksFile {
 
-    private ChecksFile() { }
+    private ChecksFile() {
+    }
 
     static ChecksFile instance = new ChecksFile();
 
@@ -18,31 +20,27 @@ public class ChecksFile {
         return instance;
     }
 
-    Plugin p;
-
-    FileConfiguration config;
-    File cfile;
-
-    FileConfiguration data;
-    File dfile;
+    private FileConfiguration data;
+    private File dataFile;
 
     public void setup(Plugin p) {
-        config = p.getConfig();
+
         if (!p.getDataFolder().exists()) {
             p.getDataFolder().mkdir();
         }
-        dfile = new File("plugins/Anticheat/checks.yml");
 
-        if (!dfile.exists()) {
+        dataFile = new File("plugins/Anticheat/checks.yml");
+
+        if (!dataFile.exists()) {
             try {
-                dfile.createNewFile();
-            }
-            catch (IOException ignored) {
+                dataFile.createNewFile();
+            } catch (IOException ignored) {
             }
         }
 
-        data = YamlConfiguration.loadConfiguration(dfile);
+        data = YamlConfiguration.loadConfiguration(dataFile);
     }
+
 
     public FileConfiguration getData() {
         return data;
@@ -51,7 +49,7 @@ public class ChecksFile {
 
     public void saveData() {
         try {
-            data.save(dfile);
+            data.save(dataFile);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -59,26 +57,6 @@ public class ChecksFile {
     }
 
     public void reloadData() {
-        data = YamlConfiguration.loadConfiguration(dfile);
-    }
-
-    public FileConfiguration getConfig() {
-        return config;
-    }
-
-    public void saveConfig() {
-        try {
-            config.save(cfile);
-        }
-        catch (IOException e) {
-        }
-    }
-
-    public void reloadConfig() {
-        config = YamlConfiguration.loadConfiguration(cfile);
-    }
-
-    public PluginDescriptionFile getDesc() {
-        return p.getDescription();
+        data = YamlConfiguration.loadConfiguration(dataFile);
     }
 }

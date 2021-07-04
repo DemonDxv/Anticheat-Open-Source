@@ -10,13 +10,17 @@ import java.util.List;
 
 @Getter
 public class CommandManager {
-
-    private List<Command> commandList = new ArrayList<>();
+    private final List<Command> commandList = new ArrayList<>();
 
     public CommandManager() {
-        addCommand(new Command(new MainCommand("ac"), "ac", null, "Main command.", true));
-        addCommand(new Command(new MainCommand("ac"), "ac alerts", "/ac alerts", "Toggle on, and off alerts.", true));
-        addCommand(new Command(new MainCommand("ac"), "ac check", "/ac check [check] [type]", "Toggle on, and off detections.", true));
+        addCommand(new Command(new MainCommand("ac"), "ac", null, "Main command.",
+                true));
+
+        addCommand(new Command(new MainCommand("ac"), "ac alerts", "/ac alerts",
+                "Toggle on, and off alerts.", true));
+
+        addCommand(new Command(new MainCommand("ac"), "ac check", "/ac check [check] [type]",
+                "Toggle on, and off detections.", true));
     }
 
     private void addCommand(Command... commands) {

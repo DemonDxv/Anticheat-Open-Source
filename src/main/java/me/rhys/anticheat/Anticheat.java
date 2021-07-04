@@ -1,6 +1,7 @@
 package me.rhys.anticheat;
 
 import lombok.Getter;
+import me.rhys.anticheat.base.check.impl.CachedCheckManager;
 import me.rhys.anticheat.base.command.CommandManager;
 import me.rhys.anticheat.base.connection.KeepaliveHandler;
 import me.rhys.anticheat.base.listener.BukkitListener;
@@ -29,12 +30,13 @@ public class Anticheat extends JavaPlugin {
     public String bukkitVersion;
     private final ConfigValues configValues = new ConfigValues();
     private final ConfigLoader configLoader = new ConfigLoader();
-
+    private final CachedCheckManager checkManager = new CachedCheckManager();
 
     @Override
     public void onEnable() {
         instance = this;
         this.tinyProtocolHandler = new TinyProtocolHandler();
+        this.checkManager.setup();
 
         if (ProtocolVersion.getGameVersion().isAbove(ProtocolVersion.V1_12_2)) {
             getServer().getPluginManager().disablePlugin(this);
@@ -50,10 +52,7 @@ public class Anticheat extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new BukkitListener(), this);
 
-        getServer().getOnlinePlayers().forEach(player -> {
-            TinyProtocolHandler.getInstance().addChannel(player);
-        });
-
+        getServer().getOnlinePlayers().forEach(player -> TinyProtocolHandler.getInstance().addChannel(player));
 
         //Resets violations after 1 minute
         this.executorService.scheduleAtFixedRate(() -> this.getUserManager().getUserMap().forEach((uuid, user) ->
