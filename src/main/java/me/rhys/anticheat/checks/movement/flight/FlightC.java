@@ -31,7 +31,7 @@ public class FlightC extends Check {
 
                 double deltaY = user.getMovementProcessor().getDeltaY();
 
-                double maxJumpHeight = 0.42F;
+                double maxJumpHeight = 0.42F + (user.getPotionProcessor().getJumpAmplifier() * 0.2D);
 
                 if (user.getBlockData().slab
                         || user.getBlockData().fence

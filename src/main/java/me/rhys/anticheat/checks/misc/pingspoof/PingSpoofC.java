@@ -7,7 +7,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "PingSpoof", checkType = "C", lagBack = false, canPunish = false, description = "Detects Ping Spoofing")
+@CheckInformation(checkName = "PingSpoof", checkType = "C", lagBack = false, canPunish = false, enabled = false, description = "Detects Ping Spoofing")
 public class PingSpoofC extends Check {
 
     private double threshold;
@@ -22,7 +22,9 @@ public class PingSpoofC extends Check {
 
                 User user = event.getUser();
 
-                if (user.shouldCancel() && user.getTick() < 60) {
+                if (user.shouldCancel()
+                        || user.getTick() < 60
+                         || user.getPlayer().isDead()) {
                     return;
                 }
 

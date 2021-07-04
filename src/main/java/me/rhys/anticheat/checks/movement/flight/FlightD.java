@@ -35,6 +35,25 @@ public class FlightD extends Check {
                 double currentY = user.getCurrentLocation().getY();
                 double deltaY = user.getMovementProcessor().getDeltaY();
 
+                double max = 1.25;
+
+                switch ((int) user.getPotionProcessor().getJumpAmplifier()) {
+                    case 1: {
+                        max = 1.8;
+                        break;
+                    }
+
+                    case 2: {
+                        max = 2.0;
+                        break;
+                    }
+
+                    case 3: {
+                        max = 2.5;
+                        break;
+                    }
+                }
+
                 if (user.getBlockData().onGround) {
                     serverGroundY = currentY;
                 }
@@ -42,7 +61,7 @@ public class FlightD extends Check {
                 double change = currentY - serverGroundY;
 
                 if (!user.getBlockData().onGround) {
-                    if (change > 1.25 && deltaY > 0.0) {
+                    if (change > max && deltaY > 0.0) {
                         if (++threshold > 3) {
                             flag(user, "Flying up to high? " + change);
                         }

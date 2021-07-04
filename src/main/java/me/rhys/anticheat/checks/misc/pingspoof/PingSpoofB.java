@@ -7,7 +7,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "PingSpoof", checkType = "B", lagBack = false, canPunish = false, description = "Detects Ping Spoofing")
+@CheckInformation(checkName = "PingSpoof", checkType = "B", lagBack = false, canPunish = false, enabled = false, description = "Detects Ping Spoofing")
 public class PingSpoofB extends Check {
 
     private double threshold;

@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 public class FlightA extends Check {
 
     private double threshold;
+    private int jumpTicks;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -44,6 +45,20 @@ public class FlightA extends Check {
                     prediction += 0.7F;
                 }
 
+                if (user.getBlockData().climbable) {
+                    if (deltaY == 0.42f) {
+                        jumpTicks = 5;
+                    }
+
+                    if (jumpTicks > 0) {
+                        prediction = 0.42f + (user.getPotionProcessor().getJumpAmplifier() * 0.2D);
+                    }
+
+                    if (jumpTicks-- <= 0) {
+                        prediction = 0.2D;
+                    }
+                }
+
                 double difference = deltaY - prediction;
 
 
@@ -70,8 +85,6 @@ public class FlightA extends Check {
     boolean checkConditions(User user) {
         return user.getBlockData().liquidTicks > 0
                 || user.getTick() < 60
-                || user.shouldCancel()
-                || user.getBlockData().climbableTicks > 0
-                || user.getBlockData().climbableTimer.hasNotPassed();
+                || user.shouldCancel();
     }
 }
