@@ -223,6 +223,16 @@ public class MovementProcessor extends Processor {
             if (this.serverAirTicks < 20) this.serverAirTicks++;
         }
 
+        if (user.getPlayer().isInsideVehicle()) {
+            if (user.getVehicleTicks() < 20) {
+                user.setVehicleTicks(user.getVehicleTicks() + 1);
+            }
+        } else {
+            if (user.getVehicleTicks() > 0) {
+                user.setVehicleTicks(user.getVehicleTicks() - 1);
+            }
+        }
+
         if (user.getPlayer().hasPotionEffect(PotionEffectType.SPEED)) {
             if (this.speedPotionTicks < 20) this.speedPotionTicks++;
         } else {

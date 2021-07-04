@@ -11,7 +11,7 @@ import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInHeldItemSlotPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
-@CheckInformation(checkName = "BadPackets", checkType = "F", lagBack = false, punishmentVL = 10, canPunish = false)
+@CheckInformation(checkName = "BadPackets", checkType = "F", lagBack = false, punishmentVL = 10, canPunish = false, enabled = false)
 public class BadPacketsF extends Check {
 
     private double threshold;

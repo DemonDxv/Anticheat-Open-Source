@@ -40,7 +40,7 @@ public class User {
 
     private final Map<Long, Long> connectionMap = new EvictingMap<>(100);
     private final Map<Long, Long> connectionMap2 = new EvictingMap<>(100);
-    private int tick;
+    private int tick, vehicleTicks;
 
     private boolean chunkLoaded = false, alerts = true;
 

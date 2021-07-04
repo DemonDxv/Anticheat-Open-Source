@@ -7,10 +7,9 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 
-@CheckInformation(checkName = "Killaura", lagBack = false, description = "Post Attack Check (unstable)", canPunish = false)
-public class KillauraA extends Check {
+@CheckInformation(checkName = "Killaura", checkType = "E", lagBack = false, description = "Check if player attacks while dead", punishmentVL = 5)
+public class KillauraE extends Check {
 
-    private long lastFlyingPacket;
     private double threshold;
 
     @Override
@@ -18,14 +17,6 @@ public class KillauraA extends Check {
         User user = event.getUser();
 
         switch (event.getType()) {
-            case Packet.Client.FLYING:
-            case Packet.Client.LOOK:
-            case Packet.Client.POSITION_LOOK:
-            case Packet.Client.POSITION: {
-                lastFlyingPacket = System.currentTimeMillis();
-                break;
-            }
-
             case Packet.Client.USE_ENTITY: {
                 WrappedInUseEntityPacket attack = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
 
@@ -39,9 +30,9 @@ public class KillauraA extends Check {
                         return;
                     }
 
-                    if ((System.currentTimeMillis() - lastFlyingPacket) <= 5L) {
-                        if (threshold++ > 10) {
-                            flag(user, "Sent attack packet late");
+                    if (user.getPlayer().isDead()) {
+                        if (threshold++ > 4) {
+                            flag(user, "Attacked while dead?");
                         }
                     } else {
                         threshold = 0;

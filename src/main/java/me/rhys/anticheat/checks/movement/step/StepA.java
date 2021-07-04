@@ -29,6 +29,8 @@ public class StepA extends Check {
                         || user.getBlockData().fenceTicks > 0
                         || user.getBlockData().snowTicks > 0
                         || user.getBlockData().piston
+                        || user.getVehicleTicks() > 0
+                        || user.getLastFallDamageTimer().hasNotPassed(20)
                         || user.getCombatProcessor().getVelocityTicks() <= 20
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getMovementProcessor().isBouncedOnSlime()

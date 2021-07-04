@@ -8,7 +8,7 @@ import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 
-@CheckInformation(checkName = "Killaura", checkType = "C", lagBack = false, description = "AutoBlock Check")
+@CheckInformation(checkName = "Killaura", checkType = "C", lagBack = false, description = "AutoBlock Check", punishmentVL = 3)
 public class KillauraC extends Check {
 
     private boolean block, dig;

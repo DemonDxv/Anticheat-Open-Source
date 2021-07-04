@@ -7,7 +7,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "Flight", checkType = "G", lagBack = true, description = "Checks if player is using yPort")
+@CheckInformation(checkName = "Flight", checkType = "G", description = "Checks if player is using yPort")
 public class FlightG extends Check {
 
     private int groundTime, airTime;
@@ -28,6 +28,7 @@ public class FlightG extends Check {
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getCombatProcessor().getVelocityTicks() <= 20
+                        || user.getVehicleTicks() > 0
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || checkConditions(user)) {
                     return;
@@ -41,7 +42,7 @@ public class FlightG extends Check {
 
                 double total = Math.abs(deltaY - prediction);
 
-                if (deltaY < 0.0) {
+                if (deltaY < 0.0 && !user.getMovementProcessor().isOnGround()) {
                     if (total > 0.35) {
                         if (threshold++ > 1.25) {
                             flag(user);

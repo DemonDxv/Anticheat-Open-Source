@@ -28,6 +28,7 @@ public class TimerB extends Check {
                 if (user.getTick() < 60
                         || user.getConnectionProcessor().isLagging()
                         || user.shouldCancel()
+                        || user.getVehicleTicks() > 0
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)) {
                     return;

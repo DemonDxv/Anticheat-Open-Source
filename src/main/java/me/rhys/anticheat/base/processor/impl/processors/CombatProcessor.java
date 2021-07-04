@@ -8,6 +8,7 @@ import me.rhys.anticheat.base.processor.api.ProcessorInformation;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
+import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutTransaction;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutVelocityPacket;
 import me.rhys.anticheat.util.EventTimer;
@@ -17,7 +18,7 @@ import org.bukkit.util.Vector;
 @Getter
 public class CombatProcessor extends Processor {
 
-    private EventTimer preVelocityTimer;
+    private EventTimer preVelocityTimer, useEntityTimer;
 
     private double velocityH, velocityV;
 
@@ -30,6 +31,14 @@ public class CombatProcessor extends Processor {
     @Override
     public void onPacket(PacketEvent event) {
         switch (event.getType()) {
+
+            case Packet.Client.USE_ENTITY: {
+                WrappedInUseEntityPacket useEntityPacket = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
+
+                if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
+                    useEntityTimer.reset();
+                }
+            }
 
             case Packet.Client.FLYING:
             case Packet.Client.LOOK:
@@ -90,6 +99,7 @@ public class CombatProcessor extends Processor {
     @Override
     public void setupTimers(User user) {
         this.preVelocityTimer = new EventTimer(20, user);
+        this.useEntityTimer = new EventTimer(20, user);
     }
 }
 

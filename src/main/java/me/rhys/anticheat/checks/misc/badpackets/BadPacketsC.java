@@ -19,6 +19,10 @@ public class BadPacketsC extends Check {
 
                 User user = event.getUser();
 
+                if (user.shouldCancel() || user.getTick() < 60 || user.getVehicleTicks() > 0) {
+                    return;
+                }
+
                 double deltaXZ = user.getMovementProcessor().getDeltaXZ();
 
                 double maxSpeed = user.getMovementProcessor().getServerPositionSpeed();

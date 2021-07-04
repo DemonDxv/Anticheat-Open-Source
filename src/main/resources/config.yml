@@ -1,3 +1,4 @@
+# %PLAYER% = the player cheating. %PREFIX% = the prefix of the anticheat you set below.
 Prefix: '&7[&cAnticheat&7]&r'
 Punishment:
   LagBack: false

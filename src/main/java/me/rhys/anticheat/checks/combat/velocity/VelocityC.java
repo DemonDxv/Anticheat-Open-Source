@@ -21,6 +21,7 @@ public class VelocityC extends Check {
                 User user = event.getUser();
 
                 if (user.getLastFallDamageTimer().hasNotPassed(20)
+                        || user.getVehicleTicks() > 0
                         || user.shouldCancel()) {
                     threshold = 0;
                     return;

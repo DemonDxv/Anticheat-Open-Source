@@ -8,7 +8,7 @@ import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.MathUtil;
 import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "Velocity",  checkType = "D", lagBack = false, description = "99% Horizontal Velocity")
+@CheckInformation(checkName = "Velocity",  checkType = "D", lagBack = false, description = "99% Horizontal Velocity", enabled = false)
 public class VelocityD extends Check {
 
     private double threshold;
@@ -24,6 +24,7 @@ public class VelocityD extends Check {
 
                 if (user.shouldCancel()
                         || user.getTick() < 60
+                        || user.getVehicleTicks() > 0
                         || !user.isChunkLoaded()) {
                     threshold = 0;
                     return;

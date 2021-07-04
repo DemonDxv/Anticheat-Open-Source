@@ -22,6 +22,7 @@ public class VelocityA extends Check {
 
                 if (user.getCurrentLocation().getY() > user.getLastLocation().getY()
                         || user.getLastFallDamageTimer().hasNotPassed(20)
+                        || user.getVehicleTicks() > 0
                         || user.shouldCancel()) {
                     threshold = 0;
                     return;

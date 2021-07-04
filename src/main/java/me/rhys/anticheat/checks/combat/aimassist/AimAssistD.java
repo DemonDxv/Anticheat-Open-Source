@@ -8,7 +8,7 @@ import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.util.MathUtil;
 
-@CheckInformation(checkName = "AimAssist", checkType = "D", lagBack = false, punishmentVL = 10, canPunish = false)
+@CheckInformation(checkName = "AimAssist", checkType = "D", lagBack = false, punishmentVL = 45, canPunish = false)
 public class AimAssistD extends Check {
 
     private double threshold;

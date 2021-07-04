@@ -42,7 +42,12 @@ public class PredictionProcessor extends Processor {
                 }
 
                 dropItem = false;
-                hit = false;
+
+                if (user.getCombatProcessor().getUseEntityTimer().hasNotPassed(20)) {
+                    hit = true;
+                } else {
+                    hit = false;
+                }
 
                 double deltaXZ = user.getMovementProcessor().getDeltaXZ();
                 double lastDeltaXZ = user.getMovementProcessor().getLastDeltaXZ();

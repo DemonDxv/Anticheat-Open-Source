@@ -35,7 +35,10 @@ public class KillauraB extends Check {
 
 
                     if (user.shouldCancel()
+                            || user.getConnectionProcessor().isLagging()
                             || user.getTick() < 60) {
+
+                        threshold = 0;
                         return;
                     }
 

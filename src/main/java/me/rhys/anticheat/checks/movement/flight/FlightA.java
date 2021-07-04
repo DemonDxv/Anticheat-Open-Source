@@ -26,6 +26,7 @@ public class FlightA extends Check {
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(20)
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getMovementProcessor().isBouncedOnSlime()
+                        || user.getVehicleTicks() > 0
                         || user.getCombatProcessor().getVelocityTicks() <= 20
                         || checkConditions(user)) {
                     threshold = 0;

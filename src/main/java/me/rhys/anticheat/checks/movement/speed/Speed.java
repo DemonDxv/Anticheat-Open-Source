@@ -7,7 +7,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "Speed", lagBack = true, description = "Detecting if the players MotionXZ matched with the predicted calculated speed.")
+@CheckInformation(checkName = "Speed", punishmentVL = 8, description = "Detecting if the players MotionXZ matched with the predicted calculated speed.")
 public class Speed extends Check {
 
     @Override
@@ -22,6 +22,7 @@ public class Speed extends Check {
 
                 if (user.getBlockData().liquidTicks > 0
                         || user.getTick() < 60
+                        || user.getVehicleTicks() > 0
                         || user.shouldCancel()
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getMovementProcessor().isBouncedOnSlime()

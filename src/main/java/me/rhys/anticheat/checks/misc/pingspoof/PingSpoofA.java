@@ -24,12 +24,15 @@ public class PingSpoofA extends Check {
 
                 User user = event.getUser();
 
-                if (user.shouldCancel() && user.getTick() < 60) {
+                if (user.shouldCancel()
+                        || user.getTick() < 60
+                        || user.getPlayer().isDead()
+                        || user.getCombatProcessor().getVelocityTicks() <= 20) {
                     return;
                 }
 
                 if (user.getConnectionProcessor().isLagging()) {
-                    if (threshold++ > 70) {
+                    if (threshold++ > 150) {
                         new BukkitRunnable() {
                             @Override
                             public void run() {
