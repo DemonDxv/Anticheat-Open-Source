@@ -200,6 +200,8 @@ public class MovementProcessor extends Processor {
         user.getBlockData().lastOnGround = user.getBlockData().onGround;
         user.getBlockData().onGround = blockChecker.isOnGround();
         user.getBlockData().collidesHorizontal = blockChecker.isCollideHorizontal();
+        user.getBlockData().carpet = blockChecker.isCarpet();
+        user.getBlockData().cake = blockChecker.isCake();
         user.getBlockData().nearLiquid = blockChecker.isNearLiquid();
         user.getBlockData().climbable = blockChecker.isClimbable();
         user.getBlockData().nearIce = blockChecker.isNearIce();
@@ -221,6 +223,22 @@ public class MovementProcessor extends Processor {
         } else {
             this.serverGroundTicks = 0;
             if (this.serverAirTicks < 20) this.serverAirTicks++;
+        }
+
+        if (user.getBlockData().carpet) {
+            if (user.getBlockData().carpetTicks < 20) this.user.getBlockData().carpetTicks++;
+        } else {
+            if (user.getBlockData().carpetTicks > 0) {
+                this.user.getBlockData().carpetTicks--;
+            }
+        }
+
+        if (user.getBlockData().cake) {
+            if (user.getBlockData().cakeTicks < 20) this.user.getBlockData().cakeTicks++;
+        } else {
+            if (user.getBlockData().cakeTicks > 0) {
+                this.user.getBlockData().cakeTicks--;
+            }
         }
 
         if (user.getPlayer().isInsideVehicle()) {

@@ -67,6 +67,12 @@ public class PredictionProcessor extends Processor {
                     prediction += user.getCombatProcessor().getVelocityH();
                 }
 
+                if (user.getBlockData().carpetTicks > 0) {
+                    prediction += 0.1F;
+                }
+
+
+
                 if (!user.getActionProcessor().getServerPositionTimer().passed(3)) {
                     prediction += user.getMovementProcessor().getServerPositionSpeed();
                 }

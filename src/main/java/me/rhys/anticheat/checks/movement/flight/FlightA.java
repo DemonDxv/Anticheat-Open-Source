@@ -28,6 +28,7 @@ public class FlightA extends Check {
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getVehicleTicks() > 0
+                        || user.getBlockData().cakeTicks > 0
                         || user.getCombatProcessor().getVelocityTicks() <= 20
                         || checkConditions(user)) {
                     threshold = 0;
@@ -73,6 +74,7 @@ public class FlightA extends Check {
                     if (difference > 0.005) {
                         if (threshold++ > 3) {
                             flag(user, "Moved the wrong prediction");
+                            Bukkit.broadcastMessage(""+deltaY + " "+prediction);
                         }
                     } else {
                         threshold -= Math.min(threshold, 0.001f);

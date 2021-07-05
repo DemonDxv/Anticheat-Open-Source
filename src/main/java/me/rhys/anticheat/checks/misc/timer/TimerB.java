@@ -13,7 +13,7 @@ public class TimerB extends Check {
     private Long lastMove;
     private long lastTime;
     private double threshold;
-    private final RollingAverageDouble timerRate = new RollingAverageDouble(40, 50.0);
+    private final RollingAverageDouble timerRate = new RollingAverageDouble(50, 50.0);
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -47,12 +47,12 @@ public class TimerB extends Check {
 
                         double timerSpeed = 50.0 / timerRate.getAverage();
 
-                        if (timerSpeed > 1.01) {
-                            if (threshold++ > 4) {
+                        if (timerSpeed >= 1.01) {
+                            if (threshold++ > 8) {
                                 flag(user, "Speeding Up Game: "+timerSpeed);
                             }
                         } else {
-                            threshold -= Math.min(threshold, 0.105f);
+                            threshold -= Math.min(threshold, 0.18f);
                         }
                     }
                 }

@@ -27,6 +27,7 @@ public class FlightD extends Check {
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getCombatProcessor().getVelocityTicks() <= 20
                         || user.getVehicleTicks() > 0
+                        || user.getBlockData().snowTicks > 0
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || checkConditions(user)) {
                     return;

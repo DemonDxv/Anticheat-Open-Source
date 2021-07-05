@@ -24,6 +24,7 @@ public class FlightE extends Check {
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getCombatProcessor().getVelocityTicks() <= 20
                         || user.getVehicleTicks() > 0
+                        || user.getBlockData().snowTicks > 0
                         || checkConditions(user)) {
                     return;
                 }

@@ -22,7 +22,7 @@ public class BlockChecker {
         this.user = user;
     }
 
-    private boolean onGround, nearLiquid, nearIce, climbable, slime, piston, snow, fence, bed,
+    private boolean carpet, cake, onGround, nearLiquid, nearIce, climbable, slime, piston, snow, fence, bed,
             stair, slab, movingUp, underBlock, web, shulker, insideBlock, collideHorizontal;
 
     public void processBlocks() {
@@ -71,6 +71,17 @@ public class BlockChecker {
                 case STATIONARY_LAVA:
                 case LAVA: {
                     this.nearLiquid = true;
+                    break;
+                }
+
+                case CARPET: {
+                    this.carpet = true;
+                    break;
+                }
+
+                case CAKE_BLOCK:
+                case CAKE: {
+                    this.cake = true;
                     break;
                 }
 

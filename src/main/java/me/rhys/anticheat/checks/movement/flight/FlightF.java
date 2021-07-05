@@ -27,6 +27,7 @@ public class FlightF extends Check {
                 if (this.checkConditions(user)
                         || user.getLastBlockPlaceTimer().hasNotPassed(20)
                         || user.getVehicleTicks() > 0
+                        || user.getBlockData().snowTicks > 0
                         || user.getLastBlockPlaceCancelTimer().hasNotPassed(5)
                         || user.getLastTeleportTimer().hasNotPassed(20)) {
                     this.threshold = 0;

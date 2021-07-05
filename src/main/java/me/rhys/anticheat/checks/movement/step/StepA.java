@@ -28,6 +28,7 @@ public class StepA extends Check {
                         || user.getBlockData().stairTicks > 0
                         || user.getBlockData().fenceTicks > 0
                         || user.getBlockData().snowTicks > 0
+                        || user.getBlockData().cakeTicks > 0
                         || user.getBlockData().piston
                         || user.getVehicleTicks() > 0
                         || user.getLastFallDamageTimer().hasNotPassed(20)
@@ -45,9 +46,9 @@ public class StepA extends Check {
                 boolean ground = user.getMovementProcessor().isOnGround();
 
                 if (deltaY > 0.0 && lastDeltaY > 0.0 && ground) {
-                    flag(user);
-                } else if (deltaY > 0.42f && ground) {
-                    flag(user);
+                    flag(user, "#1");
+                } else if (deltaY > 0.42f && lastDeltaY >= 0.0 && ground) {
+                    flag(user, "#2");
                 }
             }
         }
