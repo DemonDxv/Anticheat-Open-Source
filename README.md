@@ -9,7 +9,7 @@ Feel free to report any issues in the "Issues" tab
  
 ****Developers: demon & rhys****
 
-**Credits: darkandblue (prediction processing)**
+**Credits: darkandblue (prediction processing) & funkemunky (bounding boxes)**
 
 **Spigot Page: https://www.spigotmc.org/resources/anticheat.93504/**
 
