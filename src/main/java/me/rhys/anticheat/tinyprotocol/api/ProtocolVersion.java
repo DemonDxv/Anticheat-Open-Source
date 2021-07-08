@@ -44,6 +44,7 @@ public enum ProtocolVersion {
     v1_16_3(753, "v1_16_R3"),
     v1_16_4(754, "v1_16_R4"),
     v1_16_5(754, "v1_16_R5"),
+    v1_17(755, "v1_17_R1"),
     UNKNOWN(-1, "UNKNOWN");
 
 

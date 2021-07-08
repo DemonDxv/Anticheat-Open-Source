@@ -20,7 +20,8 @@ public class ChannelInjector implements Listener {
     private final ChannelHandlerAbstract channel;
 
     public ChannelInjector() {
-        this.channel = ProtocolVersion.getGameVersion().isOrAbove(ProtocolVersion.V1_8) ? new ChannelHandler1_8() : new ChannelHandler1_7();
+        this.channel = ProtocolVersion.getGameVersion().isOrAbove(ProtocolVersion.V1_8)
+                ? new ChannelHandler1_8() : new ChannelHandler1_7();
     }
 
     public void addChannel(Player player) {

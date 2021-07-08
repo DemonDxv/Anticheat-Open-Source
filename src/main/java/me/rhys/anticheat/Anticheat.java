@@ -39,9 +39,9 @@ public class Anticheat extends JavaPlugin {
         this.tinyProtocolHandler = new TinyProtocolHandler();
         this.checkManager.setup();
 
-        if (ProtocolVersion.getGameVersion().isAbove(ProtocolVersion.V1_12_2)) {
+        if (ProtocolVersion.getGameVersion().isAbove(ProtocolVersion.v1_16_5)) {
             getServer().getPluginManager().disablePlugin(this);
-            getLogger().warning("The anticheat is only compatible with 1.8.* to 1.12.2 spigot's");
+            getLogger().warning("The anticheat is only compatible with 1.7.* to 1.16.5 spigot's (1.8 RECOMMENDED)");
             return;
         }
 
