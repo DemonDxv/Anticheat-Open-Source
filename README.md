@@ -32,3 +32,5 @@ Feel free to report any issues in the "Issues" tab
 * /ac - displays anticheat commands and information
 
 * /ac alerts - toggles on and off alerts
+
+* /ac check (check&checktype) - toggles on and off detections
