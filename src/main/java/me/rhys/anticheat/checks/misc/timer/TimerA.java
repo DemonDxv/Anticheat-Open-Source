@@ -48,7 +48,7 @@ public class TimerA extends Check {
 
                         double timerSpeed = 50.0 / timerRate.getAverage();
 
-                        if (timerSpeed < 0.9) {
+                        if (timerSpeed < 0.7) {
                             if (threshold++ > 12) {
                                 flag(user, "Slowing Game Speed: "+timerSpeed);
                             }

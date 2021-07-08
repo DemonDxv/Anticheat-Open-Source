@@ -11,10 +11,21 @@ import org.bukkit.util.Vector;
 
 @AllArgsConstructor @Setter @Getter
 public class PlayerLocation {
-    private final World world;
-    private final double x, y, z;
-    private final float yaw, pitch;
-    private final boolean clientGround;
+    private World world;
+    private double x, y, z;
+    private float yaw, pitch;
+    private boolean clientGround;
+    private long timeStamp;
+
+    public PlayerLocation(Location loc) {
+        this.x = loc.getX();
+        this.y = loc.getY();
+        this.z = loc.getZ();
+        this.yaw = loc.getYaw();
+        this.pitch = loc.getPitch();
+
+        this.timeStamp = System.currentTimeMillis();
+    }
 
     public Vector toVector() {
         return new Vector(x, y, z);
@@ -25,7 +36,7 @@ public class PlayerLocation {
     }
 
     public PlayerLocation clone() {
-        return new PlayerLocation(this.world, this.x, this.y, this.z, this.yaw, this.pitch, this.clientGround);
+        return new PlayerLocation(this.world, this.x, this.y, this.z, this.yaw, this.pitch, this.clientGround, this.timeStamp);
     }
 
     public double distance(@NotNull PlayerLocation o) {

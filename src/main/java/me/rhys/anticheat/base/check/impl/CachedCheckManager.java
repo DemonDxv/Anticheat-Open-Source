@@ -7,6 +7,7 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.checks.combat.aimassist.*;
 import me.rhys.anticheat.checks.combat.autoclicker.*;
 import me.rhys.anticheat.checks.combat.killaura.*;
+import me.rhys.anticheat.checks.combat.reach.*;
 import me.rhys.anticheat.checks.combat.velocity.*;
 import me.rhys.anticheat.checks.misc.badpackets.*;
 import me.rhys.anticheat.checks.misc.pingspoof.*;
@@ -33,6 +34,8 @@ public class CachedCheckManager {
         this.checkList.add(new VelocityD());
         this.checkList.add(new AutoClickerA());
         this.checkList.add(new AutoClickerB());
+        this.checkList.add(new AutoClickerC());
+        this.checkList.add(new AutoClickerD());
         this.checkList.add(new AimAssistA());
         this.checkList.add(new AimAssistB());
         this.checkList.add(new AimAssistC());
@@ -42,6 +45,7 @@ public class CachedCheckManager {
         this.checkList.add(new KillauraC());
         this.checkList.add(new KillauraD());
         this.checkList.add(new KillauraE());
+        this.checkList.add(new ReachA());
         this.checkList.add(new TimerA());
         this.checkList.add(new TimerB());
         this.checkList.add(new FlightA());

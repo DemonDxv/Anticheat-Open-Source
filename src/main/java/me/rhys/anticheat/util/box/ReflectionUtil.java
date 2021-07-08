@@ -125,10 +125,12 @@ public class ReflectionUtil {
     }
 
     public static float getFriction(Block block) {
+
         Object blockNMS = getVanillaBlock(block);
 
         return (float) getFieldValue(getFieldByName(vanillaBlock, "frictionFactor"), blockNMS);
     }
+
 
     public static Object getBlockPosition(Location location) {
         if (Anticheat.getInstance().getBukkitVersion().contains("1_8")) {

@@ -27,6 +27,9 @@ public class FlightB extends Check {
                 if (this.checkConditions(user)
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
                         || user.getVehicleTicks() > 0
+                        || user.getBlockData().snowTicks > 0
+                        || user.getLastBlockPlaceCancelTimer().hasNotPassed(20)
+                        || user.getLastBlockPlaceTimer().hasNotPassed(5)
                         || user.getLastTeleportTimer().hasNotPassed(20)) {
                     this.threshold = 0;
                     return;
@@ -41,8 +44,7 @@ public class FlightB extends Check {
 
                         threshold++;
 
-                        if (threshold > 7
-                                && !user.getMovementProcessor().getLastBlockPlacePacketTimer().hasNotPassed(20)) {
+                        if (threshold > 3) {
                             flag(user, "Ghost Block / Ghost Block Fly");
                         }
                     }

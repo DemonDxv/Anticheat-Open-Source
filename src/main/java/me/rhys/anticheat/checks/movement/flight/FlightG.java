@@ -6,11 +6,10 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
-@CheckInformation(checkName = "Flight", checkType = "G", description = "Checks if player is using yPort")
+@CheckInformation(checkName = "Flight", checkType = "G", canPunish = false, description = "Checks if player is using yPort", punishmentVL = 75)
 public class FlightG extends Check {
-
-    private int groundTime, airTime;
 
     private double threshold;
 
@@ -29,37 +28,36 @@ public class FlightG extends Check {
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getCombatProcessor().getVelocityTicks() <= 20
                         || user.getVehicleTicks() > 0
+                        || user.getLastBlockPlaceTimer().hasNotPassed(20)
+                        || user.getLastBlockPlaceCancelTimer().hasNotPassed(20)
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || checkConditions(user)) {
                     return;
                 }
 
                 double deltaY = user.getMovementProcessor().getDeltaY();
-
                 double lastDeltaY = user.getMovementProcessor().getLastDeltaY();
 
-                double prediction = (lastDeltaY - 0.08D) * 0.98D;
+                double predicted = (lastDeltaY - 0.08D) * 0.98F;
 
-                double total = Math.abs(deltaY - prediction);
+                double totalChange = Math.abs(predicted - deltaY);
 
-                if (deltaY < 0.0 && !user.getMovementProcessor().isOnGround()) {
-                    if (total > 0.35) {
-                        if (threshold++ > 1.25) {
-                            flag(user);
-                        }
-                    } else {
-                        threshold -= Math.min(threshold, 0.025f);
+                if (totalChange > 0.005 && !user.getMovementProcessor().isOnGround() && deltaY < 0.0) {
+                    if (threshold++ > 2.1) {
+                        flag(user, "Using YPort");
                     }
                 } else {
-                    threshold -= Math.min(threshold, 0.125f);
+                    threshold -= Math.min(threshold, 0.06);
                 }
-
             }
         }
     }
     boolean checkConditions(User user) {
         return user.getBlockData().liquidTicks > 0
                 || user.getTick() < 60
+                || user.getBlockData().underBlockTicks > 0
+                || user.getBlockData().stairTicks > 0
+                || user.getBlockData().slabTicks > 0
                 || user.shouldCancel()
                 || user.getBlockData().climbableTicks > 0
                 || user.getBlockData().climbableTimer.hasNotPassed();

@@ -28,6 +28,7 @@ public class VelocityA extends Check {
                     return;
                 }
 
+
                 double deltaY = user.getMovementProcessor().getDeltaY();
 
                 double velocity = user.getCombatProcessor().getVelocity().getY();

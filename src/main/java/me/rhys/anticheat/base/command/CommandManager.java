@@ -19,7 +19,7 @@ public class CommandManager {
         addCommand(new Command(new MainCommand("ac"), "ac alerts", "/ac alerts",
                 "Toggle on, and off alerts.", true));
 
-        addCommand(new Command(new MainCommand("ac"), "ac check", "/ac check [check] [type]",
+        addCommand(new Command(new MainCommand("ac"), "ac check", "/ac check [check&type]",
                 "Toggle on, and off detections.", true));
     }
 

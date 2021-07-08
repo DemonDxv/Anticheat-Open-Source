@@ -10,13 +10,17 @@ import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockPlacePacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.util.MathUtil;
+import me.rhys.anticheat.util.box.ReflectionUtil;
+import me.rhys.anticheat.util.box.reflection.Reflection;
+import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
 
 @ProcessorInformation(name = "Prediction")
 @Getter
 public class PredictionProcessor extends Processor {
 
     private double motionXZ;
-    private float blockFriction;
+    private float blockFriction = 0.91F;
 
     private boolean hit = false, useSword, dropItem;
 
@@ -30,11 +34,24 @@ public class PredictionProcessor extends Processor {
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
 
+
                 if (user.getLastLastLocation().isClientGround()) {
-                    blockFriction = (user.getBlockData().iceTicks > 0 ? 0.98F : 0.91F) * 0.6F;
+                    blockFriction = 0.91F * 0.6F;
+
+                    if (user.getBlockData().slimeTimer.hasNotPassed(20)) {
+                        blockFriction = 0.91F * 0.8F;
+                    }
+
+                    if (user.getBlockData().iceTimer.hasNotPassed(20)) {
+                        blockFriction = 0.91F * 0.98F;
+                    }
+
                 } else {
                     blockFriction = 0.91F;
                 }
+
+
+
 
 
                 if (dropItem) {
@@ -56,7 +73,7 @@ public class PredictionProcessor extends Processor {
 
                 prediction += MathUtil.movingFlyingV3(user);
 
-                if (!user.getCurrentLocation().isClientGround() && user.getLastLocation().isClientGround()) {
+                if (!user.getMovementProcessor().isOnGround() && user.getMovementProcessor().isLastGround()) {
                     prediction += 0.2F;
                 }
 
@@ -120,6 +137,7 @@ public class PredictionProcessor extends Processor {
                 break;
             }
 
+            case Packet.Server.HELD_ITEM:
             case Packet.Client.HELD_ITEM_SLOT: {
                 useSword = false;
                 break;

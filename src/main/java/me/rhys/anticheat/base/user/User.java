@@ -9,6 +9,7 @@ import me.rhys.anticheat.base.processor.impl.processors.*;
 import me.rhys.anticheat.base.user.objects.BlockData;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
 import me.rhys.anticheat.util.EventTimer;
+import me.rhys.anticheat.util.TPSUtil;
 import me.rhys.anticheat.util.evicting.EvictingMap;
 import me.rhys.anticheat.util.PlayerLocation;
 import me.rhys.anticheat.util.box.BoundingBox;
@@ -46,7 +47,7 @@ public class User {
 
     private BoundingBox boundingBox = new BoundingBox(0f, 0f, 0f, 0f, 0f, 0f);
     private PlayerLocation currentLocation = new PlayerLocation(null, 0, 0, 0, 0, 0,
-            false);
+            false, System.currentTimeMillis());
     private PlayerLocation lastLocation = currentLocation, lastLastLocation = lastLocation;
 
     private EventTimer lastBlockPlaceCancelTimer = new EventTimer(20, this), lastBlockPlaceTimer = new EventTimer(20, this), lastFallDamageTimer = new EventTimer(20, this), lastTeleportTimer = new EventTimer(20, this), lastUnknownTeleportTimer = new EventTimer(20, this);
@@ -78,7 +79,7 @@ public class User {
     }
 
     public boolean shouldCancel() {
-        return !this.chunkLoaded || this.movementProcessor.isWasFlying() || this.player.getAllowFlight()
+        return !this.chunkLoaded || TPSUtil.getTPS() <= 19.0 || this.movementProcessor.isWasFlying() || this.player.getAllowFlight()
                 || this.player.isFlying() || this.player.getGameMode() == GameMode.CREATIVE
                 || this.player.getGameMode() == GameMode.SPECTATOR;
     }

@@ -9,6 +9,7 @@ import me.rhys.anticheat.base.processor.api.ProcessorInformation;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
+import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInEntityActionPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInFlyingPacket;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutPositionPacket;
@@ -23,10 +24,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 @ProcessorInformation(name = "Movement")
 @Getter @Setter
 public class MovementProcessor extends Processor {
-    private EventTimer lastGroundTimer, lastBlockPlacePacketTimer;
+    private EventTimer lastGroundTimer, lastBlockPlacePacketTimer, lastBlockDigTimer;
 
     private boolean wasFlying, onGround, lastGround, positionYGround, lastPositionYGround, bouncedOnSlime, dead, sprinting,
-            lastSprinting, serverYGround;
+            lastSprinting, serverYGround, isDigging;
     private int speedPotionTicks, groundTicks, airTicks, lagBackTicks, serverAirTicks, serverGroundTicks, ignoreServerPositionTicks;
     private double deltaY, lastDeltaY, deltaXZ, lastDeltaXZ, deltaX, deltaZ, serverPositionSpeed, serverPositionDeltaY;
     private PlayerLocation lastSlimeLocation;
@@ -63,6 +64,20 @@ public class MovementProcessor extends Processor {
 
             case Packet.Client.BLOCK_PLACE: {
                 this.lastBlockPlacePacketTimer.reset();
+                break;
+            }
+
+            case Packet.Client.BLOCK_DIG: {
+                WrappedInBlockDigPacket digPacket = new WrappedInBlockDigPacket(event.getPacket(), user.getPlayer());
+
+                if (digPacket.getAction() == WrappedInBlockDigPacket.EnumPlayerDigType.START_DESTROY_BLOCK) {
+                    isDigging = true;
+                    lastBlockDigTimer.reset();
+                } else if (digPacket.getAction() == WrappedInBlockDigPacket.EnumPlayerDigType.ABORT_DESTROY_BLOCK) {
+                    isDigging = false;
+                } else if (digPacket.getAction() == WrappedInBlockDigPacket.EnumPlayerDigType.STOP_DESTROY_BLOCK) {
+                    isDigging = false;
+                }
                 break;
             }
 
@@ -116,7 +131,7 @@ public class MovementProcessor extends Processor {
                     user.setLastLastLocation(user.getLastLocation());
                     user.setLastLocation(user.getCurrentLocation());
                     user.setCurrentLocation(new PlayerLocation(user.getPlayer().getWorld(), x, y, z,
-                            yaw, pitch, ground));
+                            yaw, pitch, ground, System.currentTimeMillis()));
 
                     this.lastDeltaY = this.deltaY;
                     this.deltaY = (user.getCurrentLocation().getY() - user.getLastLocation().getY());
@@ -361,7 +376,8 @@ public class MovementProcessor extends Processor {
     public void setupTimers(User user) {
         this.lastGroundTimer = new EventTimer(20, user);
         this.lastBlockPlacePacketTimer = new EventTimer(20, user);
+        this.lastBlockDigTimer = new EventTimer(20, user);
         this.lastSlimeLocation = new PlayerLocation(user.getPlayer().getWorld(), 0, 0, 0, 0,
-                0, false);
+                0, false, System.currentTimeMillis());
     }
 }

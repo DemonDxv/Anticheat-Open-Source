@@ -40,7 +40,7 @@ public class FlightF extends Check {
                 }
 
                 if (!user.getBlockData().onGround && !user.getBlockData().lastOnGround) {
-                    if (user.getMovementProcessor().isOnGround()) {
+                    if (user.getMovementProcessor().isOnGround() && !user.getMovementProcessor().isServerYGround()) {
 
                         if ((threshold += 1.25) >= 4.3) {
                             flag(user, "Spoofing Ground");

@@ -6,6 +6,7 @@ import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.event.CallableEvent;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
+import me.rhys.anticheat.util.TPSUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -36,6 +37,10 @@ public class Check implements CallableEvent, Cloneable {
             for (String s : data) {
                 stringBuilder.append(s).append(", ");
             }
+        }
+
+        if (TPSUtil.getTPS() <= 19.0) {
+            return;
         }
 
         if (Anticheat.getInstance().getConfigValues().isPunish() && this.canPunish && this.violation > this.maxViolation) {

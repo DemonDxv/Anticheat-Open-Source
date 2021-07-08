@@ -5,18 +5,18 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
-import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
 import me.rhys.anticheat.util.MathUtil;
+import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@CheckInformation(checkName = "AutoClicker", checkType = "B", lagBack = false, description = "Checks if the player is clicking consistently")
-public class AutoClickerB extends Check {
+@CheckInformation(checkName = "AutoClicker", checkType = "D", lagBack = false, description = "Checks if the player is clicking consistently")
+public class AutoClickerD extends Check {
 
     private int movements;
     private List<Integer> delays = new ArrayList<>();
-    private double threshold;
+    private double threshold, lastStd;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -46,17 +46,18 @@ public class AutoClickerB extends Check {
                 if (movements < 10) {
                     delays.add(movements);
 
-                    if (delays.size() == 150) {
+                    if (delays.size() == 75) {
                         double std = MathUtil.getStandardDeviation(delays);
 
-                        if (std < 0.45) {
+                        if (Math.abs(std - lastStd) < 0.08) {
                             if (threshold++ > 2) {
-                                flag(user, "Clicking to consistent");
+                                flag(user, "Clicking to consistent [S-LS]");
                             }
                         } else {
                             threshold -= Math.min(threshold, 0.125);
                         }
 
+                        lastStd = std;
                         delays.clear();
                     }
                 }
