@@ -12,6 +12,7 @@ Feel free to report any issues in the "Issues" tab
 **Spigot Page: https://www.spigotmc.org/resources/anticheat.93504/**
 
 
+If your planning on forking / taking code to resell make sure to leave credits.
 
 
 *Supported Game Verison: 1.8.x - 1.16.5* 
@@ -34,7 +35,3 @@ Feel free to report any issues in the "Issues" tab
 * /ac alerts - toggles on and off alerts
 
 * /ac check (check&checktype) - toggles on and off detections
-
-
-
-If your planning on forking / taking code to resell make sure to leave credits.
