@@ -1,7 +1,7 @@
 # Open Source Anticheat
  A free anticheat for the community that is open source.
  
- Adding support soon for 1.9.x - 1.17.x
+ Adding full support soon for 1.9.x - 1.16.5
  
  **(Highly recommended to use 1.8.x as all version above have not been tested)**
  
