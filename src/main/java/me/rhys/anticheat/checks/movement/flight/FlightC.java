@@ -45,7 +45,7 @@ public class FlightC extends Check {
 
                 if (!user.getCurrentLocation().isClientGround() && user.getLastLocation().isClientGround()) {
                     if (deltaY > maxJumpHeight) {
-                        flag(user, "Jumping Higher Than Legit "+deltaY);
+                        flag(user, "Jumping Higher Than Legit ", "" + deltaY);
                     }
                 }
             }

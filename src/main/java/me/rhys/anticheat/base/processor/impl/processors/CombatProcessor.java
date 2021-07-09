@@ -13,6 +13,7 @@ import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutTransaction;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutVelocityPacket;
 import me.rhys.anticheat.util.EventTimer;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 @ProcessorInformation(name = "Combat")
@@ -29,7 +30,7 @@ public class CombatProcessor extends Processor {
 
     private short velocityID = 9000;
 
-    private Entity lastAttackedEntity, lastLastAttackedEntity;
+    private Player lastAttackedEntity, lastLastAttackedEntity;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -40,8 +41,11 @@ public class CombatProcessor extends Processor {
 
                 if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
                     lastLastAttackedEntity = lastAttackedEntity;
-                    lastAttackedEntity = useEntityPacket.getEntity();
+                    lastAttackedEntity = (Player) useEntityPacket.getEntity();
                     useEntityTimer.reset();
+
+                    velocity.setX(velocity.getX() * 0.6F);
+                    velocity.setZ(velocity.getZ() * 0.6F);
                 }
             }
 

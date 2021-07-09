@@ -7,14 +7,19 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.util.MathUtil;
+import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "AimAssist", checkType = "D", lagBack = false, punishmentVL = 45, canPunish = false)
+@CheckInformation(checkName = "AimAssist", checkType = "D", lagBack = false, punishmentVL = 25, canPunish = false)
 public class AimAssistD extends Check {
 
     private double threshold;
 
-    private final double offset = Math.pow(2.0, 24.0);
-    private double lastPitchDifference;
+    private Float lastPitchDifference;
+    private Float lastYawDifference;
+
+    /**
+     * Credits to Sim0n as this is his detection.
+     */
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -25,29 +30,34 @@ public class AimAssistD extends Check {
 
             if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
 
-                double pitchDifference = Math.abs(user.getCurrentLocation().getPitch() - user.getLastLocation().getPitch());
+                float pitchDifference = Math.abs(user.getCurrentLocation().getPitch()
+                        - user.getLastLocation().getPitch());
 
-                if (pitchDifference > 0.0) {
+                float yawDifference = Math.abs(user.getCurrentLocation().getYaw()
+                        - user.getLastLocation().getYaw());
 
-                    /**
-                     * TODO: fix bypasses for this as this is just simple quick accounting for OptiFine.
-                     */
-                    if (pitchDifference < 0.1) {
-                        threshold -= Math.min(threshold, 2.2);
-                    }
+                if (lastYawDifference != null && lastPitchDifference != null) {
 
-                    long gcd = MathUtil.gcd((long) (pitchDifference * offset), (long) (lastPitchDifference * offset));
+                    float yawAccel = Math.abs(pitchDifference - lastPitchDifference);
+                    float pitchAccel = Math.abs(yawDifference - lastYawDifference);
 
-                    if (gcd < 131072L) {
-                        if (threshold++ > 11) {
-                            flag(user, "Not following gcd");
+                    if (yawDifference > 3.0F && pitchDifference <= 10.0F && yawAccel > 2F && pitchAccel > 2F
+                            && pitchDifference < yawDifference) {
+
+                        double pitchGCD = MathUtil.gcd(pitchDifference, lastPitchDifference);
+
+                        if (pitchGCD < 0.009) {
+                            if (threshold++ > 3) {
+                                flag(user, "Not following proper GCD");
+                            }
+                        } else {
+                            threshold -= Math.min(threshold, 0.001f);
                         }
-                    } else {
-                        threshold -= Math.min(threshold, 1.2);
                     }
-
-                    lastPitchDifference = pitchDifference;
                 }
+
+                lastYawDifference = yawDifference;
+                lastPitchDifference = pitchDifference;
             }
         }
     }

@@ -19,7 +19,9 @@ public class BadPacketsC extends Check {
 
                 User user = event.getUser();
 
-                if (user.shouldCancel() || user.getTick() < 60 || user.getVehicleTicks() > 0) {
+                if (user.shouldCancel()
+                        || user.getTick() < 60
+                        || user.getVehicleTicks() > 0) {
                     return;
                 }
 

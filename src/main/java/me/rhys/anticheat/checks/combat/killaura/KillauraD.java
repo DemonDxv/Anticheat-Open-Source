@@ -39,15 +39,15 @@ public class KillauraD extends Check {
                     double difference = user.getMovementProcessor().getDeltaXZ() - user.getMovementProcessor().getLastDeltaXZ();
 
                     if (user.getMovementProcessor().getDeltaXZ() >= MathUtil.getBaseSpeed(user.getPlayer())) {
-                        if (difference <= 0.015) {
-                            if (threshold++ > 4) {
+                        if (difference <= 0.014) {
+                            if (threshold++ > 5) {
                                 flag(user, "Keep Sprinting");
                             }
                         } else {
                             threshold -= Math.min(threshold, 0.125);
                         }
                     } else {
-                        threshold -= Math.min(threshold, 0.125);
+                        threshold -= Math.min(threshold, 0.45);
                     }
 
                 }

@@ -6,8 +6,10 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 
-@CheckInformation(checkName = "Flight", checkType = "E", lagBack = true, description = "Checks if player is jumping lower than legit")
+@CheckInformation(checkName = "Flight", checkType = "E", description = "Checks if player is jumping lower than legit")
 public class FlightE extends Check {
+
+    private double threshold;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -34,11 +36,20 @@ public class FlightE extends Check {
 
                 double deltaY = user.getMovementProcessor().getDeltaY();
 
+                if (deltaY >= .404f && deltaY <= .405f) {
+                    threshold = 0;
+                    return;
+                }
+
                 double maxJumpHeight = 0.42F;
 
                 if (!user.getCurrentLocation().isClientGround() && user.getLastLocation().isClientGround()) {
-                    if (deltaY < maxJumpHeight && deltaY > 0) {
-                        flag(user, "Jumping Lower Than Legit "+deltaY);
+                    if (deltaY < maxJumpHeight && deltaY > 0.0) {
+                        if (threshold++ > 2) {
+                            flag(user, "Jumping Lower Than Legit", "" + deltaY);
+                        }
+                    } else {
+                        threshold -= Math.min(threshold, 0.001f);
                     }
                 }
             }

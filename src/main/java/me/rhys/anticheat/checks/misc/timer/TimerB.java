@@ -5,60 +5,56 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
-import me.rhys.anticheat.util.RollingAverageDouble;
+import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "Timer", checkType = "B", lagBack = false, description = "Timer 1.01")
+import java.util.concurrent.TimeUnit;
+
+@CheckInformation(checkName = "Timer", checkType = "B", lagBack = false, punishmentVL = 15, description = "Detects 0.99% Timer Speed")
 public class TimerB extends Check {
 
-    private Long lastMove;
+    private double balance = -100L, threshold;
+
     private long lastTime;
-    private double threshold;
-    private final RollingAverageDouble timerRate = new RollingAverageDouble(50, 50.0);
 
     @Override
     public void onPacket(PacketEvent event) {
-        User user = event.getUser();
-
         switch (event.getType()) {
             case Packet.Client.FLYING:
             case Packet.Client.LOOK:
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
 
-                if (user.getTick() < 60
+         /*       User user = event.getUser();
+
+                if (user.shouldCancel()
+                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
+                        || user.getPlayer().isDead()
+                        || user.getTick() < 60
                         || user.getConnectionProcessor().isLagging()
-                        || user.shouldCancel()
-                        || user.getVehicleTicks() > 0
-                        || user.getLastTeleportTimer().hasNotPassed(20)
-                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)) {
+                        || user.getLastTeleportTimer().hasNotPassed(20)) {
+                    threshold = 0;
                     return;
                 }
 
 
-                long now = System.currentTimeMillis();
+                long currentTime = System.nanoTime();
 
-                if (lastMove != null) {
-                    long diff = now - lastMove;
+                long lastTime = this.lastTime != 0 ? this.lastTime : currentTime - 50;
 
-                    timerRate.add(diff);
+                long balanceRate = currentTime - lastTime;
 
-                    if (now - lastTime >= 1000L) {
-                        lastTime = now;
+                balance += TimeUnit.MILLISECONDS.toNanos(50L) - balanceRate;
 
-                        double timerSpeed = 50.0 / timerRate.getAverage();
-
-                        if (timerSpeed >= 1.01) {
-                            if (threshold++ > 8) {
-                                flag(user, "Speeding Up Game: "+timerSpeed);
-                            }
-                        } else {
-                            threshold -= Math.min(threshold, 0.18f);
-                        }
+                if (balance <= TimeUnit.MILLISECONDS.toNanos(20L)) {
+                    if (threshold++ > 3) {
+               /         flag(user, "Slowing down game speed");
                     }
+                    balance = 0;
+                } else {
+                    threshold -= Math.min(threshold, 0.001f);
                 }
 
-                lastMove = now;
-
+                this.lastTime = currentTime; */
 
                 break;
             }

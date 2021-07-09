@@ -23,6 +23,7 @@ public class VelocityA extends Check {
                 if (user.getCurrentLocation().getY() > user.getLastLocation().getY()
                         || user.getLastFallDamageTimer().hasNotPassed(20)
                         || user.getVehicleTicks() > 0
+                        || user.getLastFireTickTimer().hasNotPassed(20)
                         || user.shouldCancel()) {
                     threshold = 0;
                     return;
@@ -33,15 +34,19 @@ public class VelocityA extends Check {
 
                 double velocity = user.getCombatProcessor().getVelocity().getY();
 
-                if (user.getCombatProcessor().getVelocityTicks() == 1
-                        && user.getCurrentLocation().isClientGround() && user.getLastLocation().isClientGround()) {
+                if (user.getLastAttackByEntityTimer().hasNotPassed(20)
+                        || user.getLastShotByArrowTimer().hasNotPassed(20)) {
 
-                    if ((deltaY / velocity) == 0.0) {
-                        if (threshold++ > 2) {
-                            flag(user, "No Vertical Knockback");
+                    if (user.getCombatProcessor().getVelocityTicks() == 1
+                            && user.getCurrentLocation().isClientGround() && user.getLastLocation().isClientGround()) {
+
+                        if ((deltaY / velocity) == 0.0) {
+                            if (threshold++ > 2) {
+                                flag(user, "No Vertical Knockback");
+                            }
+                        } else {
+                            threshold -= Math.min(threshold, 0.0626f);
                         }
-                    } else {
-                        threshold -= Math.min(threshold, 0.0626f);
                     }
                 }
 

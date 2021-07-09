@@ -26,29 +26,34 @@ public class FlightG extends Check {
                 if (user.shouldCancel()
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
                         || user.getLastTeleportTimer().hasNotPassed(20)
-                        || user.getCombatProcessor().getVelocityTicks() <= 20
-                        || user.getVehicleTicks() > 0
-                        || user.getLastBlockPlaceTimer().hasNotPassed(20)
-                        || user.getLastBlockPlaceCancelTimer().hasNotPassed(20)
                         || user.getMovementProcessor().isBouncedOnSlime()
+                        || user.getVehicleTicks() > 0
+                        || user.getBlockData().webTicks > 0
+                        || user.getBlockData().cakeTicks > 0
+                        || user.getCombatProcessor().getVelocityTicks() <= 20
                         || checkConditions(user)) {
+                    threshold = 0;
                     return;
                 }
 
                 double deltaY = user.getMovementProcessor().getDeltaY();
+
                 double lastDeltaY = user.getMovementProcessor().getLastDeltaY();
 
-                double predicted = (lastDeltaY - 0.08D) * 0.98F;
+                double prediction = (lastDeltaY - 0.08D) * 0.98F;
 
-                double totalChange = Math.abs(predicted - deltaY);
+                double difference = Math.abs(deltaY - prediction);
 
-                if (totalChange > 0.005 && !user.getMovementProcessor().isOnGround() && deltaY < 0.0) {
-                    if (threshold++ > 2.1) {
-                        flag(user, "Using YPort");
+                if (prediction > 0.005 && deltaY < 0.0) {
+                    if (difference > 0.005) {
+                        if (threshold++ > 2) {
+                            flag(user, "Moved the wrong fall prediction");
+                        }
+                    } else {
+                        threshold -= Math.min(threshold, 0.001f);
                     }
-                } else {
-                    threshold -= Math.min(threshold, 0.06);
                 }
+
             }
         }
     }

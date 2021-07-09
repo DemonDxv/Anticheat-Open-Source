@@ -30,8 +30,8 @@ public class CachedCheckManager {
     public void setup() {
         this.checkList.add(new VelocityA());
         this.checkList.add(new VelocityB());
-        this.checkList.add(new VelocityC());
-        this.checkList.add(new VelocityD());
+      ///  this.checkList.add(new VelocityC());
+    //    this.checkList.add(new VelocityD());
         this.checkList.add(new AutoClickerA());
         this.checkList.add(new AutoClickerB());
         this.checkList.add(new AutoClickerC());

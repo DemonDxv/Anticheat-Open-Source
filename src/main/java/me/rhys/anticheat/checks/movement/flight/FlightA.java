@@ -24,7 +24,7 @@ public class FlightA extends Check {
             case Packet.Client.POSITION: {
 
                 if (user.shouldCancel()
-                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(20)
+                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getVehicleTicks() > 0
@@ -64,7 +64,9 @@ public class FlightA extends Check {
                 double difference = deltaY - prediction;
 
 
-                if (user.getMovementProcessor().getLastBlockPlacePacketTimer().hasNotPassed(20) && (deltaY >= .404f && deltaY <= .405f || lastDeltaY >= .404f && lastDeltaY <= .405F)) {
+                if ((user.getLastBlockPlaceTimer().hasNotPassed(20)
+                        || user.getLastBlockPlaceCancelTimer().hasNotPassed(20))
+                        && (deltaY >= .404f && deltaY <= .405f || lastDeltaY >= .404f && lastDeltaY <= .405F)) {
                     difference = 0.0;
                 }
 

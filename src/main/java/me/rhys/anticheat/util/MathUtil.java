@@ -51,6 +51,16 @@ public class MathUtil {
         return 0;
     }
 
+    public static double gcd(double a, double b) {
+        if (a < b) {
+            return gcd(b, a);
+        } else if (Math.abs(b) < 0.001) {
+            return a;
+        } else {
+            return gcd(b, a - Math.floor(a / b) * b);
+        }
+    }
+
     public static double getAverage(Collection<? extends Number> values) {
         return values.stream()
                 .mapToDouble(Number::doubleValue)

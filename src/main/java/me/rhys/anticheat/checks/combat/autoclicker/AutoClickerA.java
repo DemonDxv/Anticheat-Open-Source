@@ -36,7 +36,7 @@ public class AutoClickerA extends Check {
 
                 if (movements++ == 20) {
                     if (clicks > 22 || attackClicks > 22) {
-                        flag(user, "Clicking abnormally fast: "+clicks);
+                        flag(user, "Clicking abnormally fast", "C: "+clicks, "AC: "+attackClicks);
                     }
                     movements = clicks = attackClicks = 0;
                 }

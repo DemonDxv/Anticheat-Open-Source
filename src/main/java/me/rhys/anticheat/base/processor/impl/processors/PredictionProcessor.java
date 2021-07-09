@@ -34,7 +34,6 @@ public class PredictionProcessor extends Processor {
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
 
-
                 if (user.getLastLastLocation().isClientGround()) {
                     blockFriction = 0.91F * 0.6F;
 
@@ -49,10 +48,6 @@ public class PredictionProcessor extends Processor {
                 } else {
                     blockFriction = 0.91F;
                 }
-
-
-
-
 
                 if (dropItem) {
                     useSword = false;
@@ -69,17 +64,29 @@ public class PredictionProcessor extends Processor {
                 double deltaXZ = user.getMovementProcessor().getDeltaXZ();
                 double lastDeltaXZ = user.getMovementProcessor().getLastDeltaXZ();
 
+                double deltaY = user.getMovementProcessor().getDeltaY();
+
                 double prediction = lastDeltaXZ * blockFriction;
 
                 prediction += MathUtil.movingFlyingV3(user);
 
-                if (!user.getMovementProcessor().isOnGround() && user.getMovementProcessor().isLastGround()) {
+                boolean jumpCheck = deltaY == 0.42f || deltaY >= .404f && deltaY <= .405f;
+
+                if (deltaY > 0.005 && user.getMovementProcessor().isServerYGround()
+                        && user.getMovementProcessor().isLastGround()) {
+                    prediction += 0.2F;
+                }
+
+                if (!user.getMovementProcessor().isOnGround()
+                        && user.getMovementProcessor().isLastGround() && jumpCheck) {
                     prediction += 0.2F;
                 }
 
                 if (user.getCombatProcessor().getVelocityTicks() <= 20) {
                     prediction += user.getCombatProcessor().getVelocityH();
-                } else if (user.getCombatProcessor().getVelocityTicks() <= 5
+                }
+
+                if (user.getCombatProcessor().getVelocityTicks() <= 5
                         && user.getLastFallDamageTimer().hasNotPassed(5)) {
                     prediction += user.getCombatProcessor().getVelocityH();
                 }
@@ -87,8 +94,6 @@ public class PredictionProcessor extends Processor {
                 if (user.getBlockData().carpetTicks > 0) {
                     prediction += 0.1F;
                 }
-
-
 
                 if (!user.getActionProcessor().getServerPositionTimer().passed(3)) {
                     prediction += user.getMovementProcessor().getServerPositionSpeed();

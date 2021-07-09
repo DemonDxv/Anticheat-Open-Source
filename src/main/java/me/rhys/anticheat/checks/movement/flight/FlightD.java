@@ -64,7 +64,7 @@ public class FlightD extends Check {
                 if (!user.getBlockData().onGround) {
                     if (change > max && deltaY > 0.0) {
                         if (++threshold > 3) {
-                            flag(user, "Flying up to high? " + change);
+                            flag(user, "To far from the ground?", "" + change);
                         }
                     } else {
                         threshold -= Math.min(threshold, 0.1);

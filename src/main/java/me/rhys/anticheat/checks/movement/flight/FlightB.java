@@ -31,22 +31,21 @@ public class FlightB extends Check {
                         || user.getLastBlockPlaceCancelTimer().hasNotPassed(20)
                         || user.getLastBlockPlaceTimer().hasNotPassed(5)
                         || user.getLastTeleportTimer().hasNotPassed(20)) {
-                    this.threshold = 0;
                     return;
                 }
 
                 Location groundLocation = MathUtil.getGroundLocation(user);
 
                 if (!user.getBlockData().onGround && !user.getBlockData().lastOnGround) {
-                    if (user.getCurrentLocation().isClientGround() && !user.getMovementProcessor().isServerYGround()) {
-                        user.getPlayer().teleport(groundLocation,
-                                PlayerTeleportEvent.TeleportCause.PLUGIN);
-
+                    if (user.getCurrentLocation().isClientGround() && user.getMovementProcessor().isServerYGround()) {
                         threshold++;
 
                         if (threshold > 3) {
                             flag(user, "Ghost Block / Ghost Block Fly");
                         }
+
+                        user.getPlayer().teleport(groundLocation,
+                                PlayerTeleportEvent.TeleportCause.PLUGIN);
                     }
                 }
             }

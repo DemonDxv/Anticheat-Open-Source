@@ -41,7 +41,7 @@ public class VelocityC extends Check {
 
                     double ratio = deltaY / prediction;
 
-                    if (ratio <= 0.99 && ratio >= 0.0) {
+                    if (ratio <= 0.99 && ratio > 0.0) {
                         if (threshold++ > 2) {
                             flag(user, "Vertical Knockback: "+ratio);
                         }
