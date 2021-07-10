@@ -92,5 +92,7 @@ public class Anticheat extends JavaPlugin {
             user.getExecutorService().shutdownNow();
         });
         this.executorService.shutdownNow();
+
+        commandManager.removeCommand();
     }
 }

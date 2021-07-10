@@ -2,6 +2,7 @@ package me.rhys.anticheat.base.command.commands.sub;
 
 import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.check.api.Check;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -30,10 +31,14 @@ public class ChecksCommand {
                     Anticheat.getInstance().getExecutorService().execute(() -> {
                         //Disable the current check for everyone else
                         Anticheat.getInstance().getUserManager().getUserMap().forEach((uuid, user) ->
-                                user.getCheckManager().getCheckList().forEach(check ->
-                                        check.setEnabled(foundCheck.isEnabled())));
+                                user.getCheckManager().getCheckList().forEach(check -> {
 
-                        Anticheat.getInstance().getCheckManager().saveChecks();
+                                    if (check.getFriendlyName().equalsIgnoreCase(foundCheck.getFriendlyName())) {
+                                        check.setEnabled(foundCheck.isEnabled());
+                                    }
+
+                                    Anticheat.getInstance().getCheckManager().saveChecks();
+                                }));
                     });
                 } else {
                     commandSender.sendMessage(ChatColor.RED + "Unable to find the check "

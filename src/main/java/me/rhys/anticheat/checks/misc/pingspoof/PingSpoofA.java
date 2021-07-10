@@ -27,11 +27,12 @@ public class PingSpoofA extends Check {
                 if (user.shouldCancel()
                         || user.getTick() < 60
                         || user.getPlayer().isDead()
+                        || user.getMovementProcessor().getRespawnTimer().hasNotPassed(20)
                         || user.getCombatProcessor().getVelocityTicks() <= 20) {
                     return;
                 }
 
-                if (user.getConnectionProcessor().getFlyingTick() > 9) {
+                if (user.getConnectionProcessor().getFlyingTick() >= 25) {
                     new BukkitRunnable() {
                         @Override
                         public void run() {

@@ -29,5 +29,12 @@ public class CommandManager {
             if (command.isEnabled()) CommandUtils.registerCommand(command);
         }
     }
+
+    public void removeCommand() {
+        for (Command command : commandList) {
+            commandList.remove(command);
+            CommandUtils.unRegisterBukkitCommand(command);
+        }
+    }
 }
 
