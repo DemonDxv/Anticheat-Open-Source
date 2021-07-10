@@ -70,8 +70,8 @@ public class FlightA extends Check {
                     difference = 0.0;
                 }
 
-                if (!user.getCurrentLocation().isClientGround()
-                        && !user.getLastLocation().isClientGround()
+                if (!user.getMovementProcessor().isOnGround()
+                        && !user.getMovementProcessor().isLastGround()
                         && !user.getLastLastLocation().isClientGround()) {
 
                     if (difference > 0.005) {

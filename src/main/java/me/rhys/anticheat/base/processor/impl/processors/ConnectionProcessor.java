@@ -20,8 +20,8 @@ public class ConnectionProcessor extends Processor {
 
     private final Map<Long, Long> sentKeepAlives = new EvictingMap<>(100);
     private final Map<Long, Long> sentTransactions = new EvictingMap<>(100);
-    private int ping, transPing;
-    private int clientTick;
+    private int ping, transPing, lastTransPing, dropTransTime;
+    private int clientTick, flyingTick;
     private boolean isLagging = false;
 
     @Override
@@ -48,12 +48,16 @@ public class ConnectionProcessor extends Processor {
 
     void processT(User user, long time) {
         if (this.user.getConnectionMap().containsKey(time)) {
+            this.lastTransPing = transPing;
             this.transPing = (int) (System.currentTimeMillis() - this.user.getConnectionMap()
                     .get(time));
+            this.dropTransTime = Math.abs(transPing - lastTransPing);
             this.sentTransactions.put(time, System.currentTimeMillis());
             this.clientTick = (int) Math.ceil(this.ping / 50.0);
 
-            if (ping >= 800 && user.getTick() > 60) {
+            this.flyingTick = 0;
+
+            if (dropTransTime > 1000 && user.getTick() > 60) {
                 this.isLagging = true;
             }
 

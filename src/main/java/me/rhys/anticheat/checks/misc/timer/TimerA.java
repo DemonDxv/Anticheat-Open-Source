@@ -44,7 +44,7 @@ public class TimerA extends Check {
 
                 balance += TimeUnit.MILLISECONDS.toNanos(50L) - balanceRate;
 
-                if (balance > TimeUnit.MILLISECONDS.toNanos(45L)) {
+                if (balance > TimeUnit.MILLISECONDS.toNanos(47L)) {
                     if (threshold++ > 5) {
                         flag(user, "Speeding up game");
                     }

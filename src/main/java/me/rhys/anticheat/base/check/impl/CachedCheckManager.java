@@ -63,7 +63,7 @@ public class CachedCheckManager {
         this.checkList.add(new ScaffoldD());
         this.checkList.add(new ScaffoldE());
         this.checkList.add(new BadPacketsA());
-        this.checkList.add(new BadPacketsB());
+        //this.checkList.add(new BadPacketsB());
         this.checkList.add(new BadPacketsC());
         this.checkList.add(new BadPacketsE());
         this.checkList.add(new BadPacketsF());

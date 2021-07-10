@@ -55,6 +55,10 @@ public class FlightD extends Check {
                     }
                 }
 
+                if (user.getLastExplosionTimer().hasNotPassed(40)) {
+                    max = 256;
+                }
+
                 if (user.getBlockData().onGround) {
                     serverGroundY = currentY;
                 }

@@ -10,7 +10,7 @@ import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInFlyingPacket;
 @CheckInformation(checkName = "BadPackets", checkType = "B", lagBack = false, punishmentVL = 1)
 public class BadPacketsB extends Check {
 
-    private int streaks;
+    private int streaks = 0;
 
     @Override
     public void onPacket(PacketEvent event) {

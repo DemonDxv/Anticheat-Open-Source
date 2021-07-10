@@ -31,17 +31,13 @@ public class PingSpoofA extends Check {
                     return;
                 }
 
-                if (user.getConnectionProcessor().isLagging()) {
-                    if (threshold++ > 150) {
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                user.getPlayer().kickPlayer("Timed out.");
-                            }
-                        }.runTask(Anticheat.getInstance());
-                    }
-                } else {
-                    threshold -= Math.min(threshold, 0.110);
+                if (user.getConnectionProcessor().getFlyingTick() > 9) {
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            user.getPlayer().kickPlayer("Timed out.");
+                        }
+                    }.runTask(Anticheat.getInstance());
                 }
 
                 break;

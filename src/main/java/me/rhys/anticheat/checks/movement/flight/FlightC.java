@@ -33,19 +33,18 @@ public class FlightC extends Check {
 
                 double maxJumpHeight = 0.42F + (user.getPotionProcessor().getJumpAmplifier() * 0.2D);
 
-                if (user.getBlockData().slab
-                        || user.getBlockData().fence
-                        || user.getBlockData().stair) {
+                if (user.getBlockData().stairSlabTimer.hasNotPassed(20)
+                        || user.getBlockData().fenceTicks > 0) {
                     maxJumpHeight = 0.5;
                 }
 
-                if (user.getBlockData().bed) {
+                if (user.getBlockData().bedTicks > 0) {
                     maxJumpHeight = 0.5625F;
                 }
 
-                if (!user.getCurrentLocation().isClientGround() && user.getLastLocation().isClientGround()) {
+                if (!user.getMovementProcessor().isOnGround() && user.getMovementProcessor().isLastGround()) {
                     if (deltaY > maxJumpHeight) {
-                        flag(user, "Jumping Higher Than Legit ", "" + deltaY);
+                        flag(user, "Jumping Higher Than Legit ", "" + deltaY, "" + maxJumpHeight);
                     }
                 }
             }

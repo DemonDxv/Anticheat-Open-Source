@@ -190,6 +190,7 @@ public abstract class Packet {
         public static final String RESPAWN = SERVER + "Respawn";
         public static final String ATTACH = SERVER + "AttachEntity";
         public static final String OPEN_WINDOW = SERVER + "OpenWindow";
+        public static final String EXPLOSION = SERVER + "Explosion";
     }
 
     public static class Login {

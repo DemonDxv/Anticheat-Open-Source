@@ -43,7 +43,7 @@ public class FlightE extends Check {
 
                 double maxJumpHeight = 0.42F;
 
-                if (!user.getCurrentLocation().isClientGround() && user.getLastLocation().isClientGround()) {
+                if (!user.getMovementProcessor().isOnGround() && user.getMovementProcessor().isLastGround()) {
                     if (deltaY < maxJumpHeight && deltaY > 0.0) {
                         if (threshold++ > 2) {
                             flag(user, "Jumping Lower Than Legit", "" + deltaY);

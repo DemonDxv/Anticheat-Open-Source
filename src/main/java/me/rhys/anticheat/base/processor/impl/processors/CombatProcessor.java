@@ -58,6 +58,7 @@ public class CombatProcessor extends Processor {
                 break;
             }
 
+
             case Packet.Server.ENTITY_VELOCITY: {
                 WrappedOutVelocityPacket wrappedOutVelocityPacket = new WrappedOutVelocityPacket(event.getPacket(),
                         event.getUser().getPlayer());

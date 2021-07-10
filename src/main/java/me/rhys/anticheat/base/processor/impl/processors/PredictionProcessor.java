@@ -34,7 +34,7 @@ public class PredictionProcessor extends Processor {
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
 
-                if (user.getLastLastLocation().isClientGround()) {
+                if (user.getMovementProcessor().isLastLastGround()) {
                     blockFriction = 0.91F * 0.6F;
 
                     if (user.getBlockData().slimeTimer.hasNotPassed(20)) {
@@ -70,7 +70,7 @@ public class PredictionProcessor extends Processor {
 
                 prediction += MathUtil.movingFlyingV3(user);
 
-                boolean jumpCheck = deltaY == 0.42f || deltaY >= .404f && deltaY <= .405f;
+                boolean jumpCheck = deltaY == 0.42f || deltaY >= .404f && deltaY <= .406f;
 
                 if (deltaY > 0.005 && user.getMovementProcessor().isServerYGround()
                         && user.getMovementProcessor().isLastGround()) {
@@ -80,6 +80,10 @@ public class PredictionProcessor extends Processor {
                 if (!user.getMovementProcessor().isOnGround()
                         && user.getMovementProcessor().isLastGround() && jumpCheck) {
                     prediction += 0.2F;
+                }
+
+                if (user.getLastExplosionTimer().hasNotPassed(20)) {
+
                 }
 
                 if (user.getCombatProcessor().getVelocityTicks() <= 20) {
@@ -93,10 +97,6 @@ public class PredictionProcessor extends Processor {
 
                 if (user.getBlockData().carpetTicks > 0) {
                     prediction += 0.1F;
-                }
-
-                if (!user.getActionProcessor().getServerPositionTimer().passed(3)) {
-                    prediction += user.getMovementProcessor().getServerPositionSpeed();
                 }
 
                 double totalPredictedSpeed = deltaXZ - prediction;

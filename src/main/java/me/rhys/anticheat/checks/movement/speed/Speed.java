@@ -26,7 +26,7 @@ public class Speed extends Check {
                         || user.shouldCancel()
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getMovementProcessor().isBouncedOnSlime()
-                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
+                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(5)
                         || user.getElytraProcessor().isUsingElytra()) {
                     return;
                 }

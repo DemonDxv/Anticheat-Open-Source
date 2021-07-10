@@ -167,7 +167,7 @@ public class MathUtil {
         float var3 = (0.6F * 0.91F);
         float getAIMoveSpeed = 0.13000001F;
 
-        if (user.getMovementProcessor().getSpeedPotionTicks() > 0) {
+        if (user.getPotionProcessor().getSpeedTicks() > 0) {
             switch (MathUtil.getPotionEffectLevel(user.getPlayer(), PotionEffectType.SPEED)) {
                 case 0: {
                     getAIMoveSpeed = 0.23400002F;

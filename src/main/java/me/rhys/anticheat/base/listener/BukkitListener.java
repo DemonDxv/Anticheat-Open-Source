@@ -85,6 +85,12 @@ public class BukkitListener implements Listener {
                 if (((EntityDamageEvent) event).getCause() == EntityDamageEvent.DamageCause.PROJECTILE) {
                     user.getLastShotByArrowTimer().reset();
                 }
+
+                if (((EntityDamageEvent) event).getCause() == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION
+                        || ((EntityDamageEvent) event).getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) {
+                    user.getLastExplosionTimer().reset();
+                }
+
             }
         }
 

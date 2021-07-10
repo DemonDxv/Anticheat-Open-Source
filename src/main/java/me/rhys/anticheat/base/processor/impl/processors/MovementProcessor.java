@@ -9,13 +9,19 @@ import me.rhys.anticheat.base.processor.api.ProcessorInformation;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
+import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInEntityActionPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInFlyingPacket;
+import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInTransactionPacket;
+import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutExplosionPacket;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutPositionPacket;
+import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutRespawnPacket;
+import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutTransaction;
 import me.rhys.anticheat.util.*;
 import me.rhys.anticheat.util.block.BlockChecker;
 import me.rhys.anticheat.util.box.BoundingBox;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.potion.PotionEffectType;
@@ -24,15 +30,15 @@ import org.bukkit.scheduler.BukkitRunnable;
 @ProcessorInformation(name = "Movement")
 @Getter @Setter
 public class MovementProcessor extends Processor {
-    private EventTimer lastGroundTimer, lastBlockPlacePacketTimer, lastBlockDigTimer;
+    private EventTimer respawnTimer, lastGroundTimer, lastBlockPlacePacketTimer, lastBlockDigTimer;
 
-    private boolean wasFlying, onGround, lastGround, positionYGround, lastPositionYGround, bouncedOnSlime, dead, sprinting,
+    private boolean lastLastGround, wasFlying, onGround, lastGround, positionYGround, lastPositionYGround, bouncedOnSlime, dead, sprinting,
             lastSprinting, serverYGround, isDigging;
-    private int speedPotionTicks, groundTicks, airTicks, lagBackTicks, serverAirTicks, serverGroundTicks, ignoreServerPositionTicks;
+    private int groundTicks, airTicks, lagBackTicks, serverAirTicks, serverGroundTicks, ignoreServerPositionTicks;
     private double deltaY, lastDeltaY, deltaXZ, lastDeltaXZ, deltaX, deltaZ, serverPositionSpeed, serverPositionDeltaY;
     private PlayerLocation lastSlimeLocation;
 
-    private int stupidTicks, bypassTicks;
+    private short respawnID = -69;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -95,6 +101,31 @@ public class MovementProcessor extends Processor {
 
             }
 
+            case Packet.Server.RESPAWN: {
+
+                respawnID--;
+
+                if (respawnID < -9000) {
+                    respawnID = 69;
+                }
+
+                WrappedOutTransaction transaction = new WrappedOutTransaction(0, respawnID, false);
+
+                TinyProtocolHandler.sendPacket(user.getPlayer(), transaction.getObject());
+
+                break;
+            }
+
+            case Packet.Client.TRANSACTION: {
+                WrappedInTransactionPacket transactionPacket = new WrappedInTransactionPacket(event.getPacket(), user.getPlayer());
+
+                if (transactionPacket.getAction() == respawnID) {
+                    respawnTimer.reset();
+                }
+
+                break;
+            }
+
             case Packet.Client.FLYING:
             case Packet.Client.LOOK:
             case Packet.Client.POSITION_LOOK:
@@ -111,8 +142,6 @@ public class MovementProcessor extends Processor {
 
                 lastSprinting = sprinting;
 
-                this.bypassTicks -= this.bypassTicks > 0 ? 1 : 0;
-
                 this.dead = user.getPlayer().isDead();
                 this.ignoreServerPositionTicks -= (this.ignoreServerPositionTicks > 0 ? 1 : 0);
 
@@ -122,6 +151,7 @@ public class MovementProcessor extends Processor {
                     serverYGround = false;
                 }
 
+                this.lastLastGround = this.lastGround;
                 this.lastGround = this.onGround;
                 this.onGround = ground;
 
@@ -162,6 +192,7 @@ public class MovementProcessor extends Processor {
 
                 this.processBlocks();
                 this.user.setTick(this.user.getTick() + 1);
+                this.user.getConnectionProcessor().setFlyingTick(this.user.getConnectionProcessor().getFlyingTick() + 1);
 
                 if (this.lagBackTicks-- > 0 && user.getTick() % 3 == 0) {
                     Location groundLocation = MathUtil.getGroundLocation(user);
@@ -264,12 +295,6 @@ public class MovementProcessor extends Processor {
             if (user.getVehicleTicks() > 0) {
                 user.setVehicleTicks(user.getVehicleTicks() - 1);
             }
-        }
-
-        if (user.getPlayer().hasPotionEffect(PotionEffectType.SPEED)) {
-            if (this.speedPotionTicks < 20) this.speedPotionTicks++;
-        } else {
-            if (this.speedPotionTicks > 20) this.speedPotionTicks--;
         }
 
 
@@ -375,6 +400,7 @@ public class MovementProcessor extends Processor {
     @Override
     public void setupTimers(User user) {
         this.lastGroundTimer = new EventTimer(20, user);
+        this.respawnTimer = new EventTimer(20, user);
         this.lastBlockPlacePacketTimer = new EventTimer(20, user);
         this.lastBlockDigTimer = new EventTimer(20, user);
         this.lastSlimeLocation = new PlayerLocation(user.getPlayer().getWorld(), 0, 0, 0, 0,

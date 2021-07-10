@@ -4,8 +4,10 @@ import lombok.Getter;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.util.MaterialHelper;
 import me.rhys.anticheat.util.box.BoundingBox;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Slab;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.Step;
 import org.bukkit.material.WoodenStep;
@@ -152,6 +154,7 @@ public class BlockChecker {
             }
 
             if (collideEntry.getBlock().getType() == Material.STEP
+                    || collideEntry.getBlock().getType() == Material.STONE_SLAB2
                     || blockData == Step.class
                     || blockData == WoodenStep.class) {
                 slab = true;

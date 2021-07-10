@@ -277,5 +277,6 @@ public abstract class NMSObject {
         public static final String ATTACH = SERVER + "AttachEntity";
         public static final String STATISTICS = SERVER + "Statistics";
         public static final String RESOURCE_PACK_STATUS = SERVER + "ResourcePackSend";
+        public static final String EXPLOSION = SERVER + "Explosion";
     }
 }
