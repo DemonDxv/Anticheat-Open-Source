@@ -29,7 +29,6 @@ public class TimerA extends Check {
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
                         || user.getPlayer().isDead()
                         || user.getTick() < 60
-                        || user.getConnectionProcessor().isLagging()
                         || user.getLastTeleportTimer().hasNotPassed(20)) {
                     threshold = 0;
                     return;
@@ -44,8 +43,8 @@ public class TimerA extends Check {
 
                 balance += TimeUnit.MILLISECONDS.toNanos(50L) - balanceRate;
 
-                if (balance > TimeUnit.MILLISECONDS.toNanos(47L)) {
-                    if (threshold++ > 5) {
+                if (balance > TimeUnit.MILLISECONDS.toNanos(46L)) {
+                    if (threshold++ > 2) {
                         flag(user, "Speeding up game");
                     }
 

@@ -29,6 +29,7 @@ public class FlightE extends Check {
                         || user.getBlockData().webTicks > 0
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getBlockData().snowTicks > 0
+                        || user.getBlockData().pistonTicks > 0
                         || user.getBlockData().underBlockTicks > 0
                         || checkConditions(user)) {
                     return;
@@ -44,8 +45,8 @@ public class FlightE extends Check {
                 double maxJumpHeight = 0.42F;
 
                 if (!user.getMovementProcessor().isOnGround() && user.getMovementProcessor().isLastGround()) {
-                    if (deltaY < maxJumpHeight && deltaY > 0.0) {
-                        if (threshold++ > 2) {
+                    if (deltaY < maxJumpHeight && deltaY >= 0.0) {
+                        if (threshold++ > 1) {
                             flag(user, "Jumping Lower Than Legit", "" + deltaY);
                         }
                     } else {

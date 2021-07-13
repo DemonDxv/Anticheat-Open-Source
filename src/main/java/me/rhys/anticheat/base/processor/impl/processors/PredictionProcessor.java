@@ -9,6 +9,7 @@ import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockPlacePacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
+import me.rhys.anticheat.util.EventTimer;
 import me.rhys.anticheat.util.MathUtil;
 import me.rhys.anticheat.util.box.ReflectionUtil;
 import me.rhys.anticheat.util.box.reflection.Reflection;
@@ -23,6 +24,7 @@ public class PredictionProcessor extends Processor {
     private float blockFriction = 0.91F;
 
     private boolean hit = false, useSword, dropItem;
+    private EventTimer lastSlotChange;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -37,12 +39,18 @@ public class PredictionProcessor extends Processor {
                 if (user.getMovementProcessor().isLastLastGround()) {
                     blockFriction = 0.91F * 0.6F;
 
-                    if (user.getBlockData().slimeTimer.hasNotPassed(20)) {
+                    if (user.getBlockData().slimeTimer.hasNotPassed(20)
+                            || user.getMovementProcessor().isBouncedOnSlime()) {
                         blockFriction = 0.91F * 0.8F;
                     }
 
                     if (user.getBlockData().iceTimer.hasNotPassed(20)) {
                         blockFriction = 0.91F * 0.98F;
+                    }
+
+                    if (user.getBlockData().iceTimer.hasNotPassed(20)
+                            && user.getBlockData().slimeTimer.hasNotPassed(20)) {
+                        blockFriction = (0.91F * 0.8F) * 0.98F;
                     }
 
                 } else {
@@ -54,6 +62,11 @@ public class PredictionProcessor extends Processor {
                 }
 
                 dropItem = false;
+
+
+                if (lastSlotChange.hasNotPassed(9)) {
+                    useSword = false;
+                }
 
                 if (user.getCombatProcessor().getUseEntityTimer().hasNotPassed(20)) {
                     hit = true;
@@ -70,23 +83,31 @@ public class PredictionProcessor extends Processor {
 
                 prediction += MathUtil.movingFlyingV3(user);
 
-                boolean jumpCheck = deltaY == 0.42f || deltaY >= .404f && deltaY <= .406f;
+                double maxDeltaY = user.getBlockData().underBlockTicks > 0 ? 0.2D : 0.42f;
 
-                if (deltaY > 0.005 && user.getMovementProcessor().isServerYGround()
-                        && user.getMovementProcessor().isLastGround()) {
+                boolean jumpCheck = deltaY == maxDeltaY || deltaY >= .404f && deltaY <= .406f;
+
+                if (user.getMovementProcessor().isServerYGround()
+                        && user.getMovementProcessor().isLastGround() && deltaY >= 0.42f) {
                     prediction += 0.2F;
                 }
 
                 if (!user.getMovementProcessor().isOnGround()
-                        && user.getMovementProcessor().isLastGround() && jumpCheck) {
+                        && user.getMovementProcessor().isLastGround()
+                        && jumpCheck) {
                     prediction += 0.2F;
                 }
 
-                if (user.getLastExplosionTimer().hasNotPassed(20)) {
-
+                if (!user.getMovementProcessor().isOnGround()
+                        && user.getMovementProcessor().isLastGround() && user.getBlockData().underBlockTicks > 0) {
+                    prediction += 0.2F;
                 }
 
-                if (user.getCombatProcessor().getVelocityTicks() <= 20) {
+                if (user.getBlockData().pistonTicks > 0) {
+                    prediction += .5;
+                }
+
+                if (user.getCombatProcessor().getVelocityTicks() <= 9) {
                     prediction += user.getCombatProcessor().getVelocityH();
                 }
 
@@ -115,8 +136,7 @@ public class PredictionProcessor extends Processor {
                     if (wrappedInBlockPlacePacket.getPosition().getX() == -1
                             && wrappedInBlockPlacePacket.getPosition().getY() == -1 && wrappedInBlockPlacePacket.getPosition().getZ() == -1) {
 
-                        if (wrappedInBlockPlacePacket.getItemStack().getType().name().toLowerCase().contains("sword")
-                                || wrappedInBlockPlacePacket.getItemStack().getType().name().toLowerCase().contains("bow")) {
+                        if (wrappedInBlockPlacePacket.getItemStack().getType().name().toLowerCase().contains("sword")) {
                             if (!hit) {
                                 useSword = true;
                             }
@@ -145,6 +165,7 @@ public class PredictionProcessor extends Processor {
             case Packet.Server.HELD_ITEM:
             case Packet.Client.HELD_ITEM_SLOT: {
                 useSword = false;
+                lastSlotChange.reset();
                 break;
             }
 
@@ -159,5 +180,11 @@ public class PredictionProcessor extends Processor {
                 break;
             }
         }
+    }
+
+    @Override
+    public void setupTimers(User user) {
+        this.lastSlotChange = new EventTimer(20, user);
+
     }
 }

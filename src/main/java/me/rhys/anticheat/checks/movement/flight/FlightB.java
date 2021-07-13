@@ -5,6 +5,7 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
+import me.rhys.anticheat.util.EntityUtil;
 import me.rhys.anticheat.util.MathUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -28,6 +29,8 @@ public class FlightB extends Check {
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
                         || user.getVehicleTicks() > 0
                         || user.getBlockData().snowTicks > 0
+                        || user.getBlockData().skullTicks > 0
+                        || EntityUtil.isOnBoat(user)
                         || user.getLastBlockPlaceCancelTimer().hasNotPassed(20)
                         || user.getLastBlockPlaceTimer().hasNotPassed(5)
                         || user.getLastTeleportTimer().hasNotPassed(20)) {
@@ -37,7 +40,7 @@ public class FlightB extends Check {
                 Location groundLocation = MathUtil.getGroundLocation(user);
 
                 if (!user.getBlockData().onGround && !user.getBlockData().lastOnGround) {
-                    if (user.getCurrentLocation().isClientGround() && user.getMovementProcessor().isServerYGround()) {
+                    if (user.getMovementProcessor().isOnGround() && user.getMovementProcessor().isServerYGround()) {
                         threshold++;
 
                         if (threshold > 3) {

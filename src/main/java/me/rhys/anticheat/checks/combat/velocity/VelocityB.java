@@ -36,7 +36,7 @@ public class VelocityB extends Check {
                 if (user.getLastAttackByEntityTimer().hasNotPassed(20)
                         || user.getLastShotByArrowTimer().hasNotPassed(20)) {
                     if (user.getCombatProcessor().getVelocityTicks() == 2
-                            && !user.getCurrentLocation().isClientGround() && user.getLastLocation().isClientGround()) {
+                            && !user.getMovementProcessor().isOnGround() && user.getMovementProcessor().isLastGround()) {
 
                         double ratio = deltaY / velocity;
                         if (ratio <= 0.99) {

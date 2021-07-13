@@ -5,6 +5,7 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
+import me.rhys.anticheat.util.EntityUtil;
 
 @CheckInformation(checkName = "Flight", checkType = "C", lagBack = true, description = "Checks if the player is jumping higher than usual")
 public class FlightC extends Check {
@@ -24,7 +25,9 @@ public class FlightC extends Check {
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getCombatProcessor().getVelocityTicks() <= 20
                         || user.getVehicleTicks() > 0
-                        || user.getMovementProcessor().isBouncedOnSlime()
+                        || user.getBlockData().skullTicks > 0
+                        || user.getLastBlockPlaceCancelTimer().hasNotPassed(20)
+                        || user.getBlockData().slimeTimer.hasNotPassed(20)
                         || checkConditions(user)) {
                     return;
                 }
@@ -36,6 +39,10 @@ public class FlightC extends Check {
                 if (user.getBlockData().stairSlabTimer.hasNotPassed(20)
                         || user.getBlockData().fenceTicks > 0) {
                     maxJumpHeight = 0.5;
+                }
+
+                if (EntityUtil.isNearBoat(user)) {
+                    maxJumpHeight = 0.6000000238418579D;
                 }
 
                 if (user.getBlockData().bedTicks > 0) {

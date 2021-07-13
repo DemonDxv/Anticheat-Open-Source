@@ -47,11 +47,11 @@ public class AimAssistD extends Check {
                         double pitchGCD = MathUtil.gcd(pitchDifference, lastPitchDifference);
 
                         if (pitchGCD < 0.009) {
-                            if (threshold++ > 3) {
+                            if (threshold++ > 5) {
                                 flag(user, "Not following proper GCD");
                             }
                         } else {
-                            threshold -= Math.min(threshold, 0.001f);
+                            threshold -= Math.min(threshold, 0.75f);
                         }
                     }
                 }

@@ -13,8 +13,8 @@ import org.bukkit.Material;
 @CheckInformation(checkName = "AutoClicker", lagBack = false, description = "Checks if the player is clicking over 22 clicks per second.")
 public class AutoClickerA extends Check {
 
-    private int movements, clicks, attackClicks;
-    private int digTicks, blockTicks;
+    private int movements, clicks;
+    private int blockTicks;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -27,7 +27,7 @@ public class AutoClickerA extends Check {
             case Packet.Client.POSITION: {
 
                 if (user.shouldCancel()
-                        || digTicks > 0
+                        || user.getMovementProcessor().getLastBlockDigTimer().hasNotPassed(20)
                         || blockTicks > 0
                         || user.getTick() < 60) {
                     clicks = 0;
@@ -35,10 +35,10 @@ public class AutoClickerA extends Check {
                 }
 
                 if (movements++ == 20) {
-                    if (clicks > 22 || attackClicks > 22) {
-                        flag(user, "Clicking abnormally fast", "C: "+clicks, "AC: "+attackClicks);
+                    if (clicks > 22) {
+                        flag(user, "Clicking abnormally fast", "C: "+clicks);
                     }
-                    movements = clicks = attackClicks = 0;
+                    movements = clicks = 0;
                 }
 
                 break;
@@ -46,29 +46,6 @@ public class AutoClickerA extends Check {
 
             case Packet.Client.ARM_ANIMATION: {
                 clicks++;
-                break;
-            }
-
-            case Packet.Client.USE_ENTITY: {
-                WrappedInUseEntityPacket useEntityPacket = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
-
-                if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
-                    attackClicks++;
-                }
-                break;
-            }
-
-            case Packet.Client.BLOCK_DIG: {
-                WrappedInBlockDigPacket dig = new WrappedInBlockDigPacket(event.getPacket(), user.getPlayer());
-
-                if (dig.getAction() == WrappedInBlockDigPacket.EnumPlayerDigType.START_DESTROY_BLOCK) {
-                    digTicks++;
-
-                } else if (dig.getAction() == WrappedInBlockDigPacket.EnumPlayerDigType.STOP_DESTROY_BLOCK) {
-                    digTicks = 0;
-                } else if (dig.getAction() == WrappedInBlockDigPacket.EnumPlayerDigType.ABORT_DESTROY_BLOCK) {
-                    digTicks = 0;
-                }
                 break;
             }
 

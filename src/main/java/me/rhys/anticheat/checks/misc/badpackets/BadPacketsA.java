@@ -19,7 +19,7 @@ public class BadPacketsA extends Check {
                 User user = event.getUser();
                 double pitch = Math.abs(user.getCurrentLocation().getPitch());
 
-                double maxPitch = user.getBlockData().climbable ? 91.1F : 90.0F;
+                double maxPitch = user.getBlockData().climbable ? 91.11F : 90.0F;
 
                 if (pitch > maxPitch) {
                     flag(user,

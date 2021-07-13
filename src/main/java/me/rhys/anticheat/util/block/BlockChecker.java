@@ -24,7 +24,7 @@ public class BlockChecker {
         this.user = user;
     }
 
-    private boolean carpet, cake, onGround, nearLiquid, nearIce, climbable, slime, piston, snow, fence, bed,
+    private boolean skull, carpet, cake, onGround, nearLiquid, nearIce, climbable, slime, piston, snow, fence, bed,
             stair, slab, movingUp, underBlock, web, shulker, insideBlock, collideHorizontal;
 
     public void processBlocks() {
@@ -55,17 +55,12 @@ public class BlockChecker {
                 }
             }
 
-            if (collideEntry.getBlock().getType() != null && collideEntry.getBlock().getType().isBlock()) {
-                if (collideEntry.getBoundingBox().grow(1.9f, 0, 1.9f).collidesHorizontally(boundingBox)) {
-          //          collideHorizontal = true;
-                }
+            if (boundingBox.collidesHorizontally(collideEntry.getBoundingBox())) {
+                collideHorizontal = true;
             }
 
             Block block = collideEntry.getBlock();
 
-            if (boundingBox.collidesHorizontally(collideEntry.getBoundingBox())) {
-                collideHorizontal = true;
-            }
 
             switch (block.getType()) {
                 case WATER:
@@ -74,6 +69,10 @@ public class BlockChecker {
                 case LAVA: {
                     this.nearLiquid = true;
                     break;
+                }
+
+                case SKULL: {
+                    skull = true;
                 }
 
                 case CARPET: {
@@ -104,11 +103,15 @@ public class BlockChecker {
                     break;
                 }
 
-                case PISTON_STICKY_BASE:
-                case PISTON_BASE:
                 case PISTON_EXTENSION:
                 case PISTON_MOVING_PIECE: {
                     this.piston = true;
+                    break;
+                }
+
+                case PISTON_STICKY_BASE:
+                case PISTON_BASE: {
+
                     break;
                 }
 

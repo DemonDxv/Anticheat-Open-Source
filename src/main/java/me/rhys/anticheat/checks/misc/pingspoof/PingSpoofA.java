@@ -12,8 +12,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 @CheckInformation(checkName = "PingSpoof", lagBack = false, canPunish = false, description = "Blocks Ping Spoofing")
 public class PingSpoofA extends Check {
 
-    private double threshold;
-
     @Override
     public void onPacket(PacketEvent event) {
         switch (event.getType()) {

@@ -31,10 +31,7 @@ public class CommandManager {
     }
 
     public void removeCommand() {
-        for (Command command : commandList) {
-            commandList.remove(command);
-            CommandUtils.unRegisterBukkitCommand(command);
-        }
+        commandList.forEach(CommandUtils::unRegisterBukkitCommand);
     }
 }
 

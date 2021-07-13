@@ -28,6 +28,9 @@ public class FlightD extends Check {
                         || user.getCombatProcessor().getVelocityTicks() <= 20
                         || user.getVehicleTicks() > 0
                         || user.getBlockData().snowTicks > 0
+                        || user.getBlockData().skullTicks > 0
+                        || user.getLastBlockPlaceCancelTimer().hasNotPassed(20)
+                        || user.getBlockData().slimeTimer.hasNotPassed(20)
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || checkConditions(user)) {
                     return;
@@ -37,6 +40,8 @@ public class FlightD extends Check {
                 double deltaY = user.getMovementProcessor().getDeltaY();
 
                 double max = 1.25;
+
+                if (user.getLastBlockPlaceCancelTimer().hasNotPassed(20))
 
                 switch ((int) user.getPotionProcessor().getJumpAmplifier()) {
                     case 1: {
@@ -65,7 +70,7 @@ public class FlightD extends Check {
 
                 double change = currentY - serverGroundY;
 
-                if (!user.getBlockData().onGround) {
+                if (!user.getMovementProcessor().isOnGround()) {
                     if (change > max && deltaY > 0.0) {
                         if (++threshold > 3) {
                             flag(user, "To far from the ground?", "" + change);

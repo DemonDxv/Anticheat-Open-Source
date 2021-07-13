@@ -31,7 +31,7 @@ public class AutoClickerD extends Check {
                 if (user.shouldCancel()
                         || user.getTick() < 60
                         || user.getLastBlockPlaceTimer().hasNotPassed(20)
-                        || user.getMovementProcessor().getLastBlockDigTimer().hasNotPassed(5)
+                        || user.getMovementProcessor().getLastBlockDigTimer().hasNotPassed(20)
                         || user.getLastBlockPlaceCancelTimer().hasNotPassed(20)) {
                     movements = 20;
                     return;
@@ -49,7 +49,7 @@ public class AutoClickerD extends Check {
                     if (delays.size() == 75) {
                         double std = MathUtil.getStandardDeviation(delays);
 
-                        if (Math.abs(std - lastStd) < 0.08) {
+                        if (Math.abs(std - lastStd) < 0.03) {
                             if (threshold++ > 2) {
                                 flag(user, "Clicking to consistent [S-LS]");
                             }

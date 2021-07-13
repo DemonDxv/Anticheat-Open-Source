@@ -5,6 +5,7 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
+import me.rhys.anticheat.util.EntityUtil;
 import me.rhys.anticheat.util.MathUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -27,7 +28,9 @@ public class FlightF extends Check {
                 if (this.checkConditions(user)
                         || user.getLastBlockPlaceTimer().hasNotPassed(20)
                         || user.getVehicleTicks() > 0
+                        || user.getBlockData().skullTicks > 0
                         || user.getBlockData().snowTicks > 0
+                        || EntityUtil.isOnBoat(user)
                         || user.getLastBlockPlaceCancelTimer().hasNotPassed(5)
                         || user.getLastTeleportTimer().hasNotPassed(20)) {
                     this.threshold = 0;
@@ -39,8 +42,8 @@ public class FlightF extends Check {
                     threshold -= Math.min(threshold, 0.90);
                 }
 
-                if (!user.getBlockData().onGround && !user.getBlockData().lastOnGround) {
-                    if (user.getMovementProcessor().isOnGround() && !user.getMovementProcessor().isServerYGround()) {
+                if (user.getMovementProcessor().getDeltaY() < 0.0748) {
+                    if (user.getMovementProcessor().isLastGround() && !user.getMovementProcessor().isServerYGround()) {
 
                         if ((threshold += 1.25) >= 4.3) {
                             flag(user, "Spoofing Ground");

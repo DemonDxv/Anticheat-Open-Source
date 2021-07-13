@@ -10,14 +10,8 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
-import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
-import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInEntityActionPacket;
-import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInFlyingPacket;
-import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInTransactionPacket;
-import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutExplosionPacket;
-import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutPositionPacket;
-import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutRespawnPacket;
-import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutTransaction;
+import me.rhys.anticheat.tinyprotocol.packet.in.*;
+import me.rhys.anticheat.tinyprotocol.packet.out.*;
 import me.rhys.anticheat.util.*;
 import me.rhys.anticheat.util.block.BlockChecker;
 import me.rhys.anticheat.util.box.BoundingBox;
@@ -32,7 +26,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class MovementProcessor extends Processor {
     private EventTimer respawnTimer, lastGroundTimer, lastBlockPlacePacketTimer, lastBlockDigTimer;
 
-    private boolean lastLastGround, wasFlying, onGround, lastGround, positionYGround, lastPositionYGround, bouncedOnSlime, dead, sprinting,
+    private boolean inInventory, lastLastGround, wasFlying, onGround, lastGround, positionYGround, lastPositionYGround, bouncedOnSlime, dead, sprinting,
             lastSprinting, serverYGround, isDigging;
     private int groundTicks, airTicks, lagBackTicks, serverAirTicks, serverGroundTicks, ignoreServerPositionTicks;
     private double deltaY, lastDeltaY, deltaXZ, lastDeltaXZ, deltaX, deltaZ, serverPositionSpeed, serverPositionDeltaY;
@@ -126,6 +120,27 @@ public class MovementProcessor extends Processor {
                 break;
             }
 
+            case Packet.Server.ATTACH: {
+                user.getVehicleTimer().reset();
+                break;
+            }
+
+            case Packet.Client.CLIENT_COMMAND: {
+                WrappedInClientCommand clientCommand = new WrappedInClientCommand(event.getPacket(), user.getPlayer());
+
+                if (clientCommand.getCommand() == WrappedInClientCommand.EnumClientCommand.OPEN_INVENTORY_ACHIEVEMENT) {
+                    inInventory = true;
+                }
+
+                break;
+            }
+
+            case Packet.Client.CLOSE_WINDOW: {
+                inInventory = false;
+                break;
+            }
+
+
             case Packet.Client.FLYING:
             case Packet.Client.LOOK:
             case Packet.Client.POSITION_LOOK:
@@ -145,21 +160,25 @@ public class MovementProcessor extends Processor {
                 this.dead = user.getPlayer().isDead();
                 this.ignoreServerPositionTicks -= (this.ignoreServerPositionTicks > 0 ? 1 : 0);
 
-                if (user.getCurrentLocation().getY() % 0.015625 < 0.0001D) {
+                if (user.getCurrentLocation().getY() % 0.015625 < 0.0001D
+                        || user.getCurrentLocation().getY() % 0.015625 == 0.00625) {
                     serverYGround = true;
                 } else {
                     serverYGround = false;
                 }
 
+
+
                 this.lastLastGround = this.lastGround;
                 this.lastGround = this.onGround;
                 this.onGround = ground;
 
-                if (wrappedInFlyingPacket.isPos()) {
 
+                if (wrappedInFlyingPacket.isPos()) {
 
                     user.setLastLastLocation(user.getLastLocation());
                     user.setLastLocation(user.getCurrentLocation());
+
                     user.setCurrentLocation(new PlayerLocation(user.getPlayer().getWorld(), x, y, z,
                             yaw, pitch, ground, System.currentTimeMillis()));
 
@@ -244,6 +263,7 @@ public class MovementProcessor extends Processor {
         }
 
         user.getBlockData().lastOnGround = user.getBlockData().onGround;
+        user.getBlockData().skull = blockChecker.isSkull();
         user.getBlockData().onGround = blockChecker.isOnGround();
         user.getBlockData().collidesHorizontal = blockChecker.isCollideHorizontal();
         user.getBlockData().carpet = blockChecker.isCarpet();
@@ -279,6 +299,14 @@ public class MovementProcessor extends Processor {
             }
         }
 
+        if (user.getBlockData().skull) {
+            if (user.getBlockData().skullTicks < 20) this.user.getBlockData().skullTicks++;
+        } else {
+            if (user.getBlockData().skullTicks > 0) {
+                this.user.getBlockData().skullTicks--;
+            }
+        }
+
         if (user.getBlockData().cake) {
             if (user.getBlockData().cakeTicks < 20) this.user.getBlockData().cakeTicks++;
         } else {
@@ -288,6 +316,7 @@ public class MovementProcessor extends Processor {
         }
 
         if (user.getPlayer().isInsideVehicle()) {
+
             if (user.getVehicleTicks() < 20) {
                 user.setVehicleTicks(user.getVehicleTicks() + 1);
             }
@@ -298,7 +327,7 @@ public class MovementProcessor extends Processor {
         }
 
 
-        if (this.isOnGround() && user.getBlockData().slime) {
+        if (user.getBlockData().slimeTicks > 0) {
             this.lastSlimeLocation = user.getCurrentLocation().clone();
             this.bouncedOnSlime = true;
         }
@@ -374,6 +403,12 @@ public class MovementProcessor extends Processor {
             user.getBlockData().slimeTicks += (user.getBlockData().slimeTicks < 20 ? 1 : 0);
         } else {
             user.getBlockData().slimeTicks -= (user.getBlockData().slimeTicks > 0 ? 1 : 0);
+        }
+
+        if (user.getBlockData().piston) {
+            user.getBlockData().pistonTicks += (user.getBlockData().pistonTicks < 20 ? 1 : 0);
+        } else {
+            user.getBlockData().pistonTicks -= (user.getBlockData().pistonTicks > 0 ? 1 : 0);
         }
 
         if (user.getBlockData().nearIce) {

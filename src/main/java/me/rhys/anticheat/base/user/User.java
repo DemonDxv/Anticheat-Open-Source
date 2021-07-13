@@ -9,6 +9,7 @@ import me.rhys.anticheat.base.processor.impl.processors.*;
 import me.rhys.anticheat.base.user.objects.BlockData;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
 import me.rhys.anticheat.util.EventTimer;
+import me.rhys.anticheat.util.PastLocation;
 import me.rhys.anticheat.util.TPSUtil;
 import me.rhys.anticheat.util.evicting.EvictingMap;
 import me.rhys.anticheat.util.PlayerLocation;
@@ -43,6 +44,8 @@ public class User {
     private final Map<Long, Long> connectionMap2 = new EvictingMap<>(100);
     private int tick, vehicleTicks;
 
+    private PastLocation pastLocations = new PastLocation();
+
     private boolean chunkLoaded = false, alerts = true;
 
     private BoundingBox boundingBox = new BoundingBox(0f, 0f, 0f, 0f, 0f, 0f);
@@ -50,7 +53,7 @@ public class User {
             false, System.currentTimeMillis());
     private PlayerLocation lastLocation = currentLocation, lastLastLocation = lastLocation;
 
-    private EventTimer lastExplosionTimer = new EventTimer(40, this), lastShotByArrowTimer = new EventTimer(20, this), lastAttackByEntityTimer = new EventTimer(20, this), lastFireTickTimer = new EventTimer(20, this), lastBlockPlaceCancelTimer = new EventTimer(20, this), lastBlockPlaceTimer = new EventTimer(20, this), lastFallDamageTimer = new EventTimer(20, this), lastTeleportTimer = new EventTimer(20, this), lastUnknownTeleportTimer = new EventTimer(20, this);
+    private EventTimer vehicleTimer = new EventTimer(40, this), lastExplosionTimer = new EventTimer(40, this), lastShotByArrowTimer = new EventTimer(20, this), lastAttackByEntityTimer = new EventTimer(20, this), lastFireTickTimer = new EventTimer(20, this), lastBlockPlaceCancelTimer = new EventTimer(20, this), lastBlockPlaceTimer = new EventTimer(20, this), lastFallDamageTimer = new EventTimer(20, this), lastTeleportTimer = new EventTimer(20, this), lastUnknownTeleportTimer = new EventTimer(20, this);
 
     public User(Player player) {
         this.player = player;

@@ -30,7 +30,7 @@ public class PastLocation {
     }
 
     public void addLocation(Location location) {
-        if (previousLocations.size() >= 20) {
+        if (previousLocations.size() >= 8) {
             previousLocations.remove(0);
         }
 
@@ -38,7 +38,7 @@ public class PastLocation {
     }
 
     public void addLocation(PlayerLocation location) {
-        if (previousLocations.size() >= 20) {
+        if (previousLocations.size() >= 8) {
             previousLocations.remove(0);
         }
 

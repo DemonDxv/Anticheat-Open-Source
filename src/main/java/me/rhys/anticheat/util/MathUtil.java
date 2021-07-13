@@ -2,19 +2,57 @@ package me.rhys.anticheat.util;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import me.rhys.anticheat.base.user.User;
+import me.rhys.anticheat.util.box.BoundingBox;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class MathUtil {
+
+
+    public static Map<EntityType, Vector> entityDimensions;
+
+
+    public MathUtil() {
+        entityDimensions = new HashMap<>();
+        entityDimensions.put(EntityType.WOLF, new Vector(0.31, 0.8, 0.31));
+        entityDimensions.put(EntityType.SHEEP, new Vector(0.45, 1.3, 0.45));
+        entityDimensions.put(EntityType.COW, new Vector(0.45, 1.3, 0.45));
+        entityDimensions.put(EntityType.PIG, new Vector(0.45, 0.9, 0.45));
+        entityDimensions.put(EntityType.MUSHROOM_COW, new Vector(0.45, 1.3, 0.45));
+        entityDimensions.put(EntityType.WITCH, new Vector(0.31, 1.95, 0.31));
+        entityDimensions.put(EntityType.BLAZE, new Vector(0.31, 1.8, 0.31));
+        entityDimensions.put(EntityType.PLAYER, new Vector(0.3, 1.8, 0.3));
+        entityDimensions.put(EntityType.VILLAGER, new Vector(0.31, 1.8, 0.31));
+        entityDimensions.put(EntityType.CREEPER, new Vector(0.31, 1.8, 0.31));
+        entityDimensions.put(EntityType.GIANT, new Vector(1.8, 10.8, 1.8));
+        entityDimensions.put(EntityType.SKELETON, new Vector(0.31, 1.8, 0.31));
+        entityDimensions.put(EntityType.ZOMBIE, new Vector(0.31, 1.8, 0.31));
+        entityDimensions.put(EntityType.SNOWMAN, new Vector(0.35, 1.9, 0.35));
+        entityDimensions.put(EntityType.HORSE, new Vector(0.7, 1.6, 0.7));
+        entityDimensions.put(EntityType.ENDER_DRAGON, new Vector(1.5, 1.5, 1.5));
+
+        entityDimensions.put(EntityType.ENDERMAN, new Vector(0.31, 2.9, 0.31));
+        entityDimensions.put(EntityType.CHICKEN, new Vector(0.2, 0.7, 0.2));
+        entityDimensions.put(EntityType.OCELOT, new Vector(0.31, 0.7, 0.31));
+        entityDimensions.put(EntityType.SPIDER, new Vector(0.7, 0.9, 0.7));
+        entityDimensions.put(EntityType.WITHER, new Vector(0.45, 3.5, 0.45));
+        entityDimensions.put(EntityType.IRON_GOLEM, new Vector(0.7, 2.9, 0.7));
+        entityDimensions.put(EntityType.GHAST, new Vector(2, 4, 2));
+    }
 
     public static Location getGroundLocation(User user) {
         World world = user.getPlayer().getWorld();
@@ -38,8 +76,20 @@ public class MathUtil {
         return location;
     }
 
+    public static float wrapAngleTo180_float(float value) {
+        value %= 360F;
+
+        if (value >= 180.0F)
+            value -= 360.0F;
+
+        if (value < -180.0F)
+            value += 360.0F;
+
+        return value;
+    }
+
     public static float getBaseSpeed(Player player) {
-        return 0.26f + (getPotionEffectLevel(player, PotionEffectType.SPEED) * 0.062f) + ((player.getWalkSpeed() - 0.2f) * 1.6f);
+        return 0.2f + (getPotionEffectLevel(player, PotionEffectType.SPEED) * 0.062f) + ((player.getWalkSpeed() - 0.2f) * 1.6f);
     }
 
     public static int getPotionEffectLevel(Player player, PotionEffectType pet) {
@@ -222,6 +272,13 @@ public class MathUtil {
         }
 
         return 0;
+    }
+
+    public static BoundingBox getHitbox(LivingEntity entity, PlayerLocation l, User user) {
+        float d = (float) user.getMovementProcessor().getDeltaXZ();
+        Vector dimensions = MathUtil.entityDimensions.getOrDefault(entity.getType(), new Vector(0.4, 2, 0.4));
+        return new BoundingBox(0, 0, 0, 0, 0, 0).add((float) l.getX(), (float) l.getY(), (float) l.getZ()).grow((float) dimensions.getX(), (float) dimensions.getY(), (float) dimensions.getZ()).grow(.1f, 0.1f, .1f)
+                .grow((entity.getVelocity().getY() > 0 ? 0.15f : 0) + d / 1.25f, 0, (entity.getVelocity().getY() > 0 ? 0.15f : 0) + d / 1.25f);
     }
 
 

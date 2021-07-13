@@ -26,7 +26,9 @@ public class BadPacketsC extends Check {
                         || user.getTick() < 60
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getMovementProcessor().getRespawnTimer().hasNotPassed(20)
-                        || user.getVehicleTicks() > 0) {
+                        || user.getBlockData().pistonTicks > 0
+                        || user.getVehicleTimer().hasNotPassed(20)) {
+                    threshold = 0;
                     return;
                 }
 
@@ -51,10 +53,5 @@ public class BadPacketsC extends Check {
                 break;
             }
         }
-    }
-
-    double getBestMaxSpeed(User user) {
-        return .355 + (user.getPotionProcessor().getSpeedTicks() > 0
-                ? user.getPotionProcessor().getSpeedAmplifier() * 0.057 : 0);
     }
 }

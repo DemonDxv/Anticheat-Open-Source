@@ -31,7 +31,7 @@ public class AutoClickerB extends Check {
                 if (user.shouldCancel()
                         || user.getTick() < 60
                         || user.getLastBlockPlaceTimer().hasNotPassed(20)
-                        || user.getMovementProcessor().getLastBlockDigTimer().hasNotPassed(5)
+                        || user.getMovementProcessor().getLastBlockDigTimer().hasNotPassed(20)
                         || user.getLastBlockPlaceCancelTimer().hasNotPassed(20)) {
                     movements = 20;
                     return;

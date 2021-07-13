@@ -32,7 +32,7 @@ public class ScaffoldD extends Check {
 
                 double yaw = Math.abs(user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw());
 
-                if (yaw > 0) {
+                if (yaw > 0 && blockPlace.getItemStack().getType().isBlock()) {
                     if (faceInt >= 0 && faceInt <= 2) {
                         placeList.add(vecY);
 

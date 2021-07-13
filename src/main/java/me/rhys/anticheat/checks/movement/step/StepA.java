@@ -5,6 +5,7 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
+import me.rhys.anticheat.util.EntityUtil;
 import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "Step", description = "Checks if player goes up blocks higher than legit", canPunish = false)
@@ -30,6 +31,7 @@ public class StepA extends Check {
                         || user.getBlockData().snowTicks > 0
                         || user.getBlockData().cakeTicks > 0
                         || user.getBlockData().piston
+                        || EntityUtil.isOnBoat(user)
                         || user.getVehicleTicks() > 0
                         || user.getLastFallDamageTimer().hasNotPassed(20)
                         || user.getCombatProcessor().getVelocityTicks() <= 20
@@ -46,9 +48,9 @@ public class StepA extends Check {
                 boolean ground = user.getMovementProcessor().isOnGround();
 
                 if (deltaY > 0.0 && lastDeltaY > 0.0 && ground) {
-                    flag(user, "#1");
+                    flag(user, "Going up blocks to high (E1)");
                 } else if (deltaY > 0.42f && lastDeltaY >= 0.0 && ground) {
-                    flag(user, "#2");
+                    flag(user, "Going up blocks to high (E2)");
                 }
             }
         }

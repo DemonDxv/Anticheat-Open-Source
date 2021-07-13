@@ -29,26 +29,21 @@ public class KillauraB extends Check {
             }
 
             case Packet.Client.ARM_ANIMATION: {
-                WrappedInUseEntityPacket attack = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
 
-                if (attack.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
+                if (user.shouldCancel()
+                        || user.getConnectionProcessor().isLagging()
+                        || user.getTick() < 60) {
 
+                    threshold = 0;
+                    return;
+                }
 
-                    if (user.shouldCancel()
-                            || user.getConnectionProcessor().isLagging()
-                            || user.getTick() < 60) {
-
-                        threshold = 0;
-                        return;
+                if ((System.currentTimeMillis() - lastFlyingPacket) <= 5L) {
+                    if (threshold++ > 10) {
+                        flag(user, "Sent swing packet late");
                     }
-
-                    if ((System.currentTimeMillis() - lastFlyingPacket) <= 5L) {
-                        if (threshold++ > 10) {
-                            flag(user, "Sent swing packet late");
-                        }
-                    } else {
-                        threshold -= Math.min(threshold, 0.25);
-                    }
+                } else {
+                    threshold -= Math.min(threshold, 0.25);
 
                 }
 

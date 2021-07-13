@@ -5,13 +5,14 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
+import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInFlyingPacket;
+import me.rhys.anticheat.util.EntityUtil;
 import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "Flight", lagBack = true, description = "Checks if the players predicted y delta")
 public class FlightA extends Check {
 
     private double threshold;
-    private int jumpTicks;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -28,41 +29,26 @@ public class FlightA extends Check {
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getVehicleTicks() > 0
+                        || EntityUtil.isOnBoat(user)
                         || user.getBlockData().webTicks > 0
                         || user.getBlockData().cakeTicks > 0
+                        || user.getBlockData().climbableTicks > 0
                         || user.getCombatProcessor().getVelocityTicks() <= 20
                         || checkConditions(user)) {
                     threshold = 0;
                     return;
                 }
 
-
                 double deltaY = user.getMovementProcessor().getDeltaY();
 
                 double lastDeltaY = user.getMovementProcessor().getLastDeltaY();
 
                 double prediction = (lastDeltaY - 0.08D) * 0.9800000190734863D;
+            //    Bukkit.broadcastMessage(""+deltaY + " "+lastDeltaY);
 
-                if (deltaY >= 0.42f) {
-                    prediction += 0.7F;
-                }
+                //0.08075199932861322
 
-                if (user.getBlockData().climbable) {
-                    if (deltaY == 0.42f) {
-                        jumpTicks = 5;
-                    }
-
-                    if (jumpTicks > 0) {
-                        prediction = 0.42f + (user.getPotionProcessor().getJumpAmplifier() * 0.2D);
-                    }
-
-                    if (jumpTicks-- <= 0) {
-                        prediction = 0.2D;
-                    }
-                }
-
-                double difference = deltaY - prediction;
-
+                double difference = Math.abs(deltaY - prediction);
 
                 if ((user.getLastBlockPlaceTimer().hasNotPassed(20)
                         || user.getLastBlockPlaceCancelTimer().hasNotPassed(20))
@@ -70,9 +56,12 @@ public class FlightA extends Check {
                     difference = 0.0;
                 }
 
+                if (user.getMovementProcessor().getDeltaXZ() <= 0.005 && deltaY < 0 && deltaY > -0.08) {
+                    threshold -= Math.min(threshold, 1);
+                }
+
                 if (!user.getMovementProcessor().isOnGround()
-                        && !user.getMovementProcessor().isLastGround()
-                        && !user.getLastLastLocation().isClientGround()) {
+                        && !user.getMovementProcessor().isLastGround()) {
 
                     if (difference > 0.005) {
                         if (threshold++ > 3) {
