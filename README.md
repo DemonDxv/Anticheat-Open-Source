@@ -35,3 +35,4 @@ If your planning on forking / taking code to resell make sure to leave credits.
 * /ac alerts - toggles on and off alerts
 
 * /ac check (check&checktype) - toggles on and off detections
+* 
