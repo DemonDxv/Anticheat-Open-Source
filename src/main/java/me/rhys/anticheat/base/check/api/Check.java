@@ -9,13 +9,18 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.util.TPSUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 @Getter @Setter
 public class Check implements CallableEvent, Cloneable {
-    private String checkName, checkType, description;
-    private boolean enabled, punished, lagBack, canPunish;
-    private int violation, maxViolation;
+    public String checkName, checkType, description;
+    public boolean enabled, punished, lagBack, canPunish;
+    public int violation, maxViolation;
 
 
     public void setup() {
@@ -46,23 +51,7 @@ public class Check implements CallableEvent, Cloneable {
         if (Anticheat.getInstance().getConfigValues().isPunish() && this.canPunish && this.violation > this.maxViolation) {
             this.violation = 0;
 
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Anticheat.getInstance().getConfigValues()
-                            .getPunishCommand().replace("%PLAYER%", user.getPlayer().getName())
-                            .replace("%CHECK%", checkName).replace("%TYPE%", checkType)
-                            .replace("%VL_LEVEL%", String.valueOf(violation))
-                            .replace("%PREFIX%", Anticheat.getInstance().getConfigValues().getPrefix())
-                            .replaceFirst("/", ""));
-
-                    if (Anticheat.getInstance().getConfigValues().isAnnounce()) {
-                        Bukkit.broadcastMessage(Anticheat.getInstance().getConfigValues().getAnnounceMessage()
-                                .replace("%PREFIX%", Anticheat.getInstance().getConfigValues().getPrefix())
-                                .replace("%PLAYER%", user.getPlayer().getName()));
-                    }
-                }
-            }.runTask(Anticheat.getInstance());
+            punishPlayer(user);
         }
 
         String alert = Anticheat.getInstance().getConfigValues().getPrefix()
@@ -73,9 +62,14 @@ public class Check implements CallableEvent, Cloneable {
                 + (data.length > 0 ? ChatColor.GRAY + " ["
                 + ChatColor.GRAY + stringBuilder.toString().trim() + ChatColor.GRAY + "]" : "");
 
-        Bukkit.getServer().getOnlinePlayers().parallelStream().filter(player -> user.isAlerts() && (player.hasPermission("anticheat.alerts")
-                || player.isOp())).forEach(player ->
-                player.sendMessage(alert));
+        if (Anticheat.getInstance().isBungeeCord()) {
+            Anticheat.getInstance().sendMessageAlertBungee(user.getPlayer(), alert);
+
+        } else {
+      /*           Bukkit.getServer().getOnlinePlayers().parallelStream().filter(player ->
+                       user.isAlerts() && (player.hasPermission("anticheat.alerts") ||
+                             player.isOp())).forEach(player -> player.sendMessage(alert));*/
+        }
 
         if (Anticheat.getInstance().getConfigValues().isLagBack()) {
             // LOL
@@ -110,5 +104,23 @@ public class Check implements CallableEvent, Cloneable {
         }
 
         return null;
+    }
+
+    public void punishPlayer(User user) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Anticheat.getInstance().getConfigValues()
+                        .getPunishCommand().replace("%PLAYER%", user.getPlayer().getName())
+                        .replace("%PREFIX%", Anticheat.getInstance().getConfigValues().getPrefix())
+                        .replaceFirst("/", ""));
+
+                if (Anticheat.getInstance().getConfigValues().isAnnounce()) {
+                    Bukkit.broadcastMessage(Anticheat.getInstance().getConfigValues().getAnnounceMessage()
+                            .replace("%PREFIX%", Anticheat.getInstance().getConfigValues().getPrefix())
+                            .replace("%PLAYER%", user.getPlayer().getName()));
+                }
+            }
+        }.runTask(Anticheat.getInstance());
     }
 }

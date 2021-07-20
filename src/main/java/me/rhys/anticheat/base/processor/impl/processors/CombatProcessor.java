@@ -1,5 +1,6 @@
 package me.rhys.anticheat.base.processor.impl.processors;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import me.rhys.anticheat.Anticheat;
@@ -11,9 +12,7 @@ import me.rhys.anticheat.tinyprotocol.api.NMSObject;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
-import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutEntityTeleport;
-import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutTransaction;
-import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutVelocityPacket;
+import me.rhys.anticheat.tinyprotocol.packet.out.*;
 import me.rhys.anticheat.util.EventTimer;
 import me.rhys.anticheat.util.PlayerLocation;
 import org.bukkit.Bukkit;
@@ -38,66 +37,85 @@ public class CombatProcessor extends Processor {
 
     private int velocityTicks, velocityNoTransTicks;
 
-    private short velocityID = 9000, relMoveID = 9;
+    private short velocityID = 9000, relMoveID = -9, reachID = 9001;
 
     private Player lastAttackedEntity, lastLastAttackedEntity;
-    private PlayerLocation relCachedLocation, relLocation;
+    private PlayerLocation relCachedLocation, lastLastRelMove, lastRelMove;
 
     public HashMap<PlayerLocation, Short> lastRelLocation = new HashMap();
+
+
+    public HashMap<Short, ReachData> reachTestMap = new HashMap();
+    private ReachData reachData;
 
     @Override
     public void onPacket(PacketEvent event) {
 
         if (event.getType().equals(Packet.Server.ENTITY)
-                || event.getType().equals(Packet.Server.ENTITY_TELEPORT)
-                || event.getType().equals(Packet.Server.REL_POSITION_LOOK)
                 || event.getType().equals(Packet.Server.REL_LOOK)
-                || event.getType().equals(Packet.Server.REL_POSITION)
-                || event.getType().equals(Packet.Server.ENTITY_HEAD_ROTATION)) {
+                || event.getType().equals(Packet.Server.REL_POSITION_LOOK)
+                || event.getType().equals(Packet.Server.REL_POSITION)) {
+            WrappedOutRelativePosition relativePosition =
+                    new WrappedOutRelativePosition(event.getPacket(), user.getPlayer());
 
-            boolean process = false;
-            int id;
-            double x = 0;
-            double y = 0;
-            double z = 0;
+            World world = user.getPlayer().getWorld();
 
-            if (event.getType().equalsIgnoreCase(NMSObject.Server.ENTITY_TELEPORT)) {
-                WrappedOutEntityTeleport wrappedOutEntityTeleport = new WrappedOutEntityTeleport(event.getPacket());
+        //    if (!this.isValidEntity(relativePosition.getId())) return;
 
-                id = wrappedOutEntityTeleport.getId();
+            queueTransaction(new ReachData(user, System.currentTimeMillis(),
+                    new PlayerLocation(world, (double) relativePosition.getX() / 32D,
+                            (double) relativePosition.getY() / 32D, (double) relativePosition.getZ() / 32D,
+                            0, 0, false, System.currentTimeMillis()),
+                    user.getCurrentLocation().clone(),
+                    user.getLastLocation().clone()));
 
-                if (lastAttackedEntity != null && lastAttackedEntity.getEntityId() != id) {
-                    return;
-                }
-
-                x = wrappedOutEntityTeleport.getX();
-                y = wrappedOutEntityTeleport.getY();
-                z = wrappedOutEntityTeleport.getZ();
-                process = true;
-            }
-
-            if (process) {
-                x = x / 32;
-                y = y / 32;
-                z = z / 32;
-
-                World world = user.getPlayer().getWorld();
-
-                relCachedLocation = new PlayerLocation(world, x,y,z,
-                        0, 0, false, System.currentTimeMillis());
-
-
-                relMoveID--;
-
-                if (relMoveID < -65) {
-                    relMoveID = -9;
-                }
-
-                WrappedOutTransaction transaction = new WrappedOutTransaction(0, relMoveID, false);
-
-                TinyProtocolHandler.sendPacket(user.getPlayer(), transaction.getObject());
-            }
+            relCachedLocation = new PlayerLocation(world, (double) relativePosition.getX() / 32D,
+                    (double) relativePosition.getY() / 32D, (double) relativePosition.getZ() / 32D,
+                    0, 0, false, System.currentTimeMillis());
         }
+
+        if (event.getType().equals(Packet.Server.ENTITY_TELEPORT)) {
+            WrappedOutEntityTeleport teleport =
+                    new WrappedOutEntityTeleport(event.getPacket());
+
+            World world = user.getPlayer().getWorld();
+
+        //    if (!this.isValidEntity(teleport.getId())) return;
+
+            queueTransaction(new ReachData(user, System.currentTimeMillis(),
+                    new PlayerLocation(world, teleport.getX() / 32D,
+                            teleport.getY() / 32D, teleport.getZ() / 32D,
+                            0, 0, false, System.currentTimeMillis()),
+                    user.getCurrentLocation().clone(),
+                    user.getLastLocation().clone()));
+
+            relCachedLocation = new PlayerLocation(world, (double) teleport.getX() / 32D,
+                    (double) teleport.getY() / 32D, (double) teleport.getZ() / 32D,
+                    0, 0, false, System.currentTimeMillis());
+        }
+
+
+        if (event.getType().equals(Packet.Server.NAMED_ENTITY_SPAWN)) {
+            WrappedOutNamedEntitySpawn entitySpawn =
+                    new WrappedOutNamedEntitySpawn(event.getPacket(), user.getPlayer());
+
+            World world = user.getPlayer().getWorld();
+
+       //     if (!this.isValidEntity(entitySpawn.entityId)) return;
+
+            queueTransaction(new ReachData(user, System.currentTimeMillis(),
+                    new PlayerLocation(world, entitySpawn.x / 32D,
+                            entitySpawn.y / 32D, entitySpawn.z / 32D,
+                            0, 0, false, System.currentTimeMillis()),
+                    user.getCurrentLocation().clone(),
+                    user.getLastLocation().clone()));
+
+            relCachedLocation = new PlayerLocation(world, (double) entitySpawn.x / 32D,
+                    (double) entitySpawn.y / 32D, (double) entitySpawn.z / 32D,
+                    0, 0, false, System.currentTimeMillis());
+        }
+
+
 
         switch (event.getType()) {
 
@@ -138,9 +156,9 @@ public class CombatProcessor extends Processor {
                     velocity = new Vector(wrappedOutVelocityPacket.getX(), wrappedOutVelocityPacket.getY(),
                             wrappedOutVelocityPacket.getZ());
 
-                    velocityH = Math.hypot(velocity.getX(), velocity.getZ());
+            ///        velocityH = Math.hypot(velocity.getX(), velocity.getZ());
 
-                    velocityV = Math.pow(velocity.getY() + 2.0, 2.0) * 5.0;
+           ///         velocityV = Math.pow(velocity.getY() + 2.0, 2.0) * 5.0;
 
                     velocityNoTransTicks = 0;
 
@@ -162,14 +180,28 @@ public class CombatProcessor extends Processor {
                 WrappedOutTransaction transaction = new WrappedOutTransaction(event.getPacket(),
                         event.getUser().getPlayer());
 
-                if (transaction.getAction() == velocityID) {
+                short idRel = relMoveID;
+                short idVel = velocityID;
+                short idReach = reachID;
+
+                if (transaction.getAction() == idVel) {
                     velocityH = Math.hypot(velocity.getX(), velocity.getZ());
                     velocityV = Math.pow(velocity.getY() + 2.0, 2.0) * 5.0;
+
                     velocityTicks = 0;
                 }
 
-                if (transaction.getAction() == relMoveID) {
-                //    user.getPastLocations().addLocation(relCachedLocation);
+                if (idReach == transaction.getAction()) {
+                    for (Map.Entry<Short, ReachData> doubleShortEntry : reachTestMap.entrySet()) {
+                        reachData = doubleShortEntry.getValue();
+                        reachTestMap.clear();
+                    }
+                }
+
+
+                if (transaction.getAction() == idRel) {
+                    lastLastRelMove = lastRelMove;
+                    lastRelMove = relCachedLocation;
                 }
 
                 break;
@@ -181,6 +213,36 @@ public class CombatProcessor extends Processor {
     public void setupTimers(User user) {
         this.preVelocityTimer = new EventTimer(20, user);
         this.useEntityTimer = new EventTimer(20, user);
+    }
+
+    private void queueTransaction(ReachData reachData) {
+        reachID++;
+
+        if (reachID >= 10000) {
+            reachID = 9001;
+        }
+
+        short random = (short) reachID;
+        reachTestMap.put(random, reachData);
+        TinyProtocolHandler.sendPacket(reachData.getUser().getPlayer(),
+                new WrappedOutTransaction(0, random, false).getObject());
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class ReachData {
+        private final User user;
+        private final long time;
+        private final PlayerLocation customLocation;
+        private final PlayerLocation to;
+        private final PlayerLocation from;
+    }
+
+    void handleRelMove(double x, double y, double z) {
+    }
+
+    boolean isValidEntity(int id) {
+        return lastAttackedEntity != null && lastAttackedEntity.getEntityId() == id;
     }
 }
 

@@ -20,6 +20,13 @@ public class ConfigLoader {
                 .getBoolean("Punishment.Announce.Enabled"));
         Anticheat.getInstance().getConfigValues().setAnnounceMessage(this.convertColor(Anticheat.getInstance().getConfig()
                 .getString("Punishment.Announce.Message")));
+
+        Anticheat.getInstance().getConfigValues().setBungeeCord(Anticheat.getInstance().getConfig()
+                .getBoolean("Mongo.Enabled"));
+        Anticheat.getInstance().getConfigValues().setAnnounceMessage(this.convertColor(Anticheat.getInstance().getConfig()
+                .getString("Mongo.Hostname")));
+        Anticheat.getInstance().getConfigValues().setAnnounceMessage(this.convertColor(Anticheat.getInstance().getConfig()
+                .getString("Mongo.Logs")));
     }
 
     String convertColor(String in) {

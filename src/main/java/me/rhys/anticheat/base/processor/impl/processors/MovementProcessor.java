@@ -242,6 +242,7 @@ public class MovementProcessor extends Processor {
         user.setBoundingBox(new BoundingBox((badVector ? user.getCurrentLocation().toVector()
                 : user.getLastLocation().toVector()), user.getCurrentLocation().toVector())
                 .grow(0.3f, 0, 0.3f).add(0, 0, 0, 0, 1.84f, 0));
+
         this.cacheInformation(new BlockChecker(this.user));
     }
 

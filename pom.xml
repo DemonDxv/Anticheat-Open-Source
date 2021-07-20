@@ -26,6 +26,13 @@
     </repositories>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.12.6</version>
+        </dependency>
+
         <dependency>
             <groupId>org.github.spigot</groupId>
             <artifactId>1.8.8</artifactId>

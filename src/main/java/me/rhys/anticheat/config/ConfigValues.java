@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter @Setter
 public class ConfigValues {
-    private boolean lagBack, punish, announce;
-    private String punishCommand, prefix, announceMessage;
+    private boolean lagBack, punish, announce, bungeeCord;
+    private String punishCommand, prefix, announceMessage, hostName, database, logs;
 }

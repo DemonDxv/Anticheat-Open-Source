@@ -88,7 +88,7 @@ public class PredictionProcessor extends Processor {
                 boolean jumpCheck = deltaY == maxDeltaY || deltaY >= .404f && deltaY <= .406f;
 
                 if (user.getMovementProcessor().isServerYGround()
-                        && user.getMovementProcessor().isLastGround() && deltaY >= 0.42f) {
+                        && user.getMovementProcessor().isLastGround() && deltaY > 0.42f) {
                     prediction += 0.2F;
                 }
 

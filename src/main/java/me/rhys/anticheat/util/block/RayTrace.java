@@ -1,6 +1,8 @@
 package me.rhys.anticheat.util.block;
 
-import me.rhys.anticheat.util.box.BoundingBox;
+import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
+import me.rhys.anticheat.util.world.types.SimpleCollisionBox;
+import org.bukkit.Effect;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
@@ -92,8 +94,41 @@ public class RayTrace {
         return false;
     }
 
+
     //bounding blockbox instead of vector
-    public boolean intersects(BoundingBox collisionBox, double blocksAway, double accuracy) {
+    public Vector positionOfIntersection(SimpleCollisionBox collisionBox, double blocksAway, double accuracy) {
+        List<Vector> positions = traverse(blocksAway, accuracy);
+        for (Vector position : positions) {
+            if (intersects(position, collisionBox.min(), collisionBox.max())) {
+                return position;
+            }
+        }
+        return null;
+    }
+
+    public Vector positionOfIntersection(SimpleCollisionBox collisionBox, double skip, double blocksAway, double accuracy) {
+        List<Vector> positions = traverse(skip, blocksAway, accuracy);
+        for (Vector position : positions) {
+            if (intersects(position, collisionBox.min(), collisionBox.max())) {
+                return position;
+            }
+        }
+        return null;
+    }
+
+    //bounding blockbox instead of vector
+    public boolean intersects(SimpleCollisionBox collisionBox, double blocksAway, double accuracy) {
+        List<Vector> positions = traverse(blocksAway, accuracy);
+        for (Vector position : positions) {
+            if (intersects(position, collisionBox.min(), collisionBox.max())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //bounding blockbox instead of vector
+    public boolean intersects(me.rhys.anticheat.util.box.BoundingBox collisionBox, double blocksAway, double accuracy) {
         List<Vector> positions = traverse(blocksAway, accuracy);
         for (Vector position : positions) {
             if (intersects(position, collisionBox.getMinimum(), collisionBox.getMaximum())) {
@@ -103,5 +138,21 @@ public class RayTrace {
         return false;
     }
 
+    public boolean intersects(SimpleCollisionBox collisionBox, double skip, double blocksAway, double accuracy) {
+        List<Vector> positions = traverse(blocksAway, accuracy);
+        for (Vector position : positions) {
+            if (intersects(position, collisionBox.min(), collisionBox.max())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //debug / effects
+    public void highlight(World world, double blocksAway, double accuracy) {
+        for (Vector position : traverse(blocksAway, accuracy)) {
+            world.playEffect(position.toLocation(world), (ProtocolVersion.getGameVersion().isOrAbove(ProtocolVersion.V1_13) ? Effect.SMOKE : Effect.valueOf("COLOURED_DUST")), 0);
+        }
+    }
 
 }

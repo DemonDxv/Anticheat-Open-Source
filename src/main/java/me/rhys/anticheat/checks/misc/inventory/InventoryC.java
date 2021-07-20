@@ -55,7 +55,7 @@ public class InventoryC extends Check {
                                     flag(user, "Possibily using ChestStealer or Refill");
                                 }
                             } else {
-                                threshold -= Math.min(threshold, 0.115);
+                                threshold -= Math.min(threshold, 0.5);
                             }
 
                             delays.clear();

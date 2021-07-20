@@ -11,14 +11,18 @@ import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
 import me.rhys.anticheat.util.EventTimer;
 import me.rhys.anticheat.util.PastLocation;
 import me.rhys.anticheat.util.TPSUtil;
+import me.rhys.anticheat.util.evicting.EvictingList;
 import me.rhys.anticheat.util.evicting.EvictingMap;
 import me.rhys.anticheat.util.PlayerLocation;
 import me.rhys.anticheat.util.box.BoundingBox;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
+import java.util.Deque;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -44,7 +48,7 @@ public class User {
     private final Map<Long, Long> connectionMap2 = new EvictingMap<>(100);
     private int tick, vehicleTicks;
 
-    private PastLocation pastLocations = new PastLocation();
+    public PastLocation previousLocations = new PastLocation();
 
     private boolean chunkLoaded = false, alerts = true;
 
@@ -65,6 +69,7 @@ public class User {
         this.processorManager.setup();
         this.setupProcessors();
         this.blockData.setupTimers(this);
+
     }
 
     private void setupProcessors() {

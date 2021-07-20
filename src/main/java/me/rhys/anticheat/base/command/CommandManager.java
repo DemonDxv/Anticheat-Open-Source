@@ -21,6 +21,9 @@ public class CommandManager {
 
         addCommand(new Command(new MainCommand("ac"), "ac check", "/ac check [check&type]",
                 "Toggle on, and off detections.", true));
+
+        addCommand(new Command(new MainCommand("ac"), "ac forceban", "/ac forceban [player]",
+                "Forceban a player with the anticheat.", true));
     }
 
     private void addCommand(Command... commands) {

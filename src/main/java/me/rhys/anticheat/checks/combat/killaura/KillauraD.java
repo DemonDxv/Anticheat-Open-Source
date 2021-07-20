@@ -33,21 +33,19 @@ public class KillauraD extends Check {
                     return;
                 }
 
-                if (hits++ <= 2 && user.getMovementProcessor().isSprinting()
-                        && user.getMovementProcessor().isLastSprinting()) {
+                if (hits++ <= 1 && user.getMovementProcessor().isSprinting()) {
 
-                    double difference = user.getMovementProcessor().getDeltaXZ() - user.getMovementProcessor().getLastDeltaXZ();
+                    double difference = Math.abs(user.getMovementProcessor().getDeltaXZ()
+                            - user.getMovementProcessor().getLastDeltaXZ());
 
-                    if (user.getMovementProcessor().getDeltaXZ() >= MathUtil.getBaseSpeed(user.getPlayer())) {
-                        if (difference <= 0.014) {
-                            if (threshold++ > 5) {
-                                flag(user, "Keep Sprinting");
+                    if (user.getMovementProcessor().getDeltaXZ() > MathUtil.getBaseSpeed(user.getPlayer())) {
+                        if (difference <= 0.01) {
+                            if (threshold++ > 4.5) {
+                                flag(user, "Keep Sprint");
                             }
                         } else {
-                            threshold -= Math.min(threshold, 0.125);
+                            threshold -= Math.min(threshold, 0.25);
                         }
-                    } else {
-                        threshold -= Math.min(threshold, 0.45);
                     }
 
                 }

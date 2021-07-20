@@ -8,4 +8,9 @@ Punishment:
   Announce:
     Enabled: true
     Message: '%PREFIX% &chas removed &7%PLAYER% &cfor using unfair advantages.'
+Mongo:
+  Enabled: false
+  Hostname: "localhost"
+  Database: "anticheat"
+  Logs: "logs"
 

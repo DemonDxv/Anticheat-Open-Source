@@ -1,4 +1,4 @@
-package me.rhys.anticheat.checks.movement.flight;
+package me.rhys.anticheat.checks.old;
 
 import me.rhys.anticheat.base.check.api.Check;
 import me.rhys.anticheat.base.check.api.CheckInformation;

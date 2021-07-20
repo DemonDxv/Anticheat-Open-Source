@@ -54,6 +54,17 @@ public class MathUtil {
         entityDimensions.put(EntityType.GHAST, new Vector(2, 4, 2));
     }
 
+    public static Vector getDirection(PlayerLocation loc) {
+        Vector vector = new Vector();
+        double rotX = loc.getYaw();
+        double rotY = loc.getPitch();
+        vector.setY(-Math.sin(Math.toRadians(rotY)));
+        double xz = Math.cos(Math.toRadians(rotY));
+        vector.setX(-xz * Math.sin(Math.toRadians(rotX)));
+        vector.setZ(xz * Math.cos(Math.toRadians(rotX)));
+        return vector;
+    }
+
     public static Location getGroundLocation(User user) {
         World world = user.getPlayer().getWorld();
 
@@ -89,7 +100,7 @@ public class MathUtil {
     }
 
     public static float getBaseSpeed(Player player) {
-        return 0.2f + (getPotionEffectLevel(player, PotionEffectType.SPEED) * 0.062f) + ((player.getWalkSpeed() - 0.2f) * 1.6f);
+        return 0.26f + (getPotionEffectLevel(player, PotionEffectType.SPEED) * 0.062f) + ((player.getWalkSpeed() - 0.2f) * 1.6f);
     }
 
     public static int getPotionEffectLevel(Player player, PotionEffectType pet) {
@@ -203,11 +214,6 @@ public class MathUtil {
 
         moveS *= 0.98F;
         moveF *= 0.98F;
-
-        if (user.getPredictionProcessor().isUseSword()) {
-            moveF *= 0.2F;
-            moveS *= 0.2F;
-        }
 
         float strafe = moveS, forward = moveF;
         float f = strafe * strafe + forward * forward;

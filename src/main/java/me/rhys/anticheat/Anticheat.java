@@ -1,21 +1,33 @@
 package me.rhys.anticheat;
 
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteStreams;
 import lombok.Getter;
 import me.rhys.anticheat.base.check.impl.CachedCheckManager;
 import me.rhys.anticheat.base.command.CommandManager;
 import me.rhys.anticheat.base.connection.KeepaliveHandler;
 import me.rhys.anticheat.base.listener.BukkitListener;
+import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.base.user.UserManager;
 import me.rhys.anticheat.config.ConfigLoader;
 import me.rhys.anticheat.config.ConfigValues;
+import me.rhys.anticheat.mongo.MongoManager;
 import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
 import me.rhys.anticheat.util.TPSUtil;
 import me.rhys.anticheat.util.UpdateChecker;
+import me.rhys.anticheat.util.box.BlockBoxManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.PluginMessageListener;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -38,6 +50,9 @@ public class Anticheat extends JavaPlugin {
     private final ConfigValues configValues = new ConfigValues();
     private final ConfigLoader configLoader = new ConfigLoader();
     private final CachedCheckManager checkManager = new CachedCheckManager();
+    private BlockBoxManager blockBoxManager;
+
+    private MongoManager mongoManager;
 
     @Override
     public void onEnable() {
@@ -47,15 +62,18 @@ public class Anticheat extends JavaPlugin {
 
         if (ProtocolVersion.getGameVersion().isAbove(ProtocolVersion.v1_16_5)) {
             getServer().getPluginManager().disablePlugin(this);
-            getLogger().warning("The anticheat is only compatible with 1.7.* to 1.16.5 spigot's (1.8 RECOMMENDED)");
+            getLogger().warning("The anticheat is only compatible with 1.7.* to 1.16.5 spigot's " +
+                    "(1.7.* - 1.8.* is highly recommended)");
             return;
         }
 
         this.configLoader.load();
+
         this.bukkitVersion = Bukkit.getServer().getClass().getPackage().getName().substring(23);
         this.keepaliveHandler = new KeepaliveHandler();
         this.userManager = new UserManager();
         this.commandManager = new CommandManager();
+        this.blockBoxManager = new BlockBoxManager();
 
         getServer().getPluginManager().registerEvents(new BukkitListener(), this);
 
@@ -67,6 +85,8 @@ public class Anticheat extends JavaPlugin {
                 1L, 1L, TimeUnit.MINUTES);
 
         Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new TPSUtil(), 100L, 1L);
+
+        mongoManager = new MongoManager();
 
         new UpdateChecker(this, 93504).getVersion(version -> {
             if (getDescription().getVersion().equalsIgnoreCase(version)) {
@@ -82,7 +102,6 @@ public class Anticheat extends JavaPlugin {
                         + "\n" + longLine + "\n\n");
             }
         });
-
     }
 
     @Override

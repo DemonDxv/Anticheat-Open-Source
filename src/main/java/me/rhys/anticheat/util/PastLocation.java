@@ -1,11 +1,13 @@
 package me.rhys.anticheat.util;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -27,6 +29,13 @@ public class PastLocation {
                 .filter(loc -> Math.abs(loc.getTimeStamp() - (System.currentTimeMillis() - time)) < delta)
                 .forEach(locs::add);
         return locs;
+    }
+
+    public List<PlayerLocation> getEstimatedLocation(long time, long ping, long delta) {
+        return this.previousLocations
+                .stream()
+                .filter(loc -> time - loc.getTimeStamp() > 0 && time - loc.getTimeStamp() < ping + delta)
+                .collect(Collectors.toList());
     }
 
     public void addLocation(Location location) {

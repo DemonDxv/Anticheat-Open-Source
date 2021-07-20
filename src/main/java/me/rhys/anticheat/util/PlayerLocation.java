@@ -13,6 +13,8 @@ import org.bukkit.util.Vector;
 public class PlayerLocation {
     private World world;
     private double x, y, z;
+    private double minX, maxX;
+    private double minZ, maxZ;
     private float yaw, pitch;
     private boolean clientGround;
     private long timeStamp;
@@ -25,6 +27,29 @@ public class PlayerLocation {
         this.pitch = loc.getPitch();
 
         this.timeStamp = System.currentTimeMillis();
+    }
+
+
+    public PlayerLocation(World world, double x, double y, double z, float yaw, float pitch, boolean clientGround, long timeStamp) {
+        this.x = x;
+        minX = x - 0.4;
+        maxX = x + 0.4;
+
+        this.y = y;
+
+        this.z = z;
+        minZ = z - 0.4;
+        maxZ = z + 0.4;
+
+        this.yaw = yaw;
+        this.pitch = pitch;
+
+        this.clientGround = clientGround;
+
+        this.timeStamp = System.currentTimeMillis();
+
+        this.world = world;
+
     }
 
     public Vector toVector() {
@@ -50,6 +75,13 @@ public class PlayerLocation {
                     + NumberConversions.square(this.getZ() - o.getZ());
         }
         return 0.0;
+    }
+
+    public double getDistanceSquared(PlayerLocation location, PlayerLocation lastLocation) {
+        double dx = Math.min(Math.abs(location.x - minX), Math.abs(lastLocation.x - maxX));
+        double dz = Math.min(Math.abs(location.z - minZ), Math.abs(lastLocation.z - maxZ));
+
+        return Math.sqrt(Math.pow(dx, 2.0) + Math.pow(dz, 2.0));
     }
 
     public double distanceSquaredXZ(@NotNull PlayerLocation o) {

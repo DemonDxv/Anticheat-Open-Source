@@ -43,6 +43,18 @@ public class BlockChecker {
                 .anyMatch(collideEntry -> collideEntry.getBlock().getType().isSolid());
 
 
+        this.collideHorizontal = new BoundingBox(
+                (float) this.user.getCurrentLocation().getX(),
+                (float) this.user.getPlayer().getEyeLocation().getY(),
+                (float) this.user.getCurrentLocation().getZ(),
+                (float) this.user.getCurrentLocation().getX(),
+                (float) this.user.getPlayer().getEyeLocation().getY(),
+                (float) this.user.getCurrentLocation().getZ()).expand(.3, .0, .3)
+                .addXYZ(0.6, 0, 0.6).getCollidedBlocks(this.user.getPlayer())
+                .stream().filter(CollideEntry::isChunkLoaded)
+                .anyMatch(collideEntry -> collideEntry.getBlock().getType().isSolid());
+
+
         collidedBlocks.stream().filter(CollideEntry::isChunkLoaded).forEach(collideEntry -> {
             boolean checkMovingUp = false;
             Class<? extends MaterialData> blockData = collideEntry.getBlock().getType().getData();
@@ -53,10 +65,6 @@ public class BlockChecker {
                 if (collideEntry.getBoundingBox().intersectsWithBox(user.getBoundingBox())) {
                     insideBlock = true;
                 }
-            }
-
-            if (boundingBox.collidesHorizontally(collideEntry.getBoundingBox())) {
-                collideHorizontal = true;
             }
 
             Block block = collideEntry.getBlock();

@@ -24,6 +24,7 @@ public class VelocityA extends Check {
                         || user.getLastFallDamageTimer().hasNotPassed(20)
                         || user.getVehicleTicks() > 0
                         || user.getLastFireTickTimer().hasNotPassed(20)
+                        || user.getBlockData().collidesHorizontal
                         || user.shouldCancel()) {
                     threshold = 0;
                     return;
