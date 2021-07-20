@@ -7,16 +7,7 @@ Feel free to report any issues in the "Issues" tab
  
 ****Developers: demon & rhys****
 
-**Credits:**
-
-darkandblue (prediction processing)
-
-funkemunky & Rhys & Luke (bounding boxes, reflection, protocol from Atlas https://github.com/funkemunky/Atlas) 
-
-(original code of atlas is from Luke (firefly dev) and the Atlas code was modified to be less heavy by Rhys but I still gotta give funke his credit lol)
-
 **Spigot Page: https://www.spigotmc.org/resources/anticheat.93504/**
-
 
 If your planning on forking / taking code to resell make sure to leave credits.
 
@@ -41,3 +32,13 @@ If your planning on forking / taking code to resell make sure to leave credits.
 * /ac alerts - toggles on and off alerts
 
 * /ac check (check&checktype) - toggles on and off detections
+
+
+
+**Credits:**
+
+darkandblue (prediction processing)
+
+funkemunky & Rhys & Luke (bounding boxes, reflection, protocol from Atlas https://github.com/funkemunky/Atlas) 
+
+(original code of atlas is from Luke (firefly dev) and the Atlas code was modified to be less heavy by Rhys but I still gotta give funke his credit lol)
