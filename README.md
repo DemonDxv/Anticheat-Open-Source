@@ -1,8 +1,6 @@
 # Open Source Anticheat
 A free anticheat for the community that is open source.
  
-Adding full support soon for 1.9.x - 1.16.5
- 
 Feel free to report any issues in the "Issues" tab
  
 ****Developers: demon & rhys****
