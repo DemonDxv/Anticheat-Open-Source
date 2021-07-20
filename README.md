@@ -7,7 +7,7 @@ Feel free to report any issues in the "Issues" tab
  
 ****Developers: demon & rhys****
 
-**Credits: darkandblue (prediction processing) & funkemunky (bounding boxes, reflection, protocol from Atlas https://github.com/funkemunky/Atlas)**
+**Credits: darkandblue (prediction processing) & funkemunky (bounding boxes, reflection, protocol from Atlas https://github.com/funkemunky/Atlas) (original code from Luke / FireFly Anticheat, and the code was also modified from Atlas by Rhys but I still gotta give funke his credit lol)**
 
 **Spigot Page: https://www.spigotmc.org/resources/anticheat.93504/**
 
