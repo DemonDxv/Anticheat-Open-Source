@@ -42,3 +42,7 @@ darkandblue (prediction processing)
 funkemunky & Rhys & Luke (bounding boxes, reflection, protocol from Atlas https://github.com/funkemunky/Atlas) 
 
 (original code of atlas is from Luke (firefly dev) and the Atlas code was modified to be less heavy by Rhys but I still gotta give funke his credit lol)
+
+ItzLucky (Prediction calculations)
+
+Sim0n (Autoclicker utils from Nemesis)
