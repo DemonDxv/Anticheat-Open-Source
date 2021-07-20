@@ -7,7 +7,7 @@ Feel free to report any issues in the "Issues" tab
  
 ****Developers: demon & rhys****
 
-**Credits: darkandblue (prediction processing) & funkemunky (bounding boxes)**
+**Credits: darkandblue (prediction processing) & funkemunky (bounding boxes, reflection, protocol from Atlas https://github.com/funkemunky/Atlas)**
 
 **Spigot Page: https://www.spigotmc.org/resources/anticheat.93504/**
 
