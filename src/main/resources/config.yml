@@ -11,6 +11,9 @@ Punishment:
 Mongo:
   Enabled: false
   Hostname: "localhost"
+  Port: "0000"
   Database: "anticheat"
-  Logs: "logs"
+  Username: "admin"
+  Password: "password"
+  LogsFileName: "logs"
 

@@ -6,6 +6,7 @@ import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.event.CallableEvent;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
+import me.rhys.anticheat.mongo.LogInfo;
 import me.rhys.anticheat.util.TPSUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -62,19 +63,17 @@ public class Check implements CallableEvent, Cloneable {
                 + (data.length > 0 ? ChatColor.GRAY + " ["
                 + ChatColor.GRAY + stringBuilder.toString().trim() + ChatColor.GRAY + "]" : "");
 
-        if (Anticheat.getInstance().isBungeeCord()) {
-            Anticheat.getInstance().sendMessageAlertBungee(user.getPlayer(), alert);
-
-        } else {
-      /*           Bukkit.getServer().getOnlinePlayers().parallelStream().filter(player ->
+                 Bukkit.getServer().getOnlinePlayers().parallelStream().filter(player ->
                        user.isAlerts() && (player.hasPermission("anticheat.alerts") ||
-                             player.isOp())).forEach(player -> player.sendMessage(alert));*/
-        }
+                             player.isOp())).forEach(player -> player.sendMessage(alert));
 
         if (Anticheat.getInstance().getConfigValues().isLagBack()) {
             // LOL
             user.getMovementProcessor().setLagBackTicks((this.lagBack ? 3 : 0));
         }
+
+
+        LogInfo.getQueue().add(new LogInfo(user.getPlayer().getName(), checkName, checkType, violation));
     }
 
     @Override

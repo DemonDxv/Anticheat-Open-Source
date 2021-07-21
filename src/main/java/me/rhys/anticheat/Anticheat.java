@@ -1,37 +1,27 @@
 package me.rhys.anticheat;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteStreams;
 import lombok.Getter;
 import me.rhys.anticheat.base.check.impl.CachedCheckManager;
 import me.rhys.anticheat.base.command.CommandManager;
 import me.rhys.anticheat.base.connection.KeepaliveHandler;
 import me.rhys.anticheat.base.listener.BukkitListener;
-import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.base.user.UserManager;
 import me.rhys.anticheat.config.ConfigLoader;
 import me.rhys.anticheat.config.ConfigValues;
 import me.rhys.anticheat.mongo.MongoManager;
 import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
+import me.rhys.anticheat.util.FileManager;
 import me.rhys.anticheat.util.TPSUtil;
 import me.rhys.anticheat.util.UpdateChecker;
 import me.rhys.anticheat.util.box.BlockBoxManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 @Getter
 public class Anticheat extends JavaPlugin {
@@ -51,6 +41,7 @@ public class Anticheat extends JavaPlugin {
     private final ConfigLoader configLoader = new ConfigLoader();
     private final CachedCheckManager checkManager = new CachedCheckManager();
     private BlockBoxManager blockBoxManager;
+    private FileManager fileManager;
 
     private MongoManager mongoManager;
 
@@ -75,6 +66,7 @@ public class Anticheat extends JavaPlugin {
         this.commandManager = new CommandManager();
         this.blockBoxManager = new BlockBoxManager();
 
+        this.fileManager = new FileManager();
         getServer().getPluginManager().registerEvents(new BukkitListener(), this);
 
         getServer().getOnlinePlayers().forEach(player -> TinyProtocolHandler.getInstance().addChannel(player));
@@ -86,7 +78,11 @@ public class Anticheat extends JavaPlugin {
 
         Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new TPSUtil(), 100L, 1L);
 
-        mongoManager = new MongoManager();
+        if (configValues.isMongoEnabled()) {
+            mongoManager = new MongoManager();
+
+
+        }
 
         new UpdateChecker(this, 93504).getVersion(version -> {
             if (getDescription().getVersion().equalsIgnoreCase(version)) {
