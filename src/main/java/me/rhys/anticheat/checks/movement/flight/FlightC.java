@@ -6,6 +6,7 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.EntityUtil;
+import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "Flight", checkType = "C", punishmentVL = 10, description = "Checks if the player is on ground when its not possible")
 public class FlightC extends Check {
@@ -40,10 +41,10 @@ public class FlightC extends Check {
                 }
 
 
-                boolean lastGround = user.getMovementProcessor().isLastGround();
+                boolean ground = user.getMovementProcessor().isLastGround();
 
                 if (!user.getBlockData().onGround && !user.getMovementProcessor().isServerYGround()) {
-                    if (lastGround) {
+                    if (ground) {
                         flag(user, "Spoofing Ground");
                     }
                 }

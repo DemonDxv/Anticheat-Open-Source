@@ -31,7 +31,7 @@ public class VelocityC extends Check {
                     return;
                 }
 
-                if (user.getCombatProcessor().getVelocityTicks() == 2) {
+                if (user.getCombatProcessor().getVelocityTicks() == 1) {
                     double deltaXZ = user.getMovementProcessor().getDeltaXZ();
 
                     double velocityH = user.getCombatProcessor().getVelocityH();
@@ -40,7 +40,7 @@ public class VelocityC extends Check {
 
                     double totalVelocity = deltaXZ / velocityH;
 
-                    if (totalVelocity <= 0.99
+                    if (totalVelocity <= 0.99 && totalVelocity >= 0.0
                             && !user.getMovementProcessor().isOnGround()
                             && user.getMovementProcessor().isLastGround()) {
                         if (threshold++ > 1) {

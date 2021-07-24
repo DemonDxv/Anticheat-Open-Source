@@ -34,6 +34,7 @@ public class CachedCheckManager {
         this.checkList.add(new VelocityB());
         this.checkList.add(new VelocityC());
         this.checkList.add(new VelocityD());
+        this.checkList.add(new VelocityE());
 
         this.checkList.add(new AutoClickerA());
         this.checkList.add(new AutoClickerB());
@@ -45,6 +46,7 @@ public class CachedCheckManager {
         this.checkList.add(new AimAssistD());
         this.checkList.add(new AimAssistE());
         this.checkList.add(new AimAssistF());
+       // this.checkList.add(new AimAssistG());
         this.checkList.add(new KillauraA());
         this.checkList.add(new KillauraB());
         this.checkList.add(new KillauraC());

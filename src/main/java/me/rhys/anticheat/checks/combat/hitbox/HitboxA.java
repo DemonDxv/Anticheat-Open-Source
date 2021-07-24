@@ -86,8 +86,8 @@ public class HitboxA extends Check {
                         pastLocation.clear();
                     }
                 }
+                break;
             }
-            break;
         }
     }
 }

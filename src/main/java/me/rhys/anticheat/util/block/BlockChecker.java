@@ -41,7 +41,7 @@ public class BlockChecker {
                 .addXYZ(0, .4, 0).getCollidedBlocks(this.user.getPlayer())
                 .stream().filter(CollideEntry::isChunkLoaded)
                 .anyMatch(collideEntry -> (!collideEntry.getBlock().isLiquid()
-                        && collideEntry.getBlock().getType().isBlock()));
+                        && collideEntry.getBlock().getType().isSolid()));
 
 
         this.collideHorizontal = new BoundingBox(

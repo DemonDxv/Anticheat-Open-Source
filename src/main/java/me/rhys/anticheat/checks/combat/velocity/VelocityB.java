@@ -5,6 +5,7 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
+import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "Velocity",  checkType = "B", lagBack = false, description = "99% Vertical Velocity [2 Tick]")
 public class VelocityB extends Check {
@@ -32,24 +33,21 @@ public class VelocityB extends Check {
 
                 double deltaY = user.getMovementProcessor().getDeltaY();
 
-                double velocity = user.getCombatProcessor().getVelocity().getY();
+                double velocity = user.getCombatProcessor().getVelocityV();
 
-                if (user.getLastAttackByEntityTimer().hasNotPassed(20)
-                        || user.getLastShotByArrowTimer().hasNotPassed(20)) {
-                    if (user.getCombatProcessor().getVelocityTicks() == 2
-                            && !user.getMovementProcessor().isOnGround() && user.getMovementProcessor().isLastGround()) {
+                double ratio = deltaY / velocity;
 
-                        double ratio = deltaY / velocity;
-                        if (ratio <= 0.99) {
-                            if (threshold++ > 2) {
-                                flag(user, "Vertical Knockback: " + ratio);
-                            }
-                        } else {
-                            threshold -= Math.min(threshold, 0.0626f);
+                if (user.getCombatProcessor().getVelocityTicks() ==  1
+                        && !user.getMovementProcessor().isOnGround() && user.getMovementProcessor().isLastGround()) {
+
+                    if (ratio <= 0.99 && ratio >= 0.0) {
+                        if (threshold++ > 2) {
+                            flag(user, "Vertical Knockback: " + ratio);
                         }
+                    } else {
+                        threshold -= Math.min(threshold, 0.0626f);
                     }
                 }
-
                 break;
             }
         }

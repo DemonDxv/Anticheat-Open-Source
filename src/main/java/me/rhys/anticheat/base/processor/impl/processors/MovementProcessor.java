@@ -126,6 +126,15 @@ public class MovementProcessor extends Processor {
                 break;
             }
 
+            case Packet.Client.STEER_VEHICLE: {
+                user.getVehicleTimer().reset();
+
+                if (user.getCombatProcessor().getVelocityV() > 0.0) {
+                    user.setVehicleTicks(20);
+                }
+                break;
+            }
+
             case Packet.Client.CLIENT_COMMAND: {
                 WrappedInClientCommand clientCommand = new WrappedInClientCommand(event.getPacket(), user.getPlayer());
 
@@ -161,8 +170,8 @@ public class MovementProcessor extends Processor {
                 this.dead = user.getPlayer().isDead();
                 this.ignoreServerPositionTicks -= (this.ignoreServerPositionTicks > 0 ? 1 : 0);
 
-                if (user.getCurrentLocation().getY() % 0.015625 < 0.0001D
-                        || user.getCurrentLocation().getY() % 0.015625 == 0.00625) {
+                if (y % 0.015625 == 0.0
+                        || y % 0.015625 == 0.00625) {
                     serverYGround = true;
                 } else {
                     serverYGround = false;
@@ -182,8 +191,13 @@ public class MovementProcessor extends Processor {
 
                 if (wrappedInFlyingPacket.isPos()) {
 
-                    user.setLastLastLocation(user.getLastLocation());
-                    user.setLastLocation(user.getCurrentLocation());
+                    if (user.getLastLocation() != null) {
+                        user.setLastLastLocation(user.getLastLocation());
+                    }
+
+                    if (user.getCurrentLocation() != null) {
+                        user.setLastLocation(user.getCurrentLocation());
+                    }
 
                     user.setCurrentLocation(new PlayerLocation(user.getPlayer().getWorld(), x, y, z,
                             yaw, pitch, ground, System.currentTimeMillis()));

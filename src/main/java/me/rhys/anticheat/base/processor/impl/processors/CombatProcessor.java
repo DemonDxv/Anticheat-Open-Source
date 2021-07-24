@@ -187,7 +187,7 @@ public class CombatProcessor extends Processor {
 
                 if (transaction.getAction() == idVel) {
                     velocityH = Math.hypot(velocity.getX(), velocity.getZ());
-                    velocityV = Math.pow(velocity.getY() + 2.0, 2.0) * 5.0;
+                    velocityV = velocity.getY();
 
                     velocityTicks = 0;
                 }

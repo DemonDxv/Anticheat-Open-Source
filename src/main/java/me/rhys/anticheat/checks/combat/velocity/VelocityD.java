@@ -37,7 +37,7 @@ public class VelocityD extends Check {
                 if (velocityTicks <= 20) {
 
                     if (tickChange > 4) {
-                        if (threshold++ > 12) {
+                        if (threshold++ > 6) {
                             flag(user);
                         }
                     } else {
