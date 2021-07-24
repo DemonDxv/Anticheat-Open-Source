@@ -11,10 +11,7 @@ import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockPlacePacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.util.EventTimer;
 import me.rhys.anticheat.util.MathUtil;
-import me.rhys.anticheat.util.box.ReflectionUtil;
-import me.rhys.anticheat.util.box.reflection.Reflection;
-import org.bukkit.Bukkit;
-import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 
 @ProcessorInformation(name = "Prediction")
 @Getter
@@ -36,6 +33,7 @@ public class PredictionProcessor extends Processor {
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
 
+
                 if (user.getMovementProcessor().isLastLastGround()) {
                     blockFriction = 0.91F * 0.6F;
 
@@ -53,9 +51,12 @@ public class PredictionProcessor extends Processor {
                         blockFriction = (0.91F * 0.8F) * 0.98F;
                     }
 
+
                 } else {
                     blockFriction = 0.91F;
                 }
+
+
 
                 if (dropItem) {
                     useSword = false;
@@ -118,6 +119,10 @@ public class PredictionProcessor extends Processor {
 
                 if (user.getBlockData().carpetTicks > 0) {
                     prediction += 0.1F;
+                }
+
+                if (user.getBlockData().nearWater) {
+                    prediction += 0.2f;
                 }
 
                 double totalPredictedSpeed = deltaXZ - prediction;

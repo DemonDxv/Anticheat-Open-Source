@@ -12,54 +12,46 @@ import org.bukkit.Bukkit;
 @CheckInformation(checkName = "AimAssist", checkType = "E", lagBack = false, punishmentVL = 25, canPunish = false)
 public class AimAssistE extends Check {
 
-    private double offset = Math.pow(2.0, 24.0);
+    private double threshold;
 
-    private double mouseX, lastDeltaYaw, yawGCD;
-
-    /**
-     * This check is experimental so it may false or not work.
-     */
+    private float lastPitchDifference;
+    private float lastYawDifference;
 
     @Override
     public void onPacket(PacketEvent event) {
         User user = event.getUser();
 
-        switch (event.getType()) {
+        if (event.getType().equalsIgnoreCase(Packet.Client.USE_ENTITY)) {
+            WrappedInUseEntityPacket useEntityPacket = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
 
-            case Packet.Client.USE_ENTITY: {
-                WrappedInUseEntityPacket useEntityPacket = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
+            if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
 
-                if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
+                float pitchDifference = Math.abs(user.getCurrentLocation().getPitch()
+                        - user.getLastLocation().getPitch());
 
-                    float yawDifference = MathUtil.wrapAngleTo180_float(Math.abs(user.getCurrentLocation().getYaw()
-                            - user.getLastLocation().getYaw()));
-
-                    if (yawDifference > 99.99 && user.getMovementProcessor().getDeltaXZ() > 0.005) {
-                        if (yawDifference != 360) {
-                            flag(user, "Head Snapping", ""+yawDifference);
-                        }
-                    }
-                }
-                break;
-            }
-
-            case Packet.Client.FLYING:
-            case Packet.Client.LOOK:
-            case Packet.Client.POSITION_LOOK:
-            case Packet.Client.POSITION: {
-
-      /*          float yawDifference = Math.abs(user.getCurrentLocation().getYaw()
+                float yawDifference = Math.abs(user.getCurrentLocation().getYaw()
                         - user.getLastLocation().getYaw());
 
-                yawGCD = MathUtil.gcd((long) (yawDifference * offset), (long) (lastDeltaYaw * offset));
-                double yawGcd = yawGCD / offset;
-                mouseX = (int) (Math.abs((yawDifference)) / yawGcd);
+                float yawAccel = Math.abs(pitchDifference - lastPitchDifference);
+                float pitchAccel = Math.abs(yawDifference - lastYawDifference);
 
-                lastDeltaYaw = yawDifference; */
+                long gcd = MathUtil.gcd((long) pitchDifference, (long) lastPitchDifference);
 
-                break;
+                if (yawDifference > 2.0 && yawAccel > 2.0F && pitchAccel > 2.0F && pitchDifference > 0.009f) {
+                    if (gcd < 131072L && gcd > 0.0 && pitchAccel < 10) {
+                        if (threshold++ > 12) {
+                            flag(user, "GCD [2]");
+                        }
+                    } else {
+                        threshold -= Math.min(threshold, 1);
+                    }
+                } else {
+                    threshold -= Math.min(threshold, 1);
+                }
+
+                lastYawDifference = yawDifference;
+                lastPitchDifference = pitchDifference;
             }
-
         }
     }
 }

@@ -9,7 +9,9 @@ public class ConfigLoader {
         Anticheat.getInstance().saveConfig();
 
         Anticheat.getInstance().getConfigValues().setPrefix(this.convertColor(Anticheat.getInstance().getConfig()
-                .getString("Prefix")));
+                .getString("Alert.Prefix")));
+        Anticheat.getInstance().getConfigValues().setAlertsMessage(this.convertColor(Anticheat.getInstance().getConfig()
+                .getString("Alert.Alert-Message")));
         Anticheat.getInstance().getConfigValues().setLagBack(Anticheat.getInstance().getConfig()
                 .getBoolean("Punishment.LagBack"));
         Anticheat.getInstance().getConfigValues().setPunish(Anticheat.getInstance().getConfig()

@@ -24,7 +24,7 @@ public class BlockChecker {
         this.user = user;
     }
 
-    private boolean skull, carpet, cake, onGround, nearLiquid, nearIce, climbable, slime, piston, snow, fence, bed,
+    private boolean lillyPad, skull, carpet, cake, onGround, nearLava, nearWater, nearIce, climbable, slime, piston, snow, fence, bed,
             stair, slab, movingUp, underBlock, web, shulker, insideBlock, collideHorizontal;
 
     public void processBlocks() {
@@ -40,7 +40,8 @@ public class BlockChecker {
                 (float) this.user.getCurrentLocation().getZ()).expand(.3, .0, .3)
                 .addXYZ(0, .4, 0).getCollidedBlocks(this.user.getPlayer())
                 .stream().filter(CollideEntry::isChunkLoaded)
-                .anyMatch(collideEntry -> collideEntry.getBlock().getType().isSolid());
+                .anyMatch(collideEntry -> (!collideEntry.getBlock().isLiquid()
+                        && collideEntry.getBlock().getType().isBlock()));
 
 
         this.collideHorizontal = new BoundingBox(
@@ -53,6 +54,28 @@ public class BlockChecker {
                 .addXYZ(0.6, 0, 0.6).getCollidedBlocks(this.user.getPlayer())
                 .stream().filter(CollideEntry::isChunkLoaded)
                 .anyMatch(collideEntry -> collideEntry.getBlock().getType().isSolid());
+
+        this.nearWater = new BoundingBox(
+                (float) this.user.getCurrentLocation().getX(),
+                (float) this.user.getPlayer().getEyeLocation().getY(),
+                (float) this.user.getCurrentLocation().getZ(),
+                (float) this.user.getCurrentLocation().getX(),
+                (float) this.user.getPlayer().getEyeLocation().getY(),
+                (float) this.user.getCurrentLocation().getZ()).expand(.0, .0, .0)
+                .addXYZ(0, -0.3, 0).getCollidedBlocks(this.user.getPlayer())
+                .stream().filter(CollideEntry::isChunkLoaded)
+                .anyMatch(collideEntry -> collideEntry.getBlock().isLiquid());
+
+        this.nearLava = new BoundingBox(
+                (float) this.user.getCurrentLocation().getX(),
+                (float) this.user.getPlayer().getEyeLocation().getY(),
+                (float) this.user.getCurrentLocation().getZ(),
+                (float) this.user.getCurrentLocation().getX(),
+                (float) this.user.getPlayer().getEyeLocation().getY(),
+                (float) this.user.getCurrentLocation().getZ()).expand(.0, .0, .0)
+                .addXYZ(0, -0.3, 0).getCollidedBlocks(this.user.getPlayer())
+                .stream().filter(CollideEntry::isChunkLoaded)
+                .anyMatch(collideEntry -> collideEntry.getBlock().isLiquid());
 
 
         collidedBlocks.stream().filter(CollideEntry::isChunkLoaded).forEach(collideEntry -> {
@@ -67,20 +90,30 @@ public class BlockChecker {
                 }
             }
 
+
             Block block = collideEntry.getBlock();
 
-
             switch (block.getType()) {
-                case WATER:
-                case STATIONARY_WATER:
                 case STATIONARY_LAVA:
                 case LAVA: {
-                    this.nearLiquid = true;
+                 //   this.nearLava = true;
+                    break;
+                }
+
+                case WATER:
+                case STATIONARY_WATER: {
+                    if (collideEntry.getBoundingBox().intersectsWithBox(user.getBoundingBox()) && block.isLiquid()) {
+                     //   this.nearWater = true;
+                    }
                     break;
                 }
 
                 case SKULL: {
                     skull = true;
+                }
+
+                case WATER_LILY: {
+                    lillyPad = true;
                 }
 
                 case CARPET: {

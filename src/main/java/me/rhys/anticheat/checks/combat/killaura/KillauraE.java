@@ -7,7 +7,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 
-@CheckInformation(checkName = "Killaura", checkType = "E", lagBack = false, description = "Check if player attacks while dead", punishmentVL = 5)
+@CheckInformation(checkName = "Killaura", checkType = "E", lagBack = false, description = "Check if player attacks while dead", punishmentVL = 2)
 public class KillauraE extends Check {
 
     private double threshold;

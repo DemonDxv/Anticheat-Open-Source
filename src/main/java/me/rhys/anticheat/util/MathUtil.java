@@ -3,9 +3,11 @@ package me.rhys.anticheat.util;
 import com.google.common.util.concurrent.AtomicDouble;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.util.box.BoundingBox;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -112,7 +114,7 @@ public class MathUtil {
         return 0;
     }
 
-    public static double gcd(double a, double b) {
+   /* public static double gcd(double a, double b) {
         if (a < b) {
             return gcd(b, a);
         } else if (Math.abs(b) < 0.001) {
@@ -120,7 +122,7 @@ public class MathUtil {
         } else {
             return gcd(b, a - Math.floor(a / b) * b);
         }
-    }
+    }*/
 
     public static double getAverage(Collection<? extends Number> values) {
         return values.stream()
@@ -215,13 +217,14 @@ public class MathUtil {
         moveS *= 0.98F;
         moveF *= 0.98F;
 
-        float strafe = moveS, forward = moveF;
+        float strafe = 0.98F, forward = 0.98F;
         float f = strafe * strafe + forward * forward;
 
         float friction;
 
         float var3 = (0.6F * 0.91F);
         float getAIMoveSpeed = 0.13000001F;
+
 
         if (user.getPotionProcessor().getSpeedTicks() > 0) {
             switch (MathUtil.getPotionEffectLevel(user.getPlayer(), PotionEffectType.SPEED)) {

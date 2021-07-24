@@ -34,6 +34,7 @@ public class FlightC extends Check {
                         || user.getBlockData().webTicks > 0
                         || user.getBlockData().cakeTicks > 0
                         || user.getCombatProcessor().getVelocityTicks() <= 20
+                        || user.getBlockData().lavaTicks > 0
                         || user.getTick() < 60) {
                     return;
                 }

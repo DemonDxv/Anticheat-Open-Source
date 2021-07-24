@@ -36,21 +36,24 @@ public class FlightB extends Check {
                         || user.getBlockData().climbableTicks > 0
                         || user.getCombatProcessor().getVelocityTicks() <= 20
                         || user.getBlockData().liquidTicks > 0
+                        || user.getBlockData().lavaTicks > 0
+                        || user.getBlockData().lillyPad
+                        || user.getBlockData().carpet
+                        || user.getBlockData().snow
                         || user.getTick() < 60) {
                     return;
                 }
 
 
-                boolean ground = user.getMovementProcessor().isOnGround(),
-                        lGround = user.getMovementProcessor().isLastGround();
+                boolean ground = user.getMovementProcessor().isOnGround();
 
                 boolean serverPositionGround = user.getMovementProcessor().isServerYGround();
 
-                if (ground && lGround && serverPositionGround
+                if (ground && serverPositionGround
                         && !user.getBlockData().onGround
                         && !user.getBlockData().lastOnGround) {
 
-                    Location groundLocation = MathUtil.getGroundLocation(user);
+                    Location groundLocation = user.getMovementProcessor().getLastGroundLocation();
 
                     user.getPlayer().teleport(groundLocation,
                             PlayerTeleportEvent.TeleportCause.PLUGIN);

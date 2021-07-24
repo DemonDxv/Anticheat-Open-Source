@@ -32,7 +32,8 @@ public class KillauraA extends Check {
                 if (attack.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
 
                     if (user.shouldCancel()
-                            || user.getConnectionProcessor().isLagging()
+                            || user.getConnectionProcessor().getFlyingTick() > 1
+                            || user.getConnectionProcessor().getDropTransTime() > 50L
                             || user.getTick() < 60) {
 
                         threshold = 0;

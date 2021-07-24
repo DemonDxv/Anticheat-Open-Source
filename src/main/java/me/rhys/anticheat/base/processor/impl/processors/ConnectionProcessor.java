@@ -23,6 +23,7 @@ public class ConnectionProcessor extends Processor {
     private int ping, transPing, lastTransPing, dropTransTime;
     private int clientTick, flyingTick;
     private boolean isLagging = false;
+    private int dropTick;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -53,13 +54,10 @@ public class ConnectionProcessor extends Processor {
                     .get(time));
             this.dropTransTime = Math.abs(transPing - lastTransPing);
             this.sentTransactions.put(time, System.currentTimeMillis());
-            this.clientTick = (int) Math.ceil(this.ping / 50.0);
+            this.clientTick = (int) Math.ceil(this.transPing / 50.0);
 
             this.flyingTick = 0;
-
-            if (dropTransTime > 1000 && user.getTick() > 60) {
-                this.isLagging = true;
-            }
+            this.dropTick++;
 
             user.getCheckManager().getCheckList().forEach(check -> check.onConnection(user));
         }
@@ -71,10 +69,6 @@ public class ConnectionProcessor extends Processor {
                     .get(time));
             this.sentKeepAlives.put(time, System.currentTimeMillis());
             this.clientTick = (int) Math.ceil(this.ping / 50.0);
-
-            if (ping >= 800 && user.getTick() > 60) {
-                this.isLagging = true;
-            }
 
             user.getCheckManager().getCheckList().forEach(check -> check.onConnection(user));
         }

@@ -24,6 +24,12 @@ public class BadPacketsB extends Check {
 
                 WrappedInFlyingPacket flyingPacket = new WrappedInFlyingPacket(event.getPacket(), user.getPlayer());
 
+                if (user.getConnectionProcessor().getDropTransTime() > 100
+                        || user.getConnectionProcessor().getFlyingTick() > 1) {
+
+                    streaks = 0;
+                }
+
                 if (flyingPacket.isPos() || user.getPlayer().isInsideVehicle()) {
                     streaks = 0;
                 } else if (streaks++ > 20) {

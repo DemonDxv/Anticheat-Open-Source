@@ -11,6 +11,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.NMSObject;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
+import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInTransactionPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.tinyprotocol.packet.out.*;
 import me.rhys.anticheat.util.EventTimer;
@@ -176,8 +177,8 @@ public class CombatProcessor extends Processor {
                 break;
             }
 
-            case Packet.Server.TRANSACTION: {
-                WrappedOutTransaction transaction = new WrappedOutTransaction(event.getPacket(),
+            case Packet.Client.TRANSACTION: {
+                WrappedInTransactionPacket transaction = new WrappedInTransactionPacket(event.getPacket(),
                         event.getUser().getPlayer());
 
                 short idRel = relMoveID;

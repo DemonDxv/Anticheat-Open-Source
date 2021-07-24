@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter @Setter
 public class ConfigValues {
-    private boolean lagBack, punish, announce, mongoEnabled;
-    private String punishCommand, prefix, announceMessage, hostName, database, logs = "logs", mUsername, mPassword;
+    private boolean lagBack, punish, announce, debugMessage, mongoEnabled;
+    private String punishCommand, prefix, alertsMessage, announceMessage, hostName, database, logs = "logs", mUsername, mPassword;
     private int mongoPort;
 }

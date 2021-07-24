@@ -9,7 +9,7 @@ import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.util.Verbose;
 import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "Killaura", checkType = "F", lagBack = false, description = "Check if player attacks while dead", punishmentVL = 5)
+@CheckInformation(checkName = "Killaura", checkType = "F", lagBack = false, description = "Hiss miss ratio", punishmentVL = 25)
 public class KillauraF extends Check {
 
     private double swings, attacks;
@@ -29,7 +29,7 @@ public class KillauraF extends Check {
 
                 if (attack.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
 
-                    if ((user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw()) > 2.5F) {
+                    if ((user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw()) > 1.0F) {
                         ++attacks;
                     }
 
@@ -44,15 +44,25 @@ public class KillauraF extends Check {
                     return;
                 }
 
+                if (swings > 100) {
+                    swings = attacks = 0;
+                }
+
                 ++swings;
 
                 double ratio = (attacks / swings) * 100;
 
-                if (ratio > 90 && attacks > 10 && swings > 10) {
-                    if (threshold.flag(20, 1000L)) {
-                  //      flag(user, "Aim is to accurate [H:M]");
+                if (ratio < 50) {
+                    ratio = 50;
+                }
+
+                if (ratio > 75 && attacks > 5 && swings > 5) {
+                    if (threshold.flag(4, 3000L)) {
+                        flag(user, "Aim is to accurate [H:M]");
                     }
                 }
+
+                break;
             }
         }
     }

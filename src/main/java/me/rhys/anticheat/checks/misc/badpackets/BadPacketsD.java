@@ -8,7 +8,7 @@ import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInHeldItemSlotPacket;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutHeldItemSlot;
 
-@CheckInformation(checkName = "BadPackets", checkType = "D", lagBack = false, punishmentVL = 2)
+@CheckInformation(checkName = "BadPackets", checkType = "D", lagBack = false, canPunish = false)
 public class BadPacketsD extends Check {
 
     private int lastSlot;
@@ -25,22 +25,7 @@ public class BadPacketsD extends Check {
                 int slot = heldItemSlot.getSlot();
 
                 if (slot == lastSlot) {
-                 ///   flag(user);
-                }
-
-                lastSlot = slot;
-                break;
-            }
-
-            case Packet.Server.HELD_ITEM: {
-                User user = event.getUser();
-
-                WrappedOutHeldItemSlot heldItemSlot = new WrappedOutHeldItemSlot(event.getPacket(), user.getPlayer());
-
-                int slot = heldItemSlot.getSlot();
-
-                if (slot == lastSlot) {
-             //       flag(user);
+                    flag(user, "Invalid slot packet");
                 }
 
                 lastSlot = slot;

@@ -4,9 +4,9 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.util.EventTimer;
 
 public class BlockData {
-    public boolean skull, cake, carpet, collidesHorizontal, onGround, lastOnGround, nearLiquid, nearIce, climbable, slime, piston, snow, fence,
+    public boolean lillyPad, skull, cake, carpet, collidesHorizontal, onGround, lastOnGround, nearWater, nearLava, nearIce, climbable, slime, piston, snow, fence,
             bed, stair, slab, underBlock, web, shulker, insideBlock;
-    public int pistonTicks, skullTicks, cakeTicks, carpetTicks, liquidTicks, climbableTicks, iceTicks, slimeTicks, snowTicks, fenceTicks, bedTicks,
+    public int lillyPadTicks, lavaTicks, waterTicks, pistonTicks, skullTicks, cakeTicks, carpetTicks, liquidTicks, climbableTicks, iceTicks, slimeTicks, snowTicks, fenceTicks, bedTicks,
             stairTicks, slabTicks, underBlockTicks, webTicks, shulkerTicks;
     public double lastBlockY;
     public EventTimer movingUpTimer, climbableTimer, iceTimer, slimeTimer, stairSlabTimer, blockAboveTimer;

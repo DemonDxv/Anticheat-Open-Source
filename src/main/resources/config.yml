@@ -1,5 +1,7 @@
-# %PLAYER% = the player cheating. %PREFIX% = the prefix of the anticheat you set below.
-Prefix: '&7[&cAnticheat&7]&r'
+# %PLAYER% = the player cheating. %PREFIX% = the prefix of the anticheat you set below. %DEBUG% - dev/check info
+Alert:
+  Prefix: '&8[&cAnticheat&8]&r'
+  Alert-Message: '%PREFIX% &7%PLAYER% flagged &c%CHECK% &8(&c%CHECKTYPE%&8) &8[&c%VL%&8] %DEBUG%'
 Punishment:
   LagBack: false
   Command:

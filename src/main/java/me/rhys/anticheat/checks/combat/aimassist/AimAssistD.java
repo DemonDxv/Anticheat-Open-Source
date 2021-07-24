@@ -14,12 +14,8 @@ public class AimAssistD extends Check {
 
     private double threshold;
 
-    private Float lastPitchDifference;
-    private Float lastYawDifference;
-
-    /**
-     * Credits to Sim0n as this is his detection.
-     */
+    private float lastPitchDifference;
+    private float lastYawDifference;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -36,24 +32,21 @@ public class AimAssistD extends Check {
                 float yawDifference = Math.abs(user.getCurrentLocation().getYaw()
                         - user.getLastLocation().getYaw());
 
-                if (lastYawDifference != null && lastPitchDifference != null) {
+                float yawAccel = Math.abs(pitchDifference - lastPitchDifference);
+                float pitchAccel = Math.abs(yawDifference - lastYawDifference);
 
-                    float yawAccel = Math.abs(pitchDifference - lastPitchDifference);
-                    float pitchAccel = Math.abs(yawDifference - lastYawDifference);
+                long gcd = MathUtil.gcd((long) pitchDifference, (long) lastPitchDifference);
 
-                    if (yawDifference > 3.0F && pitchDifference <= 10.0F && yawAccel > 2F && pitchAccel > 2F
-                            && pitchDifference < yawDifference) {
-
-                        double pitchGCD = MathUtil.gcd(pitchDifference, lastPitchDifference);
-
-                        if (pitchGCD < 0.009) {
-                            if (threshold++ > 5) {
-                                flag(user, "Not following proper GCD");
-                            }
-                        } else {
-                            threshold -= Math.min(threshold, 0.75f);
+                if (yawDifference > 2.0 && yawAccel > 2.0F && pitchAccel > 2.0F && pitchDifference > 0.009f) {
+                    if (gcd < 131072L && gcd > 25) {
+                        if (threshold++ > 4) {
+                            flag(user, "GCD");
                         }
+                    } else {
+                        threshold -= Math.min(threshold, 0.6);
                     }
+                } else {
+                    threshold -= Math.min(threshold, 0.25);
                 }
 
                 lastYawDifference = yawDifference;

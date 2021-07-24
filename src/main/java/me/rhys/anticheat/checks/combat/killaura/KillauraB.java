@@ -31,11 +31,16 @@ public class KillauraB extends Check {
             case Packet.Client.ARM_ANIMATION: {
 
                 if (user.shouldCancel()
-                        || user.getConnectionProcessor().isLagging()
+                        || user.getConnectionProcessor().getFlyingTick() > 1
+                        || user.getConnectionProcessor().getDropTransTime() > 50L
                         || user.getTick() < 60) {
 
                     threshold = 0;
                     return;
+                }
+
+                if (user.getConnectionProcessor().getFlyingTick() > 3) {
+                    threshold = 0;
                 }
 
                 if ((System.currentTimeMillis() - lastFlyingPacket) <= 5L) {

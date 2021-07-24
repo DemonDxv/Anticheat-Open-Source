@@ -55,15 +55,16 @@ public class Check implements CallableEvent, Cloneable {
             punishPlayer(user);
         }
 
-        String alert = Anticheat.getInstance().getConfigValues().getPrefix()
-                + " " + ChatColor.RED + user.getPlayer().getName() +
-                ChatColor.GRAY + " Failed " + ChatColor.RED + this.checkName
-                + ChatColor.DARK_GRAY + " (" + ChatColor.RED + this.checkType + ChatColor.DARK_GRAY + ")"
-                + ChatColor.DARK_GRAY + " " + ChatColor.RED + "x" + (this.violation++)
-                + (data.length > 0 ? ChatColor.GRAY + " ["
-                + ChatColor.GRAY + stringBuilder.toString().trim() + ChatColor.GRAY + "]" : "");
+        String alert = Anticheat.getInstance().getConfigValues().getAlertsMessage()
+                .replace("%PLAYER%", user.getPlayer().getName())
+                .replace("%PREFIX%", Anticheat.getInstance().getConfigValues().getPrefix())
+                .replace("%CHECK%", checkName)
+                .replace("%CHECKTYPE%", checkType)
+                .replace("%VL%", String.valueOf(violation++))
+                .replace("%DEBUG%", (data.length > 0 ? ChatColor.GRAY + " ["
+                        + ChatColor.GRAY + stringBuilder.toString().trim() + ChatColor.GRAY + "]" : ""));
 
-                 Bukkit.getServer().getOnlinePlayers().parallelStream().filter(player ->
+        Bukkit.getServer().getOnlinePlayers().parallelStream().filter(player ->
                        user.isAlerts() && (player.hasPermission("anticheat.alerts") ||
                              player.isOp())).forEach(player -> player.sendMessage(alert));
 

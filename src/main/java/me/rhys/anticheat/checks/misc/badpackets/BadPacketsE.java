@@ -6,6 +6,7 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
+import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "BadPackets", checkType = "E", lagBack = false, punishmentVL = 10, canPunish = false)
 public class BadPacketsE extends Check {
@@ -21,13 +22,17 @@ public class BadPacketsE extends Check {
 
                 WrappedInBlockDigPacket digPacket = new WrappedInBlockDigPacket(event.getPacket(), user.getPlayer());
 
+                if (user.getConnectionProcessor().getFlyingTick() > 3) {
+                    threshold = 0;
+                }
+
                 if (digPacket.getAction() == WrappedInBlockDigPacket.EnumPlayerDigType.RELEASE_USE_ITEM) {
                     if ((System.currentTimeMillis() - lastFlying) < 5L) {
-                        if (++threshold > 4) {
+                        if (++threshold > 7) {
                             flag(user, "Digging Packet Sent Late");
                         }
                     } else {
-                        threshold -= Math.min(threshold, 0.75);
+                        threshold -= Math.min(threshold, 1);
                     }
 
                 }

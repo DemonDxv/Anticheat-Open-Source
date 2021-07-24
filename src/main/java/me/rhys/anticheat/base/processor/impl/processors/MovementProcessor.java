@@ -31,6 +31,7 @@ public class MovementProcessor extends Processor {
     private int groundTicks, airTicks, lagBackTicks, serverAirTicks, serverGroundTicks, ignoreServerPositionTicks;
     private double deltaY, lastDeltaY, deltaXZ, lastDeltaXZ, deltaX, deltaZ, serverPositionSpeed, serverPositionDeltaY;
     private PlayerLocation lastSlimeLocation;
+    private Location lastGroundLocation;
 
     private short respawnID = -69;
 
@@ -167,6 +168,11 @@ public class MovementProcessor extends Processor {
                     serverYGround = false;
                 }
 
+                if (serverYGround && onGround && lastGround
+                        && user.getBlockData().onGround && user.getBlockData().lastOnGround) {
+                    setLastGroundLocation(user.getPlayer().getLocation());
+                }
+
 
 
                 this.lastLastGround = this.lastGround;
@@ -211,7 +217,12 @@ public class MovementProcessor extends Processor {
 
                 this.processBlocks();
                 this.user.setTick(this.user.getTick() + 1);
-                this.user.getConnectionProcessor().setFlyingTick(this.user.getConnectionProcessor().getFlyingTick() + 1);
+
+                this.user.getConnectionProcessor()
+                        .setFlyingTick(this.user.getConnectionProcessor().getFlyingTick() + 1);
+
+                this.user.getConnectionProcessor()
+                        .setDropTick(0);
 
                 if (this.lagBackTicks-- > 0 && user.getTick() % 3 == 0) {
                     Location groundLocation = MathUtil.getGroundLocation(user);
@@ -265,11 +276,13 @@ public class MovementProcessor extends Processor {
 
         user.getBlockData().lastOnGround = user.getBlockData().onGround;
         user.getBlockData().skull = blockChecker.isSkull();
+        user.getBlockData().lillyPad = blockChecker.isLillyPad();
         user.getBlockData().onGround = blockChecker.isOnGround();
         user.getBlockData().collidesHorizontal = blockChecker.isCollideHorizontal();
         user.getBlockData().carpet = blockChecker.isCarpet();
         user.getBlockData().cake = blockChecker.isCake();
-        user.getBlockData().nearLiquid = blockChecker.isNearLiquid();
+        user.getBlockData().nearWater = blockChecker.isNearWater();
+        user.getBlockData().nearLava = blockChecker.isNearLava();
         user.getBlockData().climbable = blockChecker.isClimbable();
         user.getBlockData().nearIce = blockChecker.isNearIce();
         user.getBlockData().slime = blockChecker.isSlime();
@@ -426,10 +439,16 @@ public class MovementProcessor extends Processor {
             user.getBlockData().climbableTicks -= (user.getBlockData().climbableTicks > 0 ? 1 : 0);
         }
 
-        if (user.getBlockData().nearLiquid) {
-            user.getBlockData().liquidTicks += (user.getBlockData().liquidTicks < 20 ? 1 : 0);
+        if (user.getBlockData().nearWater) {
+            user.getBlockData().waterTicks += (user.getBlockData().waterTicks < 20 ? 1 : 0);
         } else {
-            user.getBlockData().liquidTicks -= (user.getBlockData().liquidTicks > 0 ? 1 : 0);
+            user.getBlockData().waterTicks -= (user.getBlockData().waterTicks > 0 ? 1 : 0);
+        }
+
+        if (user.getBlockData().nearLava) {
+            user.getBlockData().lavaTicks += (user.getBlockData().lavaTicks < 20 ? 1 : 0);
+        } else {
+            user.getBlockData().lavaTicks -= (user.getBlockData().lavaTicks > 0 ? 1 : 0);
         }
     }
 
