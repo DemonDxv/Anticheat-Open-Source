@@ -1,76 +1,66 @@
 package me.rhys.anticheat.checks.misc.timer;
 
-import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.check.api.Check;
 import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.concurrent.TimeUnit;
 
 @CheckInformation(checkName = "Timer", lagBack = false, punishmentVL = 15, description = "Detects 1.01% Timer Speed")
 public class TimerA extends Check {
 
-    private double balance = -100L, threshold;
+    private final long maxDelay = 50000000L;
+    private final long maxValue = 45000000L;
 
-    private long lastTime;
+    private long lastPacket = -1337L;
+    private long balance;
 
     @Override
     public void onPacket(PacketEvent event) {
+        User user = event.getUser();
+
+        //TODO: add server lag checking
+
         switch (event.getType()) {
+            case Packet.Server.POSITION: {
+
+                //We need to deduct the balance on teleport so we don't false flag, and also add the ping-tick
+
+                int transactionPing = user.getConnectionProcessor().getTransPing();
+                int pingTick = (int) Math.ceil(transactionPing / 50.0);
+
+                //Prevent ping-spoof exploits
+                if (pingTick > 10) pingTick = 5;
+
+                //Add + 10 to be safe on teleport, possibly can change to a lower value other than 250L
+                this.balance -= TimeUnit.MILLISECONDS.toNanos(250L + (pingTick + 10));
+                break;
+            }
+
             case Packet.Client.FLYING:
             case Packet.Client.LOOK:
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
+                long now = System.nanoTime();
+                long delta = (this.maxDelay - (now - this.lastPacket));
 
-                User user = event.getUser();
+                if (user.getTick() > 60 && this.lastPacket > -1337L) {
+                    this.balance += delta;
 
-                if (user.shouldCancel()
-                        || user.getPlayer().isDead()
-                        || user.getTick() < 60
-                        || user.getConnectionProcessor().getFlyingTick() > 1
-                        || user.getConnectionProcessor().getDropTransTime() > 100L
-                        || user.getLastTeleportTimer().hasNotPassed(20)) {
-                    threshold = 0;
-                    return;
-                }
+                    if (this.balance > this.maxValue) {
+                        this.flag(user,
+                                "balance=" + this.balance,
+                                "packetDelta=" + delta
+                        );
 
-
-                long currentTime = System.nanoTime();
-
-                long lastTime = this.lastTime != 0 ? this.lastTime : currentTime - 50;
-
-                long balanceRate = currentTime - lastTime;
-
-                balance += TimeUnit.MILLISECONDS.toNanos(50L) - balanceRate;
-
-                if (user.getActionProcessor().getServerPositionTimer().hasNotPassed(
-                        (user.getConnectionProcessor().getClientTick() * 2))) {
-                    balance = -50.0;
-                }
-
-                if (balance < -100.0) {
-                    balance = -100.0;
-                }
-
-                if (balance > TimeUnit.MILLISECONDS.toNanos(45L)) {
-
-                    if (threshold++ > 6) {
-                        flag(user, "Speeding up game", ""
-                                +user.getConnectionProcessor().getFlyingTick() + " "
-                                +user.getConnectionProcessor().getDropTick());
+                        this.balance = 0;
                     }
-
-                    balance = 0L;
-                } else {
-                    threshold -= Math.min(threshold, 0.25f);
                 }
 
-                this.lastTime = currentTime;
-
+                this.lastPacket = now;
                 break;
             }
         }
