@@ -64,7 +64,7 @@ public class FlightA extends Check {
 
                 double max = 0.005;
 
-                if (!user.getMovementProcessor().isOnGround()) {
+                if (!user.getMovementProcessor().isOnGround() && !user.getMovementProcessor().isLastGround()) {
                     if (totalUp > max && Math.abs(prediction) > max) {
                         if (threshold++ > 1) {
                             flag(user, "Invalid motion prediction");

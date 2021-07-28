@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
  */
 public class PastLocation {
     private List<PlayerLocation> previousLocations = new CopyOnWriteArrayList<>();
+    private List<CustomLocation> previousLocations2 = new CopyOnWriteArrayList<>();
 
     public PlayerLocation getPreviousLocation(long time) {
         return previousLocations.stream().min(Comparator.comparingLong(loc -> Math.abs(loc.getTimeStamp() - (System.currentTimeMillis() - time)))).orElse(previousLocations.get(previousLocations.size() - 1));
@@ -36,6 +37,21 @@ public class PastLocation {
                 .stream()
                 .filter(loc -> time - loc.getTimeStamp() > 0 && time - loc.getTimeStamp() < ping + delta)
                 .collect(Collectors.toList());
+    }
+
+    public List<CustomLocation> getEstimatedLocation2(long time, long ping, long delta) {
+        return this.previousLocations2
+                .stream()
+                .filter(loc -> time - loc.getTimestamp() > 0 && time - loc.getTimestamp() < ping + delta)
+                .collect(Collectors.toList());
+    }
+
+    public void addLocation2(Location location) {
+        if (previousLocations2.size() >= 8) {
+            previousLocations2.remove(0);
+        }
+
+        previousLocations2.add(new CustomLocation(location));
     }
 
     public void addLocation(Location location) {

@@ -8,20 +8,14 @@ import me.rhys.anticheat.base.processor.impl.ProcessorManager;
 import me.rhys.anticheat.base.processor.impl.processors.*;
 import me.rhys.anticheat.base.user.objects.BlockData;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
-import me.rhys.anticheat.util.EventTimer;
-import me.rhys.anticheat.util.PastLocation;
-import me.rhys.anticheat.util.TPSUtil;
+import me.rhys.anticheat.util.*;
 import me.rhys.anticheat.util.evicting.EvictingList;
 import me.rhys.anticheat.util.evicting.EvictingMap;
-import me.rhys.anticheat.util.PlayerLocation;
 import me.rhys.anticheat.util.box.BoundingBox;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
-import java.util.Deque;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -49,6 +43,7 @@ public class User {
     private int tick, vehicleTicks;
 
     public PastLocation previousLocations = new PastLocation();
+    private Deque<CustomLocation> customLocations = new LinkedList<>();
 
     private boolean chunkLoaded = false, alerts = true;
 
@@ -69,6 +64,10 @@ public class User {
         this.processorManager.setup();
         this.setupProcessors();
         this.blockData.setupTimers(this);
+
+        if (customLocations.size() >= 8) {
+            customLocations.removeLast();
+        }
 
     }
 

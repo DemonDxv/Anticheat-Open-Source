@@ -5,9 +5,10 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
+import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "Velocity", canPunish = false, description = "0% Vertical Velocity")
-public class VelocityA extends Check {
+@CheckInformation(checkName = "Velocity",  checkType = "F", canPunish = false, description = "More Vertical Velocity [2]")
+public class VelocityF extends Check {
 
     private double threshold;
 
@@ -20,34 +21,32 @@ public class VelocityA extends Check {
             case Packet.Client.POSITION: {
                 User user = event.getUser();
 
-                if (user.getCurrentLocation().getY() > user.getLastLocation().getY()
-                        || user.getLastFallDamageTimer().hasNotPassed(20)
+                if (user.getLastFallDamageTimer().hasNotPassed(20)
                         || user.getVehicleTicks() > 0
-                        || user.getTick() < 60
+                        || user.getBlockData().underBlockTicks > 0
                         || user.getLastFireTickTimer().hasNotPassed(20)
                         || user.getBlockData().collidesHorizontal
+                        || user.getTick() < 60
                         || user.shouldCancel()) {
                     threshold = 0;
                     return;
                 }
 
-
                 double deltaY = user.getMovementProcessor().getDeltaY();
 
                 double velocity = user.getCombatProcessor().getVelocityV();
 
-                if (user.getLastAttackByEntityTimer().hasNotPassed(20)
-                        || user.getLastShotByArrowTimer().hasNotPassed(20)) {
+                velocity -= 0.08D;
 
-                    if (user.getCombatProcessor().getVelocityTicks() == 1
-                            && user.getMovementProcessor().isOnGround() && user.getMovementProcessor().isLastGround()) {
+                velocity *= 0.98F;
 
-                        if ((deltaY / velocity) == 0.0) {
-                            if (threshold++ > 2) {
-                                flag(user, "No Vertical Knockback");
-                            }
-                        } else {
-                            threshold -= Math.min(threshold, 0.0626f);
+
+                double ratio = deltaY / velocity;
+
+                if (user.getCombatProcessor().getVelocityTicks() == 2) {
+                    if (deltaY < 0.42f && velocity < 2 && velocity > 0.2) {
+                        if (ratio > 1.00001 && ratio < 2.0) {
+                            flag(user, "Vertical velocity to high " + ratio);
                         }
                     }
                 }

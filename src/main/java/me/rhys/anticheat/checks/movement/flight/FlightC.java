@@ -45,8 +45,14 @@ public class FlightC extends Check {
 
                 if (!user.getBlockData().onGround && !user.getMovementProcessor().isServerYGround()) {
                     if (ground) {
-                        flag(user, "Spoofing Ground");
+                        if (threshold++ > 4.2) {
+                            flag(user, "Spoofing Ground");
+                        }
+                    } else {
+                        threshold -= Math.min(threshold, 0.001);
                     }
+                } else {
+                    threshold -= Math.min(threshold, 0.005);
                 }
             }
         }

@@ -8,7 +8,7 @@ import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.MathUtil;
 import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "Velocity", checkType = "D", lagBack = false, description = "Checks for canceled velocity transactions", canPunish = false)
+@CheckInformation(checkName = "Velocity", checkType = "D", canPunish = false, description = "Checks for canceled velocity transactions")
 public class VelocityD extends Check {
 
     private double threshold;
@@ -36,8 +36,8 @@ public class VelocityD extends Check {
 
                 if (velocityTicks <= 20) {
 
-                    if (tickChange > 4) {
-                        if (threshold++ > 6) {
+                    if (tickChange > 8) {
+                        if (threshold++ > 12) {
                             flag(user);
                         }
                     } else {

@@ -23,18 +23,8 @@ public class ConfigLoader {
         Anticheat.getInstance().getConfigValues().setAnnounceMessage(this.convertColor(Anticheat.getInstance().getConfig()
                 .getString("Punishment.Announce.Message")));
 
-        Anticheat.getInstance().getConfigValues().setMongoEnabled(Anticheat.getInstance().getConfig()
-                .getBoolean("Mongo.Enabled"));
-        Anticheat.getInstance().getConfigValues().setAnnounceMessage(this.convertColor(Anticheat.getInstance().getConfig()
-                .getString("Mongo.Hostname")));
-        Anticheat.getInstance().getConfigValues().setDatabase(this.convertColor(Anticheat.getInstance().getConfig()
-                .getString("Mongo.Database")));
-        Anticheat.getInstance().getConfigValues().setMUsername(this.convertColor(Anticheat.getInstance().getConfig()
-                .getString("Mongo.Username")));
-        Anticheat.getInstance().getConfigValues().setMPassword(this.convertColor(Anticheat.getInstance().getConfig()
-                .getString("Mongo.Password")));
-        Anticheat.getInstance().getConfigValues().setAnnounceMessage(this.convertColor(Anticheat.getInstance().getConfig()
-                .getString("Mongo.LogsFileName")));
+ //       Anticheat.getInstance().getConfigValues().setJudgementDay(Anticheat.getInstance().getConfig()
+//                .getBoolean("Banwave.Enabled"));
     }
 
     String convertColor(String in) {

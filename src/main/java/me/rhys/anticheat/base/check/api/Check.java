@@ -6,7 +6,6 @@ import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.event.CallableEvent;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
-import me.rhys.anticheat.mongo.LogInfo;
 import me.rhys.anticheat.util.TPSUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -21,7 +20,7 @@ import java.io.IOException;
 public class Check implements CallableEvent, Cloneable {
     public String checkName, checkType, description;
     public boolean enabled, punished, lagBack, canPunish;
-    public int violation, maxViolation;
+    private int violation, maxViolation;
 
 
     public void setup() {
@@ -60,9 +59,13 @@ public class Check implements CallableEvent, Cloneable {
                 .replace("%PREFIX%", Anticheat.getInstance().getConfigValues().getPrefix())
                 .replace("%CHECK%", checkName)
                 .replace("%CHECKTYPE%", checkType)
-                .replace("%VL%", String.valueOf(violation++))
+                .replace("%VL%", String.valueOf(violation))
                 .replace("%DEBUG%", (data.length > 0 ? ChatColor.GRAY + " ["
                         + ChatColor.GRAY + stringBuilder.toString().trim() + ChatColor.GRAY + "]" : ""));
+
+        if (isCanPunish()) {
+            violation++;
+        }
 
         Bukkit.getServer().getOnlinePlayers().parallelStream().filter(player ->
                        user.isAlerts() && (player.hasPermission("anticheat.alerts") ||
@@ -74,7 +77,7 @@ public class Check implements CallableEvent, Cloneable {
         }
 
 
-        LogInfo.getQueue().add(new LogInfo(user.getPlayer().getName(), checkName, checkType, violation));
+      //  LogInfo.getQueue().add(new LogInfo(user.getPlayer().getName(), checkName, checkType, violation));
     }
 
     @Override

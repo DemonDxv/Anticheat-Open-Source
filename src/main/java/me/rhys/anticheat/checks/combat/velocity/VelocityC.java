@@ -7,7 +7,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.MathUtil;
 
-@CheckInformation(checkName = "Velocity",  checkType = "C", lagBack = false, description = "99% Horizontal Velocity Check")
+@CheckInformation(checkName = "Velocity",  checkType = "C", canPunish = false, description = "99% Horizontal Velocity Detection")
 public class VelocityC extends Check {
 
     private double threshold;

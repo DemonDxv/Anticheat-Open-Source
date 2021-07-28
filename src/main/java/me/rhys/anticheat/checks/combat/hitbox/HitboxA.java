@@ -43,50 +43,6 @@ public class HitboxA extends Check {
             }
 
             case Packet.Client.USE_ENTITY: {
-                WrappedInUseEntityPacket attack = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
-
-                if (attack.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
-
-                    List<BoundingBox> boundingBoxList = new ArrayList<>();
-
-                    List<PlayerLocation> pastLocation = hitBoxPastLocations.getEstimatedLocation(
-                            user.getConnectionProcessor().getTransPing(),
-                            Math.abs(user.getConnectionProcessor().getDropTransTime()) + 200);
-
-                    if (pastLocation.size() > 0) {
-
-                        PlayerLocation location = user.getCurrentLocation().clone();
-                        LivingEntity livingEntity = (LivingEntity) attack.getEntity();
-
-                        pastLocation.forEach(loc1 -> {
-                            boundingBoxList.add(MathUtil.getHitbox(livingEntity, loc1, user));
-                        });
-
-                        location.setY(location.getY() +
-                                (user.getPlayer().isSneaking() ? 1.63f : user.getPlayer().getEyeHeight()));
-
-                        RayTrace trace = new RayTrace(location.toVector(),
-                                user.getPlayer().getEyeLocation().getDirection());
-
-                        boolean intersect = boundingBoxList.stream().noneMatch(box ->
-                                trace.intersects(box, box.getMinimum()
-                                        .distance(location.toVector()) + 1.0, 0.2));
-
-                        if (!intersect) {
-                            Bukkit.broadcastMessage("flag" + threshold);
-
-                            if (threshold++ > 8) {
-                                flag(user, "Hitboxing");
-                            }
-                        } else {
-                            threshold -= Math.min(threshold, 0.79f);
-                        }
-
-                        boundingBoxList.clear();
-                        pastLocation.clear();
-                    }
-                }
-                break;
             }
         }
     }

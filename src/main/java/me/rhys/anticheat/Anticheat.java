@@ -1,6 +1,7 @@
 package me.rhys.anticheat;
 
 import lombok.Getter;
+import me.rhys.anticheat.banwave.BanWaveManager;
 import me.rhys.anticheat.base.check.impl.CachedCheckManager;
 import me.rhys.anticheat.base.command.CommandManager;
 import me.rhys.anticheat.base.connection.KeepaliveHandler;
@@ -8,10 +9,8 @@ import me.rhys.anticheat.base.listener.BukkitListener;
 import me.rhys.anticheat.base.user.UserManager;
 import me.rhys.anticheat.config.ConfigLoader;
 import me.rhys.anticheat.config.ConfigValues;
-import me.rhys.anticheat.mongo.MongoManager;
 import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
-import me.rhys.anticheat.util.FileManager;
 import me.rhys.anticheat.util.TPSUtil;
 import me.rhys.anticheat.util.UpdateChecker;
 import me.rhys.anticheat.util.box.BlockBoxManager;
@@ -41,9 +40,7 @@ public class Anticheat extends JavaPlugin {
     private final ConfigLoader configLoader = new ConfigLoader();
     private final CachedCheckManager checkManager = new CachedCheckManager();
     private BlockBoxManager blockBoxManager;
-    private FileManager fileManager;
-
-    private MongoManager mongoManager;
+    private BanWaveManager banWaveManager;
 
     @Override
     public void onEnable() {
@@ -66,7 +63,6 @@ public class Anticheat extends JavaPlugin {
         this.commandManager = new CommandManager();
         this.blockBoxManager = new BlockBoxManager();
 
-        this.fileManager = new FileManager();
         getServer().getPluginManager().registerEvents(new BukkitListener(), this);
 
         getServer().getOnlinePlayers().forEach(player -> TinyProtocolHandler.getInstance().addChannel(player));
@@ -78,11 +74,7 @@ public class Anticheat extends JavaPlugin {
 
         Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new TPSUtil(), 100L, 1L);
 
-        if (configValues.isMongoEnabled()) {
-            mongoManager = new MongoManager();
-
-
-        }
+        banWaveManager = new BanWaveManager();
 
         new UpdateChecker(this, 93504).getVersion(version -> {
             if (getDescription().getVersion().equalsIgnoreCase(version)) {

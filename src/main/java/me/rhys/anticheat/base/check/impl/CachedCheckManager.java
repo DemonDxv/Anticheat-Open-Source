@@ -35,11 +35,15 @@ public class CachedCheckManager {
         this.checkList.add(new VelocityC());
         this.checkList.add(new VelocityD());
         this.checkList.add(new VelocityE());
+     //   this.checkList.add(new VelocityF());
+       // this.checkList.add(new VelocityG());
 
         this.checkList.add(new AutoClickerA());
         this.checkList.add(new AutoClickerB());
         this.checkList.add(new AutoClickerC());
         this.checkList.add(new AutoClickerD());
+        this.checkList.add(new AutoClickerE());
+
         this.checkList.add(new AimAssistA());
         this.checkList.add(new AimAssistB());
         this.checkList.add(new AimAssistC());
@@ -55,14 +59,15 @@ public class CachedCheckManager {
         this.checkList.add(new KillauraF());
         this.checkList.add(new KillauraG());
        // this.checkList.add(new HitboxA());
-        this.checkList.add(new ReachA());
-        this.checkList.add(new ReachB());
+  //      this.checkList.add(new ReachA());
+     ///   this.checkList.add(new ReachB());
         this.checkList.add(new TimerA());
      //   this.checkList.add(new TimerB());
         this.checkList.add(new FlightA());
         this.checkList.add(new FlightB());
         this.checkList.add(new FlightC());
         this.checkList.add(new FlightD());
+        this.checkList.add(new FlightE());
         this.checkList.add(new Speed());
         this.checkList.add(new StepA());
         this.checkList.add(new JesusA());
@@ -79,6 +84,7 @@ public class CachedCheckManager {
         this.checkList.add(new BadPacketsD());
         this.checkList.add(new BadPacketsE());
         this.checkList.add(new BadPacketsF());
+        this.checkList.add(new BadPacketsG());
 
         this.checkList.add(new InventoryA());
         this.checkList.add(new InventoryB());

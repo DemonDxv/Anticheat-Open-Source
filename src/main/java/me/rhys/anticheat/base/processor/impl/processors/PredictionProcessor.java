@@ -108,7 +108,7 @@ public class PredictionProcessor extends Processor {
                     prediction += .5;
                 }
 
-                if (user.getCombatProcessor().getVelocityTicks() <= 9) {
+                if (user.getCombatProcessor().getPreVelocityTimer().hasNotPassed(9)) {
                     prediction += user.getCombatProcessor().getVelocityH();
                 }
 

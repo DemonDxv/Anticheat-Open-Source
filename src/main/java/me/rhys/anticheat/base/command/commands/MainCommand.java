@@ -2,6 +2,7 @@ package me.rhys.anticheat.base.command.commands;
 
 import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.command.commands.sub.AlertsCommand;
+import me.rhys.anticheat.base.command.commands.sub.BanWaveCommand;
 import me.rhys.anticheat.base.command.commands.sub.ChecksCommand;
 import me.rhys.anticheat.base.command.commands.sub.ForceBanCommand;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -20,6 +21,7 @@ public class MainCommand extends BukkitCommand {
     private final AlertsCommand alertsCommand = new AlertsCommand();
     private final ChecksCommand checksCommand = new ChecksCommand();
     private final ForceBanCommand forceBanCommand = new ForceBanCommand();
+    private final BanWaveCommand banWaveCommand = new BanWaveCommand();
 
 
     public MainCommand(String name) {
@@ -67,6 +69,9 @@ public class MainCommand extends BukkitCommand {
                     } else if (s.equalsIgnoreCase("forceban")) {
                         found = true;
                         forceBanCommand.execute(args, s, commandSender);
+                    } else if (s.equalsIgnoreCase("banwave")) {
+                      //  found = true;
+                      //  banWaveCommand.execute(args, s, commandSender);
                     }
 
                     if (!found) commandSender.sendMessage(ChatColor.RED + "Sub command doesn't exist!");

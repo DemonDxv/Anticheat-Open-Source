@@ -67,6 +67,17 @@ public class MathUtil {
         return vector;
     }
 
+    public static Vector getDirection(CustomLocation loc) {
+        Vector vector = new Vector();
+        double rotX = loc.getYaw();
+        double rotY = loc.getPitch();
+        vector.setY(-Math.sin(Math.toRadians(rotY)));
+        double xz = Math.cos(Math.toRadians(rotY));
+        vector.setX(-xz * Math.sin(Math.toRadians(rotX)));
+        vector.setZ(xz * Math.cos(Math.toRadians(rotX)));
+        return vector;
+    }
+
     public static Location getGroundLocation(User user) {
         World world = user.getPlayer().getWorld();
 
@@ -88,6 +99,11 @@ public class MathUtil {
         location.add(0, .05, 0);
         return location;
     }
+
+    public static double getCPS(Collection<? extends Number> values) {
+        return 20 / getAverage(values);
+    }
+
 
     public static float wrapAngleTo180_float(float value) {
         value %= 360F;

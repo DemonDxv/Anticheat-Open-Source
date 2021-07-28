@@ -6,6 +6,7 @@ import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
 import me.rhys.anticheat.tinyprotocol.api.packets.reflections.Reflections;
 import me.rhys.anticheat.tinyprotocol.api.packets.reflections.types.WrappedClass;
 import me.rhys.anticheat.tinyprotocol.api.packets.reflections.types.WrappedField;
+import me.rhys.anticheat.util.CustomLocation;
 import me.rhys.anticheat.util.PlayerLocation;
 import me.rhys.anticheat.util.reflection.CraftReflection;
 import me.rhys.anticheat.util.world.types.SimpleCollisionBox;
@@ -49,6 +50,10 @@ public class EntityData {
 
 
     public static CollisionBox getEntityBox(PlayerLocation location, Entity entity) {
+        return bounds(entity).offset(location.getX(), location.getY(), location.getZ());
+    }
+
+    public static CollisionBox getEntityBox(CustomLocation location, Entity entity) {
         return bounds(entity).offset(location.getX(), location.getY(), location.getZ());
     }
 
