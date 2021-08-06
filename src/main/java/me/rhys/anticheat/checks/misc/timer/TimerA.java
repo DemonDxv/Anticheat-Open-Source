@@ -45,12 +45,10 @@ public class TimerA extends Check {
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
 
-                if (user.shouldCancel() || user.getTick() < 60) return;
-
                 long now = System.nanoTime();
                 long delta = (this.maxDelay - (now - this.lastPacket));
 
-                if (user.getTick() > 60 && this.lastPacket > -1337L) {
+                if (!user.shouldCancel() && user.getTick() > 60 && this.lastPacket > -1337L) {
                     this.balance += delta;
 
                     if (this.balance > this.maxValue) {
