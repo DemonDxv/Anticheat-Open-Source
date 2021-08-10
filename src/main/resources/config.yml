@@ -1,4 +1,5 @@
 # %PLAYER% = the player cheating. %PREFIX% = the prefix of the anticheat you set below. %DEBUG% - dev/check info
+# Op-Bypass: if set to true, a player that is op will automatically bypass else if false they will need the permission "anticheat.bypass" to bypass
 Alert:
   Prefix: '&8[&cAnticheat&8]&r'
   Alert-Message: '%PREFIX% &f%PLAYER% &7flagged &c%CHECK% &8(&c%CHECKTYPE%&8) &8[&c%VL%&8]'
@@ -10,3 +11,5 @@ Punishment:
   Announce:
     Enabled: true
     Message: '%PREFIX% &7has removed &f%PLAYER% &7for using &cUnfair Advantages.'
+Bypass:
+  Op-Bypass: false

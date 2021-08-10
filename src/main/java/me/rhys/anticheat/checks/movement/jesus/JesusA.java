@@ -7,7 +7,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "Jesus", punishmentVL = 14, description = "Checks if the player is walking on water")
+@CheckInformation(checkName = "Jesus", canPunish = false, description = "Checks if the player is walking on water")
 public class JesusA extends Check {
 
     private double threshold;

@@ -9,8 +9,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
 @Getter
-public class KeepaliveHandler implements Runnable {
-    public KeepaliveHandler() {
+public class TransactionHandler implements Runnable {
+    public TransactionHandler() {
         this.start();
     }
 

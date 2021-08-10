@@ -23,6 +23,9 @@ public class ConfigLoader {
         Anticheat.getInstance().getConfigValues().setAnnounceMessage(this.convertColor(Anticheat.getInstance().getConfig()
                 .getString("Punishment.Announce.Message")));
 
+        Anticheat.getInstance().getConfigValues().setAllowOp(Anticheat.getInstance().getConfig()
+                .getBoolean("Bypass.Op-Bypass"));
+
  //       Anticheat.getInstance().getConfigValues().setJudgementDay(Anticheat.getInstance().getConfig()
 //                .getBoolean("Banwave.Enabled"));
     }

@@ -41,7 +41,7 @@ public class VelocityD extends Check {
                             flag(user);
                         }
                     } else {
-                        threshold -= Math.min(threshold, 1);
+                        threshold -= Math.min(threshold, 2);
                     }
                 }
 

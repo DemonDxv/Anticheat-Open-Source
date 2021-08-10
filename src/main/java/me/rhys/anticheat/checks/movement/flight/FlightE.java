@@ -7,7 +7,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "Flight", checkType = "E", punishmentVL = 45, description = "Checks if player is using yPort")
+@CheckInformation(checkName = "Flight", checkType = "E", punishmentVL = 12, description = "Jump height check")
 public class FlightE extends Check {
 
     private double threshold;
@@ -22,9 +22,13 @@ public class FlightE extends Check {
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
 
+                double deltaY = user.getMovementProcessor().getDeltaY();
+
                 if (user.shouldCancel()
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
                         || user.getLastTeleportTimer().hasNotPassed(20)
+                        || user.getLastBlockPlaceTimer().hasNotPassed(20) && deltaY > 0.0
+                        || user.getLastBlockPlaceCancelTimer().hasNotPassed(20)
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getVehicleTicks() > 0
                         || user.getBlockData().webTicks > 0
@@ -34,6 +38,7 @@ public class FlightE extends Check {
                         || user.getBlockData().waterTicks > 0
                         || user.getBlockData().stairSlabTimer.hasNotPassed(20)
                         || user.getBlockData().snowTicks > 0
+                        || user.getBlockData().door
                         || user.getBlockData().underBlockTicks > 0
                         || user.getBlockData().collidesHorizontal
                         || user.getCombatProcessor().getVelocityTicks() <= 20
@@ -42,7 +47,6 @@ public class FlightE extends Check {
                     return;
                 }
 
-                double deltaY = user.getMovementProcessor().getDeltaY();
 
                 boolean isGround = user.getMovementProcessor().isOnGround(),
                         lastGround = user.getMovementProcessor().isLastGround();

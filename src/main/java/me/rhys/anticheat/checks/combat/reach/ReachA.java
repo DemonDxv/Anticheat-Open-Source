@@ -9,6 +9,7 @@ import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutEntityTeleport;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutRelativePosition;
+import me.rhys.anticheat.util.CustomLocation;
 import me.rhys.anticheat.util.MathUtil;
 import me.rhys.anticheat.util.PastLocation;
 import me.rhys.anticheat.util.PlayerLocation;
@@ -54,12 +55,12 @@ public class ReachA extends Check {
                             .map(loc -> getHitbox(user.getCombatProcessor().getLastAttackedEntity(), loc)).collect(Collectors.toList())
                             .forEach(box -> box.downCast(simpleBoxes));
 
-                    double distance = 69, horzDistance = 69, totalDistance = 69;
+                    double distance = 69, horzDistance = 69, totalDistance = 69, hitboxEx = 69;
                     int a = 0, collided = 0;
 
                     for (PlayerLocation location : Arrays.asList(user.getCurrentLocation().clone(),
                             user.getLastLocation().clone())) {
-                        location.setY(location.getY() + 1.62f);
+                        location.setY(location.getY() + 1.905f);
 
 
                         RayCollision ray = new RayCollision(location.toVector(), MathUtil.getDirection(location));
@@ -84,21 +85,24 @@ public class ReachA extends Check {
 
                             distance = Math.min(distance, hitBoxExpand);
 
+                            totalDistance = Math.min(distance, horzDistance);
+
+                            hitboxEx = hitBoxExpand;
+
                         }
                     }
 
+                 //   Bukkit.broadcastMessage(""+totalDistance + " "+horzDistance);
 
-                    if (collided > 2) {
-                        if (horzDistance > 3.01 && distance > 3.01 && distance <= 6.5 && horzDistance <= 6.5) {
-                            if (++threshold > 4.5) {
-                                flag(user, "Distance", "" + distance);
-                            }
-                        } else {
-                            threshold -= Math.min(threshold, 0.115f);
+                    if (horzDistance >= 3.5 && horzDistance <= 6.5) {
+;                        if (threshold++ > 1) {
+                            flag(user, "Reaching "+horzDistance);
                         }
+                    } else if (horzDistance < 3.0 && horzDistance != 69) {
+                        threshold -= Math.min(threshold, .11);
                     }
 
-                    reachCTargetLocations.addLocation(user.getCombatProcessor().getReachData().getCustomLocation());
+                    reachCTargetLocations.addLocation(user.getReachProcessor().getReachData().getCustomLocation());
 
                 }
 

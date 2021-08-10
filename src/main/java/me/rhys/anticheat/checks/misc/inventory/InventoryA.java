@@ -32,10 +32,12 @@ public class InventoryA extends Check {
                     return;
                 }
 
+                double max = invTicks <= 30 ? MathUtil.getBaseSpeed(user.getPlayer()) : 0.01;
+
                 if (user.getMovementProcessor().isInInventory()) {
                     invTicks++;
                     if (invTicks > 12) {
-                        if (user.getMovementProcessor().getDeltaXZ() > MathUtil.getBaseSpeed(user.getPlayer())) {
+                        if (user.getMovementProcessor().getDeltaXZ() > max) {
                             if (++threshold > 5) {
                                 flag(user, "Moving while in inventory");
                             }

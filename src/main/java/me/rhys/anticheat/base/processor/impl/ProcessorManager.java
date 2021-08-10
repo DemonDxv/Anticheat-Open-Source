@@ -25,6 +25,8 @@ public class ProcessorManager {
         this.processors.add(new PotionProcessor());
         this.processors.add(new ElytraProcessor());
         this.processors.add(new PredictionProcessor());
+        this.processors.add(new GhostBlockProcessor());
+        this.processors.add(new ReachProcessor());
 
         this.processors.forEach(processor -> processor.setup(this.user));
     }

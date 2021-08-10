@@ -53,6 +53,10 @@ public class TimerA extends Check {
                 if (user.getTick() > 60 && this.lastPacket > -1337L) {
                     this.balance += delta;
 
+                    if (balance <= -500000000) {
+                        balance = -500000000;
+                    }
+
                     if (this.balance > this.maxValue) {
                         this.flag(user,
                                 "balance=" + this.balance,

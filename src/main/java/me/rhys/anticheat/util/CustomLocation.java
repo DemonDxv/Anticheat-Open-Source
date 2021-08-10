@@ -13,15 +13,38 @@ public class CustomLocation {
     private long timestamp;
 
     private double x, y, z;
+    private double minX, minZ, maxX, maxZ;
 
     private float yaw, pitch;
 
     private boolean onGround;
 
+    public CustomLocation(CustomLocation loc) {
+        this.x = loc.getX();
+        this.y = loc.getY();
+        this.z = loc.getZ();
+        this.yaw = loc.getYaw();
+        this.pitch = loc.getPitch();
+
+        minX = x - .3F;
+        minZ = z - .3F;
+
+        maxX = x + .3F;
+        maxZ = x + .3F;
+
+        this.timestamp = System.currentTimeMillis();
+    }
+
     public CustomLocation(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
+
+        minX = x - .3F;
+        minZ = z - .3F;
+
+        maxX = x + .3F;
+        maxZ = x + .3F;
 
         this.timestamp = System.currentTimeMillis();
     }
@@ -32,6 +55,12 @@ public class CustomLocation {
         this.z = loc.getZ();
         this.yaw = loc.getYaw();
         this.pitch = loc.getPitch();
+
+        minX = x - .3F;
+        minZ = z - .3F;
+
+        maxX = x + .3F;
+        maxZ = x + .3F;
 
         this.timestamp = System.currentTimeMillis();
     }
@@ -46,6 +75,12 @@ public class CustomLocation {
         this.pitch = pitch;
         this.onGround = onGround;
 
+        minX = x - .3F;
+        minZ = z - .3F;
+
+        maxX = x + .3F;
+        maxZ = x + .3F;
+
         this.timestamp = System.currentTimeMillis();
     }
 
@@ -56,6 +91,12 @@ public class CustomLocation {
         this.yaw = yaw;
         this.pitch = pitch;
         this.onGround = onGround;
+
+        minX = x - .3F;
+        minZ = z - .3F;
+
+        maxX = x + .3F;
+        maxZ = x + .3F;
 
         this.timestamp = timestamp;
     }
@@ -69,14 +110,11 @@ public class CustomLocation {
         return new CustomLocation(this.x + x, this.y + y, this.z + z, this.yaw, this.pitch, this.onGround);
     }
 
-    public double distance(@NotNull CustomLocation o) {
-        return Math.sqrt(this.distanceSquared(o));
-    }
+    public double getDistanceSquared(CustomLocation location, CustomLocation lastLocation) {
+        double dx = Math.min(Math.abs(location.x - minX), Math.abs(lastLocation.x - maxX));
+        double dz = Math.min(Math.abs(location.z - minZ), Math.abs(lastLocation.z - maxZ));
 
-    public double distanceSquared(@NotNull CustomLocation o) {
-            return NumberConversions.square(this.getX() - o.getX())
-                    + NumberConversions.square(this.getY() - o.getY())
-                    + NumberConversions.square(this.getZ() - o.getZ());
+        return Math.sqrt(Math.pow(dx, 2.0) + Math.pow(dz, 2.0));
     }
 
     public Vector toVector() {

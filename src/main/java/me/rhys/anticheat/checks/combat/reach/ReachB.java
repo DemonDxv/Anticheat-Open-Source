@@ -13,6 +13,7 @@ import me.rhys.anticheat.util.world.CollisionBox;
 import me.rhys.anticheat.util.world.EntityData;
 import me.rhys.anticheat.util.world.types.RayCollision;
 import me.rhys.anticheat.util.world.types.SimpleCollisionBox;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 
 import java.util.ArrayList;
@@ -20,11 +21,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CheckInformation(checkName = "Reach", checkType = "B", punishmentVL = 25, description = "Detects reach at 3.3 using Past Locations")
+@CheckInformation(checkName = "Reach", checkType = "B", lagBack = false, punishmentVL = 7, description = "Detects reach at 3.01 using the Average Reach")
 public class ReachB extends Check {
 
-    private PastLocation reachCTargetLocations = new PastLocation();
+    private PastLocation reachBTargetLocations = new PastLocation();
+
     private double threshold;
+    private List<Double> averageReachThreshold = new ArrayList<>();
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -36,23 +39,21 @@ public class ReachB extends Check {
                 WrappedInUseEntityPacket useEntityPacket = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
 
                 if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
-                  ///  User target = Anticheat.getInstance().getUserManager().getUser(user.getCombatProcessor().getLastLastAttackedEntity().getPlayer());
-
 
                     List<SimpleCollisionBox> simpleBoxes = new ArrayList<>();
 
-                    reachCTargetLocations.getEstimatedLocation(event.getTimestamp(),
+                    reachBTargetLocations.getEstimatedLocation(event.getTimestamp(),
                             user.getConnectionProcessor().getTransPing(), 200L)
                             .stream()
                             .map(loc -> getHitbox(user.getCombatProcessor().getLastAttackedEntity(), loc)).collect(Collectors.toList())
                             .forEach(box -> box.downCast(simpleBoxes));
 
-                    double distance = 69, horzDistance = 69, totalDistance = 69;
+                    double distance = 69, horzDistance = 69;
                     int a = 0, collided = 0;
 
                     for (PlayerLocation location : Arrays.asList(user.getCurrentLocation().clone(),
                             user.getLastLocation().clone())) {
-                        location.setY(location.getY() + 1.62f);
+                        location.setY(location.getY() + 1.905f);
 
 
                         RayCollision ray = new RayCollision(location.toVector(), MathUtil.getDirection(location));
@@ -80,21 +81,30 @@ public class ReachB extends Check {
                         }
                     }
 
-                    if (a >= 0 && collided >= 0) {
-                        if (distance >= 3.3 && horzDistance >= 3.3 && horzDistance <= 6.5 && distance <= 6.5) {
-                            if (threshold++ > 5) {
-                                flag(user, "" + distance, "" + horzDistance);
-                            }
-                        } else {
-                            threshold -= Math.min(threshold, 0.115f);
-                        }
+                    if (horzDistance > 3.01 && horzDistance <= 6.5) {
+                        threshold++;
+                        averageReachThreshold.add(threshold);
+                    } else if (horzDistance > 0.0 && horzDistance <= 3.0) {
+                        threshold -= Math.min(threshold, 0.75);
                     }
 
-                    reachCTargetLocations.addLocation(user.getCombatProcessor().getReachData().getCustomLocation());
-                }
-            }
 
-            break;
+                    if (averageReachThreshold.size() > 9) {
+
+                        double averageThreshold = MathUtil.getAverage(averageReachThreshold);
+
+                        if (averageThreshold > 3.6) {
+                            flag(user, "Possibly using low reach settings");
+                        }
+
+                        averageReachThreshold.clear();
+                    }
+
+                    reachBTargetLocations.addLocation(user.getReachProcessor().getReachData().getCustomLocation());
+                }
+
+                break;
+            }
         }
     }
 

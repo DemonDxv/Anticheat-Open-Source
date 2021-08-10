@@ -12,8 +12,11 @@ import me.rhys.anticheat.util.*;
 import me.rhys.anticheat.util.evicting.EvictingList;
 import me.rhys.anticheat.util.evicting.EvictingMap;
 import me.rhys.anticheat.util.box.BoundingBox;
+import me.rhys.anticheat.util.math.TrigHandler;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -29,14 +32,18 @@ public class User {
     private final ExecutorService executorService;
     private final BlockData blockData = new BlockData();
 
-    private ProcessorManager processorManager;
-    private MovementProcessor movementProcessor;
+    private GhostBlockProcessor ghostBlockProcessor;
     private ConnectionProcessor connectionProcessor;
     private PredictionProcessor predictionProcessor;
+    private MovementProcessor movementProcessor;
+    private ProcessorManager processorManager;
     private ActionProcessor actionProcessor;
     private PotionProcessor potionProcessor;
     private CombatProcessor combatProcessor;
     private ElytraProcessor elytraProcessor;
+    private ReachProcessor reachProcessor;
+
+    private TrigHandler trigHandler;
 
     private final Map<Long, Long> connectionMap = new EvictingMap<>(100);
     private final Map<Long, Long> connectionMap2 = new EvictingMap<>(100);
@@ -47,12 +54,14 @@ public class User {
 
     private boolean chunkLoaded = false, alerts = true;
 
+    private double mouseDeltaY, mouseDeltaX, lastAimHDeltaPitch, lastAimHDeltaYaw;
+
     private BoundingBox boundingBox = new BoundingBox(0f, 0f, 0f, 0f, 0f, 0f);
     private PlayerLocation currentLocation = new PlayerLocation(null, 0, 0, 0, 0, 0,
             false, System.currentTimeMillis());
     private PlayerLocation lastLocation = currentLocation, lastLastLocation = lastLocation;
 
-    private EventTimer vehicleTimer = new EventTimer(40, this), lastExplosionTimer = new EventTimer(40, this), lastShotByArrowTimer = new EventTimer(20, this), lastAttackByEntityTimer = new EventTimer(20, this), lastFireTickTimer = new EventTimer(20, this), lastBlockPlaceCancelTimer = new EventTimer(20, this), lastBlockPlaceTimer = new EventTimer(20, this), lastFallDamageTimer = new EventTimer(20, this), lastTeleportTimer = new EventTimer(20, this), lastUnknownTeleportTimer = new EventTimer(20, this);
+    private EventTimer lastBlockBreakTimer = new EventTimer(20, this), vehicleTimer = new EventTimer(40, this), lastExplosionTimer = new EventTimer(40, this), lastShotByArrowTimer = new EventTimer(20, this), lastAttackByEntityTimer = new EventTimer(20, this), lastFireTickTimer = new EventTimer(20, this), lastBlockPlaceCancelTimer = new EventTimer(20, this), lastBlockPlaceTimer = new EventTimer(20, this), lastFallDamageTimer = new EventTimer(20, this), lastTeleportTimer = new EventTimer(20, this), lastUnknownTeleportTimer = new EventTimer(20, this);
 
     public User(Player player) {
         this.player = player;
@@ -69,16 +78,19 @@ public class User {
             customLocations.removeLast();
         }
 
+        trigHandler = new TrigHandler(this);
     }
 
     private void setupProcessors() {
         this.connectionProcessor = (ConnectionProcessor) this.processorManager.forClass(ConnectionProcessor.class);
+        this.ghostBlockProcessor = (GhostBlockProcessor) this.processorManager.forClass(GhostBlockProcessor.class);
         this.movementProcessor = (MovementProcessor) this.processorManager.forClass(MovementProcessor.class);
         this.predictionProcessor = (PredictionProcessor) this.processorManager.forClass(PredictionProcessor.class);
         this.actionProcessor = (ActionProcessor) this.processorManager.forClass(ActionProcessor.class);
         this.potionProcessor = (PotionProcessor) this.processorManager.forClass(PotionProcessor.class);
         this.combatProcessor = (CombatProcessor) this.processorManager.forClass(CombatProcessor.class);
         this.elytraProcessor = (ElytraProcessor) this.processorManager.forClass(ElytraProcessor.class);
+        this.reachProcessor = (ReachProcessor) this.processorManager.forClass(ReachProcessor.class);
     }
 
     public void sendPacket(Object packet) {
@@ -89,5 +101,13 @@ public class User {
         return !this.chunkLoaded || TPSUtil.getTPS() <= 19.0 || this.movementProcessor.isWasFlying() || this.player.getAllowFlight()
                 || this.player.isFlying() || this.player.getGameMode() == GameMode.CREATIVE
                 || this.player.getGameMode() == GameMode.SPECTATOR;
+    }
+
+    public boolean isSword(ItemStack itemStack) {
+        return itemStack.getType() == Material.WOOD_SWORD
+                || itemStack.getType() == Material.STONE_SWORD
+                || itemStack.getType() == Material.GOLD_SWORD
+                || itemStack.getType() == Material.IRON_SWORD
+                || itemStack.getType() == Material.DIAMOND_SWORD;
     }
 }

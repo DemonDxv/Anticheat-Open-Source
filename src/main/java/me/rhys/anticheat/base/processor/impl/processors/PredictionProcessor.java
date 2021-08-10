@@ -9,9 +9,21 @@ import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockPlacePacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
+import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutExplosionPacket;
 import me.rhys.anticheat.util.EventTimer;
 import me.rhys.anticheat.util.MathUtil;
+import me.rhys.anticheat.util.PlayerLocation;
+import me.rhys.anticheat.util.math.OptifineMath;
+import me.rhys.anticheat.util.math.VanillaMath;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.HashMap;
 
 @ProcessorInformation(name = "Prediction")
 @Getter
@@ -22,6 +34,8 @@ public class PredictionProcessor extends Processor {
 
     private boolean hit = false, useSword, dropItem;
     private EventTimer lastSlotChange;
+    public boolean fastMath, fMath = false;
+    private double lastExpX, lastExpZ, explosionSpeed;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -32,7 +46,6 @@ public class PredictionProcessor extends Processor {
             case Packet.Client.LOOK:
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
-
 
                 if (user.getMovementProcessor().isLastLastGround()) {
                     blockFriction = 0.91F * 0.6F;
@@ -51,12 +64,9 @@ public class PredictionProcessor extends Processor {
                         blockFriction = (0.91F * 0.8F) * 0.98F;
                     }
 
-
                 } else {
                     blockFriction = 0.91F;
                 }
-
-
 
                 if (dropItem) {
                     useSword = false;
@@ -82,7 +92,133 @@ public class PredictionProcessor extends Processor {
 
                 double prediction = lastDeltaXZ * blockFriction;
 
-                prediction += MathUtil.movingFlyingV3(user);
+                PlayerLocation to = user.getCurrentLocation(), from = user.getLastLocation();
+
+                double preD = 0.01D;
+
+                double mx = to.getX() - from.getX();
+                double mz = to.getZ() - from.getZ();
+
+                float motionYaw = (float) (Math.atan2(mz, mx) * 180.0D / Math.PI) - 90.0F;
+
+                int direction;
+
+                motionYaw -= to.getYaw();
+
+                while (motionYaw > 360.0F)
+                    motionYaw -= 360.0F;
+                while (motionYaw < 0.0F)
+                    motionYaw += 360.0F;
+
+                motionYaw /= 45.0F;
+
+                float moveS = 0.0F;
+                float moveF = 0.0F;
+
+                if (Math.abs(Math.abs(mx) + Math.abs(mz)) > preD) {
+                    direction = (int) new BigDecimal(motionYaw).setScale(1, RoundingMode.HALF_UP).doubleValue();
+
+                    if (direction == 1) {
+                        moveF = 1F;
+                        moveS = -1F;
+
+
+                    } else if (direction == 2) {
+                        moveS = -1F;
+
+
+                    } else if (direction == 3) {
+                        moveF = -1F;
+                        moveS = -1F;
+
+
+                    } else if (direction == 4) {
+                        moveF = -1F;
+
+                    } else if (direction == 5) {
+                        moveF = -1F;
+                        moveS = 1F;
+
+                    } else if (direction == 6) {
+                        moveS = 1F;
+
+                    } else if (direction == 7) {
+                        moveF = 1F;
+                        moveS = 1F;
+
+                    } else if (direction == 8) {
+                        moveF = 1F;
+
+                    } else if (direction == 0) {
+                        moveF = 1F;
+                    }
+                }
+
+                moveS *= 0.98F;
+                moveF *= 0.98F;
+
+                float strafe = 0.98F, forward = 0.98F;
+                float f = strafe * strafe + forward * forward;
+
+                float friction;
+
+                float var3 = (0.6F * 0.91F);
+                float getAIMoveSpeed = 0.13000001F;
+
+
+                if (user.getPotionProcessor().getSpeedTicks() > 0) {
+                    switch (MathUtil.getPotionEffectLevel(user.getPlayer(), PotionEffectType.SPEED)) {
+                        case 0: {
+                            getAIMoveSpeed = 0.23400002F;
+                            break;
+                        }
+
+
+                        case 1: {
+                            getAIMoveSpeed = 0.156F;
+                            break;
+                        }
+
+                        case 2: {
+                            getAIMoveSpeed = 0.18200001F;
+                            break;
+                        }
+
+                        case 3: {
+                            getAIMoveSpeed = 0.208F;
+                            break;
+                        }
+
+                        case 4: {
+                            getAIMoveSpeed = 0.23400001F;
+                            break;
+                        }
+
+                    }
+                }
+
+                float var4 = 0.16277136F / (var3 * var3 * var3);
+
+                if (from.isClientGround()) {
+                    friction = getAIMoveSpeed * var4;
+                } else {
+                    friction = 0.026F;
+                }
+
+                if (f >= 1.0E-4F) {
+                    f = (float) Math.sqrt(f);
+                    if (f < 1.0F) {
+                        f = 1.0F;
+                    }
+                    f = friction / f;
+                    strafe = strafe * f;
+                    forward = forward * f;
+                    float f1 = user.getTrigHandler().sin(to.getYaw() * (float) Math.PI / 180.0F);
+                    float f2 = user.getTrigHandler().cos(to.getYaw() * (float) Math.PI / 180.0F);
+                    float motionXAdd = (strafe * f2 - forward * f1);
+                    float motionZAdd = (forward * f2 + strafe * f1);
+                    prediction += Math.hypot(motionXAdd, motionZAdd);
+                }
 
                 double maxDeltaY = user.getBlockData().underBlockTicks > 0 ? 0.2D : 0.42f;
 
@@ -108,13 +244,15 @@ public class PredictionProcessor extends Processor {
                     prediction += .5;
                 }
 
-                if (user.getCombatProcessor().getPreVelocityTimer().hasNotPassed(9)) {
-                    prediction += user.getCombatProcessor().getVelocityH();
+                if (user.getCombatProcessor().getVelocityTicks() <=
+                        (20 + user.getConnectionProcessor().getClientTick())
+                        && user.getConnectionProcessor().getClientTick() < 6) {
+                    prediction += user.getCombatProcessor().getVelocityHNoTrans();
                 }
 
                 if (user.getCombatProcessor().getVelocityTicks() <= 5
                         && user.getLastFallDamageTimer().hasNotPassed(5)) {
-                    prediction += user.getCombatProcessor().getVelocityH();
+                    prediction += user.getCombatProcessor().getVelocityHNoTrans();
                 }
 
                 if (user.getBlockData().carpetTicks > 0) {
@@ -125,10 +263,32 @@ public class PredictionProcessor extends Processor {
                     prediction += 0.2f;
                 }
 
-                double totalPredictedSpeed = deltaXZ - prediction;
+                if (user.getLastExplosionTimer().hasNotPassed((20
+                        + user.getConnectionProcessor().getClientTick()))) {
+                    prediction += explosionSpeed;
+                }
 
-                motionXZ = totalPredictedSpeed;
+                motionXZ = deltaXZ - prediction;
 
+                break;
+            }
+
+            case Packet.Server.EXPLOSION: {
+                WrappedOutExplosionPacket explosionPacket =
+                        new WrappedOutExplosionPacket(event.getPacket(), user.getPlayer());
+
+                double expX = explosionPacket.getMotionX(), expZ = explosionPacket.getMotionZ();
+
+                double expDeltaX = Math.abs(Math.abs(expX)
+                        - Math.abs(lastExpX));
+                double expDeltaZ = Math.abs(Math.abs(expZ)
+                        - Math.abs(lastExpZ));
+
+                explosionSpeed = Math.hypot(expDeltaX, expDeltaZ);
+
+
+                this.lastExpX = expX;
+                this.lastExpZ = expZ;
                 break;
             }
 
@@ -190,6 +350,5 @@ public class PredictionProcessor extends Processor {
     @Override
     public void setupTimers(User user) {
         this.lastSlotChange = new EventTimer(20, user);
-
     }
 }

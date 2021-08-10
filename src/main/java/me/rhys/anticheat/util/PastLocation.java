@@ -39,14 +39,14 @@ public class PastLocation {
                 .collect(Collectors.toList());
     }
 
-    public List<CustomLocation> getEstimatedLocation2(long time, long ping, long delta) {
+    public List<CustomLocation> getEstimatedCustomLocation(long time, long ping, long delta) {
         return this.previousLocations2
                 .stream()
                 .filter(loc -> time - loc.getTimestamp() > 0 && time - loc.getTimestamp() < ping + delta)
                 .collect(Collectors.toList());
     }
 
-    public void addLocation2(Location location) {
+    public void addCustomLocation(CustomLocation location) {
         if (previousLocations2.size() >= 8) {
             previousLocations2.remove(0);
         }
@@ -55,7 +55,7 @@ public class PastLocation {
     }
 
     public void addLocation(Location location) {
-        if (previousLocations.size() >= 8) {
+        if (previousLocations.size() >= 20) {
             previousLocations.remove(0);
         }
 
@@ -63,7 +63,7 @@ public class PastLocation {
     }
 
     public void addLocation(PlayerLocation location) {
-        if (previousLocations.size() >= 8) {
+        if (previousLocations.size() >= 20) {
             previousLocations.remove(0);
         }
 

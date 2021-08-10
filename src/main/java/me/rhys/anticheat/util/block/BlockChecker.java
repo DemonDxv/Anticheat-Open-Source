@@ -24,7 +24,7 @@ public class BlockChecker {
         this.user = user;
     }
 
-    private boolean lillyPad, skull, carpet, cake, onGround, nearLava, nearWater, nearIce, climbable, slime, piston, snow, fence, bed,
+    private boolean door, soulSand, lillyPad, skull, carpet, cake, onGround, nearLava, nearWater, nearIce, climbable, slime, piston, snow, fence, bed,
             stair, slab, movingUp, underBlock, web, shulker, insideBlock, collideHorizontal;
 
     public void processBlocks() {
@@ -50,8 +50,9 @@ public class BlockChecker {
                 (float) this.user.getCurrentLocation().getZ(),
                 (float) this.user.getCurrentLocation().getX(),
                 (float) this.user.getPlayer().getEyeLocation().getY(),
-                (float) this.user.getCurrentLocation().getZ()).expand(.3, .0, .3)
-                .addXYZ(0.6, 0, 0.6).getCollidedBlocks(this.user.getPlayer())
+                (float) this.user.getCurrentLocation().getZ()).expand(1.2, .0, 1.2)
+
+                .getCollidedBlocks(this.user.getPlayer())
                 .stream().filter(CollideEntry::isChunkLoaded)
                 .anyMatch(collideEntry -> collideEntry.getBlock().getType().isSolid());
 
@@ -94,26 +95,34 @@ public class BlockChecker {
             Block block = collideEntry.getBlock();
 
             switch (block.getType()) {
-                case STATIONARY_LAVA:
-                case LAVA: {
-                 //   this.nearLava = true;
-                    break;
-                }
-
-                case WATER:
-                case STATIONARY_WATER: {
-                    if (collideEntry.getBoundingBox().intersectsWithBox(user.getBoundingBox()) && block.isLiquid()) {
-                     //   this.nearWater = true;
-                    }
-                    break;
-                }
-
                 case SKULL: {
                     skull = true;
+                    break;
                 }
 
                 case WATER_LILY: {
                     lillyPad = true;
+                    break;
+                }
+
+                case DARK_OAK_DOOR:
+                case ACACIA_DOOR:
+                case BIRCH_DOOR:
+                case IRON_DOOR:
+                case JUNGLE_DOOR:
+                case SPRUCE_DOOR:
+                case TRAP_DOOR:
+                case WOOD_DOOR:
+                case WOODEN_DOOR:
+                case IRON_TRAPDOOR: {
+                    door = true;
+                    break;
+                }
+
+                case SOUL_SAND: {
+                    soulSand = true;
+
+                    break;
                 }
 
                 case CARPET: {

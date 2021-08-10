@@ -8,7 +8,7 @@ import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.EntityUtil;
 import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "Flight", checkType = "C", punishmentVL = 10, description = "Checks if the player is on ground when its not possible")
+@CheckInformation(checkName = "Flight", checkType = "C", punishmentVL = 120, description = "Checks if the player is on ground when its not possible")
 public class FlightC extends Check {
 
     private int threshold;
@@ -29,6 +29,8 @@ public class FlightC extends Check {
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getVehicleTicks() > 0
                         || EntityUtil.isOnBoat(user)
+                        || user.getLastBlockPlaceTimer().hasNotPassed(20)
+                        || user.getLastBlockPlaceCancelTimer().hasNotPassed(20)
                         || user.getBlockData().snowTicks > 0
                         || user.getBlockData().skullTicks > 0
                         || user.getBlockData().stairSlabTimer.hasNotPassed(20)
@@ -37,22 +39,22 @@ public class FlightC extends Check {
                         || user.getCombatProcessor().getVelocityTicks() <= 20
                         || user.getBlockData().lavaTicks > 0
                         || user.getTick() < 60) {
-                    return;
+                     return;
                 }
 
+                double deltaY = user.getMovementProcessor().getDeltaY();
 
-                boolean ground = user.getMovementProcessor().isLastGround();
+                boolean isGround = user.getMovementProcessor().isLastGround();
 
-                if (!user.getBlockData().onGround && !user.getMovementProcessor().isServerYGround()) {
-                    if (ground) {
-                        if (threshold++ > 4.2) {
-                            flag(user, "Spoofing Ground");
+                if (!user.getMovementProcessor().isServerYGround()) {
+                    if (isGround && (deltaY < 0 || deltaY >= 0.0)
+                            && !user.getBlockData().onGround) {
+                        if (threshold++ > 2) {
+                            flag(user);
                         }
                     } else {
                         threshold -= Math.min(threshold, 0.001);
                     }
-                } else {
-                    threshold -= Math.min(threshold, 0.005);
                 }
             }
         }

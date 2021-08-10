@@ -30,6 +30,7 @@ public class FlightA extends Check {
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getVehicleTicks() > 0
                         || EntityUtil.isOnBoat(user)
+                        || user.getLastBlockPlaceCancelTimer().hasNotPassed(20)
                         || user.getBlockData().webTicks > 0
                         || user.getBlockData().cakeTicks > 0
                         || user.getBlockData().climbableTicks > 0
@@ -38,6 +39,7 @@ public class FlightA extends Check {
                         || user.getBlockData().underBlockTicks > 0
                         || user.getBlockData().waterTicks > 0
                         || user.getBlockData().lavaTicks > 0
+                        || user.getBlockData().door
                         || user.getCombatProcessor().getVelocityTicks() <= 20
                         || user.getTick() < 60) {
                     threshold = 0;
@@ -57,15 +59,20 @@ public class FlightA extends Check {
                 if (!user.getMovementProcessor().isOnGround()
                         && user.getMovementProcessor().isLastGround() && deltaY > 0.0) {
                     prediction = 0.42F;
-
                 }
 
                 double totalUp = Math.abs(deltaY - prediction);
+
+                if (user.getMovementProcessor().getDeltaXZ() < 0.1 &&
+                        user.getLastBlockPlaceTimer().hasNotPassed(10)) {
+                    totalUp = 0.0;
+                }
 
                 double max = 0.005;
 
                 if (!user.getMovementProcessor().isOnGround() && !user.getMovementProcessor().isLastGround()) {
                     if (totalUp > max && Math.abs(prediction) > max) {
+
                         if (threshold++ > 1) {
                             flag(user, "Invalid motion prediction");
                         }

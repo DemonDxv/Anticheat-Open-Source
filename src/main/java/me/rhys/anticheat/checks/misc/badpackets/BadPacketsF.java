@@ -23,20 +23,8 @@ public class BadPacketsF extends Check {
                 WrappedInCustomPayloadPacket packet
                         = new WrappedInCustomPayloadPacket(event.getPacket());
 
-                String tag = packet.getTag();
-
-                if (!tag.equals("MC|Brand") && !tag.equals("REGISTER")) {
-                    flag(user, "Modded Client" + " "+tag);
-                }
-
                 if (packet.getDecodedData().equals("Vanilla") && !packet.getDecodedData().equals("vanilla")) {
-                    flag(user, "Modded Client [2]");
-                }
-
-                if (!packet.getDecodedData().equals("fml,forge")
-                        && !packet.getDecodedData().equals("FML|HSFMLFML|MPFMLFORGE")
-                        && !packet.getDecodedData().equals("vanilla")) {
-                    flag(user, "Modded Client [3]" + " "+packet.getDecodedData());
+                    flag(user, "Modded Client");
                 }
 
                 break;

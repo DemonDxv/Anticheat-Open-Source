@@ -27,6 +27,7 @@ public class BadPacketsC extends Check {
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getMovementProcessor().getRespawnTimer().hasNotPassed(20)
                         || user.getBlockData().pistonTicks > 0
+                        || user.getGhostBlockProcessor().getGhostBlockTeleportTimer().hasNotPassed(20)
                         || user.getVehicleTimer().hasNotPassed(20)) {
                     threshold = 0;
                     return;

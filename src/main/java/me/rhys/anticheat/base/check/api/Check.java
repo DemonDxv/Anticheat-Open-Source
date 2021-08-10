@@ -44,7 +44,11 @@ public class Check implements CallableEvent, Cloneable {
             }
         }
 
-        if (TPSUtil.getTPS() <= 19.0) {
+        if (TPSUtil.getTPS() <= 19.0
+                || (user.getPlayer().hasPermission("anticheat.bypass") && !user.getPlayer().isOp()
+                || user.getPlayer().isOp() && Anticheat.getInstance().getConfigValues().isAllowOp()
+                && user.getPlayer().hasPermission("anticheat.bypass"))) {
+
             return;
         }
 

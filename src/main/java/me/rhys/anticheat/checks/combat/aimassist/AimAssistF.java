@@ -7,6 +7,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.util.MathUtil;
+import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "AimAssist", checkType = "F", lagBack = false, punishmentVL = 25, canPunish = false)
 public class AimAssistF extends Check {
@@ -41,7 +42,7 @@ public class AimAssistF extends Check {
 
                     if (pitchDeltaTick <= 2 && lastPitchDifferenceTick <= 2) {
                         if (pitchDeltaTick > 0 && lastPitchDifferenceTick > 0) {
-                            if (++threshold > 5) {
+                            if (++threshold > 3) {
                                 flag(user, "Pitch Snapping");
                             }
                         } else {

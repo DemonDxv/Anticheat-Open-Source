@@ -1,0 +1,50 @@
+package me.rhys.anticheat.checks.combat.aimassist;
+
+import me.rhys.anticheat.base.check.api.Check;
+import me.rhys.anticheat.base.check.api.CheckInformation;
+import me.rhys.anticheat.base.event.PacketEvent;
+import me.rhys.anticheat.base.user.User;
+import me.rhys.anticheat.tinyprotocol.api.Packet;
+import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
+import me.rhys.anticheat.util.MathUtil;
+import org.bukkit.Bukkit;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@CheckInformation(checkName = "AimAssist", checkType = "H", lagBack = false, punishmentVL = 10, canPunish = false)
+public class AimAssistH extends Check {
+
+    @Override
+    public void onPacket(PacketEvent event) {
+        User user = event.getUser();
+
+        switch (event.getType()) {
+
+            case Packet.Client.USE_ENTITY: {
+
+                WrappedInUseEntityPacket useEntityPacket = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
+
+                if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
+
+                    if (user.getTick() < 60 || user.shouldCancel()) {
+                        return;
+                    }
+
+                    double deltaYaw = Math.abs(user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw());
+
+                    double deltaMouse = (deltaYaw - user.getMouseDeltaX());
+
+                    if (deltaMouse > 60.0 && deltaMouse != 360) {
+
+                        if (deltaYaw > 0.0 && deltaYaw >= 100) {
+                            flag(user, "Head Snapping");
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
+}

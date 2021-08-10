@@ -26,44 +26,16 @@ public class FlightB extends Check {
             case Packet.Client.POSITION: {
 
                 if (user.shouldCancel()
-                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
-                        || user.getLastTeleportTimer().hasNotPassed(20)
-                        || user.getMovementProcessor().isBouncedOnSlime()
-                        || user.getVehicleTicks() > 0
-                        || EntityUtil.isOnBoat(user)
-                        || user.getBlockData().webTicks > 0
-                        || user.getBlockData().cakeTicks > 0
-                        || user.getBlockData().climbableTicks > 0
-                        || user.getCombatProcessor().getVelocityTicks() <= 20
-                        || user.getBlockData().liquidTicks > 0
-                        || user.getBlockData().lavaTicks > 0
-                        || user.getBlockData().lillyPad
-                        || user.getBlockData().carpet
-                        || user.getBlockData().snow
                         || user.getTick() < 60) {
                     return;
                 }
 
-
-                boolean ground = user.getMovementProcessor().isOnGround();
-
-                boolean serverPositionGround = user.getMovementProcessor().isServerYGround();
-
-                if (ground && serverPositionGround
-                        && !user.getBlockData().onGround
-                        && !user.getBlockData().lastOnGround) {
-
-                    Location groundLocation = user.getMovementProcessor().getLastGroundLocation();
-
-                    user.getPlayer().teleport(groundLocation,
-                            PlayerTeleportEvent.TeleportCause.PLUGIN);
-
-
-                    if (threshold++ > 3) {
-                        flag(user, "Possibly using a Fly/Ground Spoof");
+                if (user.getGhostBlockProcessor().getGhostBlockTeleportTimer().hasNotPassed(1)) {
+                    if (threshold++ > 4) {
+                        flag(user, "Possibly using Fly/Nofall");
                     }
                 } else {
-                    threshold -= Math.min(threshold, 0.001f);
+                    threshold -= Math.min(threshold, 0.001);
                 }
             }
         }

@@ -5,16 +5,17 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
+import me.rhys.anticheat.util.MathUtil;
+import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "AimAssist", checkType = "G", lagBack = false, punishmentVL = 25, canPunish = false)
+import java.util.ArrayList;
+import java.util.List;
+
+@CheckInformation(checkName = "AimAssist", checkType = "G", lagBack = false, punishmentVL = 25)
 public class AimAssistG extends Check {
 
-    /**
-     * Patch for Stitch's Aura that snaps every couple ticks.
-     */
-
     private double threshold;
-    private int yawChangeTick, lastYawDifferenceTick;
+    private List<Double> deltaPitchList = new ArrayList<>();
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -28,28 +29,25 @@ public class AimAssistG extends Check {
             case Packet.Client.POSITION: {
 
                 if (user.getCombatProcessor().getUseEntityTimer().hasNotPassed(2)) {
-                    double deltaPitch = Math.abs(user.getCurrentLocation().getYaw()
-                            - user.getLastLocation().getYaw());
+                    double deltaPitch = Math.abs(user.getCurrentLocation().getPitch()
+                            - user.getLastLocation().getPitch());
 
-                    if (deltaPitch > 0.0) {
-                        yawChangeTick = user.getTick();
-                    }
+                    //Bukkit.broadcastMessage(""+deltaPitch);
 
-                    int pitchDeltaTick = user.getTick() - yawChangeTick;
+                    if (deltaPitch > 0.8) {
+                        deltaPitchList.add(deltaPitch);
 
-                    if (pitchDeltaTick <= 2 && lastYawDifferenceTick <= 2) {
-                        if (pitchDeltaTick > 0 && lastYawDifferenceTick > 0) {
-                            if (++threshold > 5) {
-                                flag(user, "Yaw Snapping");
+                        if (deltaPitchList.size() > 125) {
+                            double std = MathUtil.getStandardDeviation(deltaPitchList);
+
+                            if (std < 1.0) {
+                                flag(user, "Pitch consistency");
                             }
-                        } else {
-                            threshold -= Math.min(threshold, 0.125);
+
+                            deltaPitchList.clear();
                         }
-                    } else {
-                        threshold -= Math.min(threshold, 0.125);
                     }
 
-                    lastYawDifferenceTick = pitchDeltaTick;
                 }
 
                 break;

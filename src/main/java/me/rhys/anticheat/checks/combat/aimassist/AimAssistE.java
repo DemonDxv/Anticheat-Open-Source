@@ -37,16 +37,16 @@ public class AimAssistE extends Check {
 
                 long gcd = MathUtil.gcd((long) pitchDifference, (long) lastPitchDifference);
 
-                if (yawDifference > 2.0 && yawAccel > 2.0F && pitchAccel > 2.0F && pitchDifference > 0.009f) {
-                    if (gcd < 131072L && gcd > 0.0 && pitchAccel < 10) {
-                        if (threshold++ > 12) {
+                if (yawDifference > 2.0 && yawAccel > 2.0F && pitchAccel > 0.0F && pitchDifference > 0.009f) {
+                    if (gcd < 131072L && gcd > 0.0 && pitchAccel < 7) {
+                        if (threshold++ > 8) {
                             flag(user, "GCD [2]");
                         }
                     } else {
-                        threshold -= Math.min(threshold, 1);
+                        threshold -= Math.min(threshold, 1.5);
                     }
                 } else {
-                    threshold -= Math.min(threshold, 1);
+                    threshold -= Math.min(threshold, 2);
                 }
 
                 lastYawDifference = yawDifference;

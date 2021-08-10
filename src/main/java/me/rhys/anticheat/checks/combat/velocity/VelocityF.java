@@ -36,17 +36,16 @@ public class VelocityF extends Check {
 
                 double velocity = user.getCombatProcessor().getVelocityV();
 
-                velocity -= 0.08D;
-
-                velocity *= 0.98F;
-
-
                 double ratio = deltaY / velocity;
 
-                if (user.getCombatProcessor().getVelocityTicks() == 2) {
+                if (user.getCombatProcessor().getVelocityTicks() == 1) {
                     if (deltaY < 0.42f && velocity < 2 && velocity > 0.2) {
-                        if (ratio > 1.00001 && ratio < 2.0) {
-                            flag(user, "Vertical velocity to high " + ratio);
+                        if (ratio > 1.00001) {
+                            if (threshold++ > 3) {
+                                flag(user, "Vertical velocity to high " + ratio);
+                            }
+                        } else {
+                            threshold -= Math.min(threshold, 0.001);
                         }
                     }
                 }

@@ -97,6 +97,10 @@ public class MathUtil {
         }
 
         location.add(0, .05, 0);
+
+        location.setYaw(user.getCurrentLocation().getYaw());
+        location.setPitch(user.getCurrentLocation().getPitch());
+
         return location;
     }
 
@@ -311,4 +315,5 @@ public class MathUtil {
         if (last <= 16384) return current;
         return gcd(last, current % last);
     }
+
 }

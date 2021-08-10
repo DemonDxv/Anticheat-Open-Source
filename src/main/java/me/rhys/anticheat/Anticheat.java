@@ -4,13 +4,14 @@ import lombok.Getter;
 import me.rhys.anticheat.banwave.BanWaveManager;
 import me.rhys.anticheat.base.check.impl.CachedCheckManager;
 import me.rhys.anticheat.base.command.CommandManager;
-import me.rhys.anticheat.base.connection.KeepaliveHandler;
+import me.rhys.anticheat.base.connection.TransactionHandler;
 import me.rhys.anticheat.base.listener.BukkitListener;
 import me.rhys.anticheat.base.user.UserManager;
 import me.rhys.anticheat.config.ConfigLoader;
 import me.rhys.anticheat.config.ConfigValues;
 import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
+import me.rhys.anticheat.util.MathUtil;
 import me.rhys.anticheat.util.TPSUtil;
 import me.rhys.anticheat.util.UpdateChecker;
 import me.rhys.anticheat.util.box.BlockBoxManager;
@@ -33,7 +34,7 @@ public class Anticheat extends JavaPlugin {
             "-----------------------------------------------------------------------------------------------";
 
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-    private KeepaliveHandler keepaliveHandler;
+    private TransactionHandler transactionHandler;
     private TinyProtocolHandler tinyProtocolHandler;
     public String bukkitVersion;
     private final ConfigValues configValues = new ConfigValues();
@@ -58,10 +59,12 @@ public class Anticheat extends JavaPlugin {
         this.configLoader.load();
 
         this.bukkitVersion = Bukkit.getServer().getClass().getPackage().getName().substring(23);
-        this.keepaliveHandler = new KeepaliveHandler();
+        this.transactionHandler = new TransactionHandler();
         this.userManager = new UserManager();
         this.commandManager = new CommandManager();
         this.blockBoxManager = new BlockBoxManager();
+
+        new MathUtil();
 
         getServer().getPluginManager().registerEvents(new BukkitListener(), this);
 

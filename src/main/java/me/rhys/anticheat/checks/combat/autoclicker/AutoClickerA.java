@@ -51,6 +51,11 @@ public class AutoClickerA extends Check {
                     delays.add(movements);
                     double cps = MathUtil.getCPS(delays);
 
+                    if (Double.valueOf(cps).isInfinite()) {
+                        delays.clear();
+                        return;
+                    }
+
                     if (delays.size() > 30) {
 
                         if (cps > 20) {
@@ -59,6 +64,7 @@ public class AutoClickerA extends Check {
 
                         delays.clear();
                     }
+
                 }
                 movements = 0;
                 break;

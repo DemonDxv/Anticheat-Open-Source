@@ -10,6 +10,7 @@ import me.rhys.anticheat.base.processor.api.ProcessorInformation;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInKeepAlivePacket;
+import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInTransactionPacket;
 import me.rhys.anticheat.util.EventTimer;
 
 import java.util.HashMap;
@@ -24,10 +25,11 @@ public class ActionProcessor extends Processor {
 
     @Override
     public void onPacket(PacketEvent event) {
-        if (event.getType().equalsIgnoreCase(Packet.Client.KEEP_ALIVE)) {
-            WrappedInKeepAlivePacket wrappedInKeepAlivePacket = new WrappedInKeepAlivePacket(event.getPacket(),
+        if (event.getType().equalsIgnoreCase(Packet.Server.KEEP_ALIVE)) {
+            WrappedInTransactionPacket transactionPacket = new WrappedInTransactionPacket(event.getPacket(),
                     this.user.getPlayer());
-            long time = wrappedInKeepAlivePacket.getTime();
+
+            long time = transactionPacket.getAction();
 
             if (this.wrappedDataMap.containsKey(time)) {
                 WrappedData wrappedData = this.wrappedDataMap.get(time);
@@ -41,6 +43,7 @@ public class ActionProcessor extends Processor {
                         this.serverPositionTimer.reset();
                         break;
                     }
+
                 }
 
                 this.wrappedDataMap.remove(time);
@@ -55,13 +58,14 @@ public class ActionProcessor extends Processor {
     }
 
     public void add(Actions action) {
-        long time = Anticheat.getInstance().getKeepaliveHandler().getTime() - 2L;
+        long time = Anticheat.getInstance().getTransactionHandler().getTime() - 2L;
         this.wrappedDataMap.put(time, new WrappedData(System.currentTimeMillis(), action));
     }
 
     public enum Actions {
         VELOCITY,
-        SERVER_POSITION
+        SERVER_POSITION,
+        REACH_POSITION,
     }
 
     @Getter @AllArgsConstructor

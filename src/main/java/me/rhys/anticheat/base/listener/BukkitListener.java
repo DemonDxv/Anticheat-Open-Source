@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -105,6 +106,14 @@ public class BukkitListener implements Listener {
                         user.getLastBlockPlaceCancelTimer().reset();
                     }
                 }
+            }
+        }
+
+        if (event instanceof BlockBreakEvent) {
+            User user = Anticheat.getInstance().getUserManager().getUser(((BlockBreakEvent) event).getPlayer());
+
+            if (user != null) {
+                user.getLastBlockBreakTimer().reset();
             }
         }
     }

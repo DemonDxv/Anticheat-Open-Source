@@ -26,8 +26,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class MovementProcessor extends Processor {
     private EventTimer respawnTimer, lastGroundTimer, lastBlockPlacePacketTimer, lastBlockDigTimer;
 
-    private boolean inInventory, lastLastGround, wasFlying, onGround, lastGround, positionYGround, lastPositionYGround, bouncedOnSlime, dead, sprinting,
-            lastSprinting, serverYGround, isDigging;
+    private boolean sneaking, inInventory, lastLastGround, wasFlying, onGround = false, lastGround = false, positionYGround, lastPositionYGround, bouncedOnSlime, dead, sprinting,
+            lastSprinting, serverYGround = false, isDigging;
     private int groundTicks, airTicks, lagBackTicks, serverAirTicks, serverGroundTicks, ignoreServerPositionTicks;
     private double deltaY, lastDeltaY, deltaXZ, lastDeltaXZ, deltaX, deltaZ, serverPositionSpeed, serverPositionDeltaY;
     private PlayerLocation lastSlimeLocation;
@@ -92,6 +92,12 @@ public class MovementProcessor extends Processor {
                     sprinting = false;
                 }
 
+                if (actionPacket.getAction() == WrappedInEntityActionPacket.EnumPlayerAction.START_SNEAKING) {
+                    sneaking = true;
+                } else if (actionPacket.getAction() == WrappedInEntityActionPacket.EnumPlayerAction.STOP_SNEAKING) {
+                    sneaking = false;
+                }
+
                 break;
 
             }
@@ -127,10 +133,17 @@ public class MovementProcessor extends Processor {
             }
 
             case Packet.Client.STEER_VEHICLE: {
-                user.getVehicleTimer().reset();
+                WrappedInSteerVehiclePacket steerVehiclePacket =
+                        new WrappedInSteerVehiclePacket(event.getPacket(), user.getPlayer());
 
-                if (user.getCombatProcessor().getVelocityV() > 0.0) {
-                    user.setVehicleTicks(20);
+                if (steerVehiclePacket.isJump() && !steerVehiclePacket.isUnmount()) {
+                    if (steerVehiclePacket.getForward() == Float.MIN_VALUE) {
+                        user.getVehicleTimer().reset();
+
+                        if (user.getCombatProcessor().getVelocityV() > 0.0) {
+                            user.setVehicleTicks(20);
+                        }
+                    }
                 }
                 break;
             }
@@ -184,32 +197,38 @@ public class MovementProcessor extends Processor {
 
 
 
+
                 this.lastLastGround = this.lastGround;
                 this.lastGround = this.onGround;
                 this.onGround = ground;
 
-
                 if (wrappedInFlyingPacket.isPos()) {
 
                     if (user.getLastLocation() != null) {
-                        user.setLastLastLocation(user.getLastLocation());
+                        user.setLastLastLocation(user.getLastLocation().clone());
                     }
 
                     if (user.getCurrentLocation() != null) {
-                        user.setLastLocation(user.getCurrentLocation());
+                        user.setLastLocation(user.getCurrentLocation().clone());
                     }
 
-                    user.setCurrentLocation(new PlayerLocation(user.getPlayer().getWorld(), x, y, z,
-                            yaw, pitch, ground, System.currentTimeMillis()));
+                    user.getCurrentLocation().setWorld(user.getPlayer().getWorld());
+                    user.getCurrentLocation().setX(x);
+                    user.getCurrentLocation().setY(y);
+                    user.getCurrentLocation().setZ(z);
+                    user.getCurrentLocation().setClientGround(ground);
+                    user.getCurrentLocation().setTimeStamp(System.currentTimeMillis());
 
-                    this.lastDeltaY = this.deltaY;
-                    this.deltaY = (user.getCurrentLocation().getY() - user.getLastLocation().getY());
+                   // user.setCurrentLocation(new PlayerLocation(user.getPlayer().getWorld(), x, y, z,
+              //              yaw, pitch, ground, System.currentTimeMillis()));
+
 
                     this.lastPositionYGround = this.positionYGround;
                     this.positionYGround = y % 0.015625 < 0.009;
 
-                   // this.lastGround = this.onGround;
-                  //  this.onGround = ground;
+
+                  //   this.lastGround = this.onGround;
+                  ////  this.onGround = ground;
 
                     if (ground) {
                         this.lastGroundTimer.reset();
@@ -220,6 +239,15 @@ public class MovementProcessor extends Processor {
                         if (this.airTicks < 20) this.airTicks++;
                     }
                 }
+
+                if (wrappedInFlyingPacket.isLook()) {
+                    user.getCurrentLocation().setYaw(wrappedInFlyingPacket.getYaw());
+                    user.getCurrentLocation().setPitch(wrappedInFlyingPacket.getPitch());
+
+                    updateMousePrediction(user);
+                }
+                this.lastDeltaY = this.deltaY;
+                this.deltaY = (user.getCurrentLocation().getY() - user.getLastLocation().getY());
 
                 this.deltaX = Math.abs(Math.abs(user.getCurrentLocation().getX())
                         - Math.abs(user.getLastLocation().getX()));
@@ -271,8 +299,32 @@ public class MovementProcessor extends Processor {
         this.cacheInformation(new BlockChecker(this.user));
     }
 
-    void processPrediction(User user) {
+    public void updateMousePrediction(User user) {
 
+        if (user.getCurrentLocation() != null && user.getLastLocation() != null) {
+
+            double offset = Math.pow(2.0, 24.0);
+            double yawDelta = Math.abs(user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw());
+            double pitchDelta = user.getCurrentLocation().getPitch() - user.getLastLocation().getPitch();
+
+
+            double yawGCD = MathUtil.gcd((long) (yawDelta * offset),
+                    (long) (user.getLastAimHDeltaYaw() * offset));
+
+            double pitchGCD = MathUtil.gcd((long) (Math.abs(pitchDelta) * offset),
+                    (long) (Math.abs(user.getLastAimHDeltaPitch()) * offset));
+
+            double yawGcd = yawGCD / offset;
+            double pitchGcd = pitchGCD / offset;
+
+            user.setMouseDeltaX((int)
+                    (Math.abs((user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw())) / yawGcd));
+            user.setMouseDeltaY((int)
+                    (Math.abs((user.getCurrentLocation().getPitch() - user.getLastLocation().getPitch())) / pitchGcd));
+
+            user.setLastAimHDeltaPitch(pitchDelta);
+            user.setLastAimHDeltaYaw(yawDelta);
+        }
     }
 
     void cacheInformation(BlockChecker blockChecker) {
@@ -291,6 +343,7 @@ public class MovementProcessor extends Processor {
         user.getBlockData().lastOnGround = user.getBlockData().onGround;
         user.getBlockData().skull = blockChecker.isSkull();
         user.getBlockData().lillyPad = blockChecker.isLillyPad();
+        user.getBlockData().door = blockChecker.isDoor();
         user.getBlockData().onGround = blockChecker.isOnGround();
         user.getBlockData().collidesHorizontal = blockChecker.isCollideHorizontal();
         user.getBlockData().carpet = blockChecker.isCarpet();

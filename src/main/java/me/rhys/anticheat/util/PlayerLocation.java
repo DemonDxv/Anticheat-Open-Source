@@ -30,6 +30,23 @@ public class PlayerLocation {
     }
 
 
+    public PlayerLocation(double x, double y, double z, long timeStamp) {
+        this.x = x;
+
+        minX = x - 0.4;
+        maxX = x + 0.4;
+
+        this.y = y;
+
+        this.z = z;
+        minZ = z - 0.4;
+        maxZ = z + 0.4;
+
+
+        this.timeStamp = timeStamp;
+
+    }
+
     public PlayerLocation(World world, double x, double y, double z, float yaw, float pitch, boolean clientGround, long timeStamp) {
         this.x = x;
         minX = x - 0.4;
