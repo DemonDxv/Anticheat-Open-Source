@@ -23,6 +23,8 @@ If your planning on forking / taking code to resell make sure to leave credits.
 
 * anticheat.alerts - see alerts permission
 
+* anticheat.bypass - bypass the anticheat with a permission
+
 **Commands:**
 
 * /ac - displays anticheat commands and information
@@ -30,6 +32,8 @@ If your planning on forking / taking code to resell make sure to leave credits.
 * /ac alerts - toggles on and off alerts
 
 * /ac check (check&checktype) - toggles on and off detections
+
+* /ac forceban (player) - bans the player using the anticheat
 
 
 
