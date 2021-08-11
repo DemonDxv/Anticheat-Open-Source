@@ -15,14 +15,22 @@ import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInTransactionPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.tinyprotocol.packet.out.*;
 import me.rhys.anticheat.util.EventTimer;
+import me.rhys.anticheat.util.MathUtil;
+import me.rhys.anticheat.util.PastLocation;
 import me.rhys.anticheat.util.PlayerLocation;
+import me.rhys.anticheat.util.block.RayTrace;
+import me.rhys.anticheat.util.box.BoundingBox;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @ProcessorInformation(name = "Combat")
@@ -42,6 +50,10 @@ public class CombatProcessor extends Processor {
 
     private Player lastAttackedEntity, lastLastAttackedEntity;
 
+    private PastLocation hitboxLocations = new PastLocation();
+    private List<BoundingBox> boundingBoxList = new ArrayList<>();
+    private boolean insideHitbox;
+
     @Override
     public void onPacket(PacketEvent event) {
 
@@ -51,9 +63,40 @@ public class CombatProcessor extends Processor {
                 WrappedInUseEntityPacket useEntityPacket = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
 
                 if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
+
                     lastLastAttackedEntity = lastAttackedEntity;
                     lastAttackedEntity = (Player) useEntityPacket.getEntity();
                     useEntityTimer.reset();
+
+                    Location location = user.getCurrentLocation().clone()
+                            .toBukkitLocation(user.getPlayer().getWorld());
+
+                    LivingEntity livingEntity = (LivingEntity) useEntityPacket.getEntity();
+
+                    List<PlayerLocation> pastLocation = hitboxLocations.getEstimatedLocation(event.getTimestamp(),
+                            user.getConnectionProcessor().getTransPing(), 200L);
+
+                    if (pastLocation.size() > 0) {
+
+                        if (livingEntity != null && location != null) {
+
+                            pastLocation.forEach(loc1 -> boundingBoxList.add(MathUtil.getHitbox(livingEntity, loc1, user)));
+
+                            location.setY(location.getY() + (user.getPlayer().isSneaking() ? 1.53 : user.getPlayer().getEyeHeight()));
+
+                            RayTrace trace = new RayTrace(location.toVector(), user.getPlayer().getEyeLocation().getDirection());
+
+
+                            boolean outsideHitbox = boundingBoxList.stream().noneMatch(box ->
+                                    trace.intersects(box, box.getMinimum().distance(location.toVector()) + 1.0,
+                                            .4));
+
+                             insideHitbox = !outsideHitbox;
+
+                            boundingBoxList.clear();
+                            pastLocation.clear();
+                        }
+                    }
 
                     velocity.setX(velocity.getX() * 0.6F);
                     velocity.setZ(velocity.getZ() * 0.6F);
@@ -66,6 +109,9 @@ public class CombatProcessor extends Processor {
             case Packet.Client.POSITION: {
                 velocityTicks++;
                 velocityNoTransTicks++;
+
+                hitboxLocations.addLocation(user.getCombatProcessor().getLastAttackedEntity().getLocation());
+
 
                 break;
             }

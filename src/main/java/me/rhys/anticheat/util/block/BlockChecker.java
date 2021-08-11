@@ -62,7 +62,7 @@ public class BlockChecker {
                 (float) this.user.getCurrentLocation().getZ(),
                 (float) this.user.getCurrentLocation().getX(),
                 (float) this.user.getPlayer().getEyeLocation().getY(),
-                (float) this.user.getCurrentLocation().getZ()).expand(.0, .0, .0)
+                (float) this.user.getCurrentLocation().getZ()).expand(.3, .0, .3)
                 .addXYZ(0, -0.3, 0).getCollidedBlocks(this.user.getPlayer())
                 .stream().filter(CollideEntry::isChunkLoaded)
                 .anyMatch(collideEntry -> collideEntry.getBlock().isLiquid());

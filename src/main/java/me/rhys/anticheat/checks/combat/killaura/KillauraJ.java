@@ -33,6 +33,7 @@ public class KillauraJ extends Check {
             }
 
             case Packet.Client.BLOCK_PLACE: {
+
                 if (movements < 10) {
                     delays.add(movements);
 

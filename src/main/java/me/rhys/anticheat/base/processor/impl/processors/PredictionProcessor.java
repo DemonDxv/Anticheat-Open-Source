@@ -244,9 +244,8 @@ public class PredictionProcessor extends Processor {
                     prediction += .5;
                 }
 
-                if (user.getCombatProcessor().getVelocityTicks() <=
-                        (20 + user.getConnectionProcessor().getClientTick())
-                        && user.getConnectionProcessor().getClientTick() < 6) {
+                if (user.getCombatProcessor().getVelocityTicks() <= (5 + user.getConnectionProcessor().getClientTick())
+                        && user.getConnectionProcessor().getClientTick() < 20) {
                     prediction += user.getCombatProcessor().getVelocityHNoTrans();
                 }
 
@@ -259,12 +258,14 @@ public class PredictionProcessor extends Processor {
                     prediction += 0.1F;
                 }
 
-                if (user.getBlockData().nearWater) {
-                    prediction += 0.2f;
+                if (user.getBlockData().waterTicks > 0) {
+                    prediction += 0.4f;
+                } else if (user.getBlockData().waterTicks > 0 && user.getBlockData().climbableTicks > 0) {
+                    prediction += 0.4f;
                 }
 
-                if (user.getLastExplosionTimer().hasNotPassed((20
-                        + user.getConnectionProcessor().getClientTick()))) {
+                if (user.getLastExplosionTimer().hasNotPassed(20 + user.getConnectionProcessor().getClientTick())
+                                && user.getConnectionProcessor().getClientTick() < 20) {
                     prediction += explosionSpeed;
                 }
 

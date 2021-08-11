@@ -30,7 +30,8 @@ public class KillauraF extends Check {
                 if (attack.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
 
                     double yawDiff = Math.abs(user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw());
-                    if (yawDiff > 2.4f && yawDiff < 120 && user.getMovementProcessor().getDeltaXZ() > 0.1) {
+                    if (yawDiff > 3.5f && yawDiff < 120 && user.getMovementProcessor().getDeltaXZ() > 0.1
+                            && user.getCombatProcessor().isInsideHitbox()) {
                         ++attacks;
                     }
 

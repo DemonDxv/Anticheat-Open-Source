@@ -35,7 +35,7 @@ public class Speed extends Check {
 
                 double deltaXZ = user.getMovementProcessor().getDeltaXZ();
 
-                if (motionXZ > 0.001) {
+                if (motionXZ > 0.005) {
                     if (deltaXZ > 0.2) {
                         flag(user, "MotionXZ -> "+motionXZ);
                     }

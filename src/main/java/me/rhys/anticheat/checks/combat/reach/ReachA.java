@@ -46,6 +46,9 @@ public class ReachA extends Check {
                 if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
                     ///  User target = Anticheat.getInstance().getUserManager().getUser(user.getCombatProcessor().getLastLastAttackedEntity().getPlayer());
 
+                    if (user.shouldCancel() || user.getTick() < 60) {
+                        return;
+                    }
 
                     List<SimpleCollisionBox> simpleBoxes = new ArrayList<>();
 

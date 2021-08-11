@@ -78,6 +78,21 @@ public class MathUtil {
         return vector;
     }
 
+    /**
+     * Gets the angle between {@param from} and {@param to} and subtracts with the direction of {@param to}
+     * @param from The from location
+     * @param to The to location
+     * @return The move angle
+     */
+    public static float getMoveAngle(PlayerLocation from, PlayerLocation to) {
+        double dx = to.getX() - from.getX();
+        double dz = to.getZ() - from.getZ();
+
+        float moveAngle = (float) (Math.toDegrees(Math.atan2(dz, dx)) - 90F); // have to subtract by 90 because minecraft does it
+
+        return Math.abs(wrapAngleTo180_float(moveAngle - to.getYaw()));
+    }
+
     public static Location getGroundLocation(User user) {
         World world = user.getPlayer().getWorld();
 

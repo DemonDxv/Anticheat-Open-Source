@@ -40,6 +40,10 @@ public class ReachB extends Check {
 
                 if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
 
+                    if (user.shouldCancel() || user.getTick() < 60) {
+                        return;
+                    }
+
                     List<SimpleCollisionBox> simpleBoxes = new ArrayList<>();
 
                     reachBTargetLocations.getEstimatedLocation(event.getTimestamp(),

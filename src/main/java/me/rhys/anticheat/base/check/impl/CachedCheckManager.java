@@ -20,6 +20,7 @@ import me.rhys.anticheat.checks.movement.jesus.*;
 import me.rhys.anticheat.checks.movement.sneak.*;
 import me.rhys.anticheat.checks.movement.speed.*;
 import me.rhys.anticheat.checks.movement.step.*;
+import me.rhys.anticheat.checks.movement.strafe.Strafe;
 import me.rhys.anticheat.util.file.ChecksFile;
 
 import java.util.ArrayList;
@@ -86,6 +87,8 @@ public class CachedCheckManager {
         this.checkList.add(new FlightE());
 
         this.checkList.add(new Speed());
+
+        this.checkList.add(new Strafe());
 
         this.checkList.add(new StepA());
 
