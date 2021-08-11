@@ -68,6 +68,10 @@ public class CombatProcessor extends Processor {
                     lastAttackedEntity = (Player) useEntityPacket.getEntity();
                     useEntityTimer.reset();
 
+
+                    velocity.setX(velocity.getX() * 0.6F);
+                    velocity.setZ(velocity.getZ() * 0.6F);
+
                     Location location = user.getCurrentLocation().clone()
                             .toBukkitLocation(user.getPlayer().getWorld());
 
@@ -91,15 +95,12 @@ public class CombatProcessor extends Processor {
                                     trace.intersects(box, box.getMinimum().distance(location.toVector()) + 1.0,
                                             .4));
 
-                             insideHitbox = !outsideHitbox;
+                            insideHitbox = !outsideHitbox;
 
                             boundingBoxList.clear();
                             pastLocation.clear();
                         }
                     }
-
-                    velocity.setX(velocity.getX() * 0.6F);
-                    velocity.setZ(velocity.getZ() * 0.6F);
                 }
             }
 
@@ -110,8 +111,9 @@ public class CombatProcessor extends Processor {
                 velocityTicks++;
                 velocityNoTransTicks++;
 
-                hitboxLocations.addLocation(user.getCombatProcessor().getLastAttackedEntity().getLocation());
-
+                if (lastAttackedEntity != null) {
+                    hitboxLocations.addLocation(lastAttackedEntity.getLocation());
+                }
 
                 break;
             }

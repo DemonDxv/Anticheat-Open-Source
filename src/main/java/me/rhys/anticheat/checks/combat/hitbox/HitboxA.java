@@ -39,12 +39,19 @@ public class HitboxA extends Check {
 
                 if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
 
-                    if (!user.getCombatProcessor().isInsideHitbox()) {
-                        if (threshold++ > 5) {
-                            flag(user, "Expanded Hitbox");
+                    Location location = user.getCurrentLocation().clone()
+                            .toBukkitLocation(user.getPlayer().getWorld());
+
+                    LivingEntity livingEntity = (LivingEntity) useEntityPacket.getEntity();
+
+                    if (livingEntity != null && location != null) {
+                        if (!user.getCombatProcessor().isInsideHitbox()) {
+                            if (threshold++ > 5) {
+                                flag(user, "Expanded Hitbox");
+                            }
+                        } else {
+                            threshold -= Math.min(threshold, 0.25);
                         }
-                    } else {
-                        threshold -= Math.min(threshold, 0.25);
                     }
                 }
 
