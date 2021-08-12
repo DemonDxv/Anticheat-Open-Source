@@ -6,6 +6,9 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.MathUtil;
+import org.bukkit.Location;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.util.Vector;
 
 @CheckInformation(checkName = "Inventory", lagBack = false, punishmentVL = 10)
 public class InventoryA extends Check {
@@ -28,24 +31,35 @@ public class InventoryA extends Check {
                         || user.getBlockData().iceTimer.hasNotPassed(20)
                         || user.getBlockData().slimeTimer.hasNotPassed(20)
                         || user.getBlockData().pistonTicks > 0) {
-                    threshold = 0;
+                    threshold = invTicks = 0;
                     return;
                 }
 
                 double max = invTicks <= 30 ? MathUtil.getBaseSpeed(user.getPlayer()) : 0.01;
 
+                Vector vector = user.getMovementProcessor().getInventoryVector();
+
                 if (user.getMovementProcessor().isInInventory()) {
                     invTicks++;
                     if (invTicks > 12) {
                         if (user.getMovementProcessor().getDeltaXZ() > max) {
-                            if (++threshold > 5) {
+                            if (++threshold > 15) {
                                 flag(user, "Moving while in inventory");
+                                user.getPlayer().closeInventory();
+                                user.getMovementProcessor().setInInventory(false);
+                                user.getPlayer().teleport(
+                                        new Location(user.getPlayer().getWorld(),
+                                                vector.getX(), vector.getY(), vector.getZ(),
+                                                user.getCurrentLocation().getYaw(),
+                                                user.getCurrentLocation().getPitch()),
+                                        PlayerTeleportEvent.TeleportCause.UNKNOWN);
+                                user.getGhostBlockProcessor().getGhostBlockTeleportTimer().reset();
                             }
                         } else {
-                            threshold -= Math.min(threshold, 1);
+                            threshold -= Math.min(threshold, 2);
                         }
                     } else {
-                        threshold -= Math.min(threshold, 1);
+                        threshold -= Math.min(threshold, 2);
                     }
                 } else {
                     threshold = invTicks = 0;

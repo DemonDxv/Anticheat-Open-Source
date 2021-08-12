@@ -7,6 +7,7 @@ import me.rhys.anticheat.util.box.BoundingBox;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Fence;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.Step;
@@ -24,7 +25,7 @@ public class BlockChecker {
         this.user = user;
     }
 
-    private boolean door, soulSand, lillyPad, skull, carpet, cake, onGround, nearLava, nearWater, nearIce, climbable, slime, piston, snow, fence, bed,
+    private boolean collideSlime, door, soulSand, lillyPad, skull, carpet, cake, onGround, nearLava, nearWater, nearIce, climbable, slime, piston, snow, fence, bed,
             stair, slab, movingUp, underBlock, web, shulker, insideBlock, collideHorizontal;
 
     public void processBlocks() {
@@ -37,8 +38,8 @@ public class BlockChecker {
                 (float) this.user.getCurrentLocation().getZ(),
                 (float) this.user.getCurrentLocation().getX(),
                 (float) this.user.getPlayer().getEyeLocation().getY(),
-                (float) this.user.getCurrentLocation().getZ()).expand(.3, .0, .3)
-                .addXYZ(0, .4, 0).getCollidedBlocks(this.user.getPlayer())
+                (float) this.user.getCurrentLocation().getZ()).expand(.31, .0, .31)
+                .addXYZ(0, 0.625, 0).getCollidedBlocks(this.user.getPlayer())
                 .stream().filter(CollideEntry::isChunkLoaded)
                 .anyMatch(collideEntry -> (!collideEntry.getBlock().isLiquid()
                         && collideEntry.getBlock().getType().isSolid()));
@@ -56,16 +57,31 @@ public class BlockChecker {
                 .stream().filter(CollideEntry::isChunkLoaded)
                 .anyMatch(collideEntry -> collideEntry.getBlock().getType().isSolid());
 
+        this.collideSlime = new BoundingBox(
+                (float) this.user.getCurrentLocation().getX(),
+                (float) this.user.getPlayer().getEyeLocation().getY(),
+                (float) this.user.getCurrentLocation().getZ(),
+                (float) this.user.getCurrentLocation().getX(),
+                (float) this.user.getPlayer().getEyeLocation().getY(),
+                (float) this.user.getCurrentLocation().getZ()).expand(1.2, .0, 1.2)
+
+                .getCollidedBlocks(this.user.getPlayer())
+                .stream().filter(CollideEntry::isChunkLoaded)
+                .anyMatch(collideEntry -> collideEntry.getBlock().getType() == Material.SLIME_BLOCK);
+
         this.nearWater = new BoundingBox(
                 (float) this.user.getCurrentLocation().getX(),
                 (float) this.user.getPlayer().getEyeLocation().getY(),
                 (float) this.user.getCurrentLocation().getZ(),
                 (float) this.user.getCurrentLocation().getX(),
                 (float) this.user.getPlayer().getEyeLocation().getY(),
-                (float) this.user.getCurrentLocation().getZ()).expand(.3, .0, .3)
+                (float) this.user.getCurrentLocation().getZ()).expand(.42, .0, .42)
                 .addXYZ(0, -0.3, 0).getCollidedBlocks(this.user.getPlayer())
                 .stream().filter(CollideEntry::isChunkLoaded)
-                .anyMatch(collideEntry -> collideEntry.getBlock().isLiquid());
+                .anyMatch(collideEntry -> collideEntry.getBlock().isLiquid() &&
+                        (collideEntry.getBlock().getType() == Material.STATIONARY_WATER
+                                || collideEntry.getBlock().getType() == Material.WATER));
+
 
         this.nearLava = new BoundingBox(
                 (float) this.user.getCurrentLocation().getX(),
@@ -73,10 +89,45 @@ public class BlockChecker {
                 (float) this.user.getCurrentLocation().getZ(),
                 (float) this.user.getCurrentLocation().getX(),
                 (float) this.user.getPlayer().getEyeLocation().getY(),
-                (float) this.user.getCurrentLocation().getZ()).expand(.0, .0, .0)
+                (float) this.user.getCurrentLocation().getZ()).expand(.42, .0, .42)
                 .addXYZ(0, -0.3, 0).getCollidedBlocks(this.user.getPlayer())
                 .stream().filter(CollideEntry::isChunkLoaded)
-                .anyMatch(collideEntry -> collideEntry.getBlock().isLiquid());
+                .anyMatch(collideEntry -> collideEntry.getBlock().isLiquid()
+                        && (collideEntry.getBlock().getType() == Material.LAVA
+                        || collideEntry.getBlock().getType() == Material.STATIONARY_LAVA));
+
+        BoundingBox expandFence = new BoundingBox(
+                (float) this.user.getCurrentLocation().getX(),
+                (float) this.user.getPlayer().getEyeLocation().getY(),
+                (float) this.user.getCurrentLocation().getZ(),
+                (float) this.user.getCurrentLocation().getX(),
+                (float) this.user.getPlayer().getEyeLocation().getY(),
+                (float) this.user.getCurrentLocation().getZ()).expand(.42, 0, .42).addXYZ(0,-1.5,0);
+
+        List<CollideEntry> blockList = expandFence.getCollidedBlocks(user.getPlayer());
+
+        blockList.forEach(blocks -> {
+            switch (blocks.getBlock().getType()) {
+                case COBBLE_WALL:
+                case FENCE_GATE:
+                case ACACIA_FENCE:
+                case BIRCH_FENCE:
+                case DARK_OAK_FENCE:
+                case IRON_FENCE:
+                case JUNGLE_FENCE:
+                case SPRUCE_FENCE:
+                case NETHER_FENCE:
+                case ACACIA_FENCE_GATE:
+                case BIRCH_FENCE_GATE:
+                case DARK_OAK_FENCE_GATE:
+                case JUNGLE_FENCE_GATE:
+                case SPRUCE_FENCE_GATE:
+                case FENCE: {
+                    this.fence = true;
+                    break;
+                }
+            }
+        });
 
 
         collidedBlocks.stream().filter(CollideEntry::isChunkLoaded).forEach(collideEntry -> {
@@ -171,6 +222,19 @@ public class BlockChecker {
                 }
 
                 case COBBLE_WALL:
+                case FENCE_GATE:
+                case ACACIA_FENCE:
+                case BIRCH_FENCE:
+                case DARK_OAK_FENCE:
+                case IRON_FENCE:
+                case JUNGLE_FENCE:
+                case SPRUCE_FENCE:
+                case NETHER_FENCE:
+                case ACACIA_FENCE_GATE:
+                case BIRCH_FENCE_GATE:
+                case DARK_OAK_FENCE_GATE:
+                case JUNGLE_FENCE_GATE:
+                case SPRUCE_FENCE_GATE:
                 case FENCE: {
                     this.fence = true;
                     break;

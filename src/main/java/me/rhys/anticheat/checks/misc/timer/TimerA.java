@@ -29,11 +29,10 @@ public class TimerA extends Check {
 
                 //We need to deduct the balance on teleport so we don't false flag, and also add the ping-tick
 
-                int transactionPing = user.getConnectionProcessor().getTransPing();
-                int pingTick = (int) Math.ceil(transactionPing / 50.0);
+                int pingTick = user.getConnectionProcessor().getClientTick();
 
                 //Prevent ping-spoof exploits
-                if (pingTick > 10) pingTick = 5;
+                if (pingTick > 20) pingTick = 10;
 
                 //Add + 10 to be safe on teleport, possibly can change to a lower value other than 250L
                 this.balance -= TimeUnit.MILLISECONDS.toNanos(250L + (pingTick + 10));
@@ -48,7 +47,7 @@ public class TimerA extends Check {
                 long now = System.nanoTime();
                 long delta = (this.maxDelay - (now - this.lastPacket));
 
-                if (!user.shouldCancel() && user.getTick() > 60 && this.lastPacket > -1337L) {
+                if (!user.shouldCancel() && user.getTick() > 120 && this.lastPacket > -1337L) {
                     this.balance += delta;
 
                     if (balance <= -500000000) {

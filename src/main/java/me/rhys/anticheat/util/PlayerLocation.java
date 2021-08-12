@@ -63,7 +63,7 @@ public class PlayerLocation {
 
         this.clientGround = clientGround;
 
-        this.timeStamp = System.currentTimeMillis();
+        this.timeStamp = timeStamp;
 
         this.world = world;
 

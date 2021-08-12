@@ -20,6 +20,7 @@ import org.bukkit.Location;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 @ProcessorInformation(name = "Movement")
 @Getter @Setter
@@ -30,8 +31,9 @@ public class MovementProcessor extends Processor {
             lastSprinting, serverYGround = false, isDigging;
     private int groundTicks, airTicks, lagBackTicks, serverAirTicks, serverGroundTicks, ignoreServerPositionTicks;
     private double deltaY, lastDeltaY, deltaXZ, lastDeltaXZ, deltaX, deltaZ, serverPositionSpeed, serverPositionDeltaY;
-    private PlayerLocation lastSlimeLocation;
+    private PlayerLocation lastSlimeLocation, serverPositionLocation;
     private Location lastGroundLocation;
+    private Vector inventoryVector;
 
     private short respawnID = -69;
 
@@ -60,6 +62,10 @@ public class MovementProcessor extends Processor {
 
                 //Delta Y
                 this.serverPositionDeltaY = Math.abs(user.getCurrentLocation().getY() - y);
+
+                this.serverPositionLocation = new PlayerLocation(wrappedOutPositionPacket.getPlayer().getWorld(),
+                        x,y,z, user.getCurrentLocation().getYaw(), user.getCurrentLocation().getPitch(),
+                        user.getCurrentLocation().isClientGround(), System.currentTimeMillis());
                 break;
             }
 
@@ -129,6 +135,7 @@ public class MovementProcessor extends Processor {
 
             case Packet.Server.ATTACH: {
                 user.getVehicleTimer().reset();
+                user.setVehicleTicks(20);
                 break;
             }
 
@@ -138,10 +145,10 @@ public class MovementProcessor extends Processor {
 
                 if (steerVehiclePacket.isJump() && !steerVehiclePacket.isUnmount()) {
                     if (steerVehiclePacket.getForward() == Float.MIN_VALUE) {
-                        user.getVehicleTimer().reset();
+                       // user.getVehicleTimer().reset();
 
                         if (user.getCombatProcessor().getVelocityV() > 0.0) {
-                            user.setVehicleTicks(20);
+                     ///       user.setVehicleTicks(20);
                         }
                     }
                 }
@@ -153,6 +160,11 @@ public class MovementProcessor extends Processor {
 
                 if (clientCommand.getCommand() == WrappedInClientCommand.EnumClientCommand.OPEN_INVENTORY_ACHIEVEMENT) {
                     inInventory = true;
+
+                    if (user.getBlockData().onGround && inInventory) {
+                        inventoryVector = new Vector(user.getCurrentLocation().getX(),
+                                user.getCurrentLocation().getY(), user.getCurrentLocation().getZ());
+                    }
                 }
 
                 break;
@@ -182,6 +194,7 @@ public class MovementProcessor extends Processor {
 
                 this.dead = user.getPlayer().isDead();
                 this.ignoreServerPositionTicks -= (this.ignoreServerPositionTicks > 0 ? 1 : 0);
+
 
                 if (y % 0.015625 == 0.0
                         || y % 0.015625 == 0.00625) {
@@ -344,6 +357,7 @@ public class MovementProcessor extends Processor {
         user.getBlockData().skull = blockChecker.isSkull();
         user.getBlockData().lillyPad = blockChecker.isLillyPad();
         user.getBlockData().door = blockChecker.isDoor();
+        user.getBlockData().collideSlime = blockChecker.isCollideSlime();
         user.getBlockData().onGround = blockChecker.isOnGround();
         user.getBlockData().collidesHorizontal = blockChecker.isCollideHorizontal();
         user.getBlockData().carpet = blockChecker.isCarpet();
@@ -364,6 +378,9 @@ public class MovementProcessor extends Processor {
         user.getBlockData().shulker = blockChecker.isShulker();
         user.getBlockData().insideBlock = blockChecker.isInsideBlock();
 
+        if (user.getBlockData().collideSlime) {
+            user.getBlockData().collideSlimeTimer.reset();
+        }
         if (user.getBlockData().onGround) {
             if (this.serverGroundTicks < 20) this.serverGroundTicks++;
             this.serverAirTicks = 0;

@@ -85,6 +85,7 @@ public class CachedCheckManager {
         this.checkList.add(new FlightC());
         this.checkList.add(new FlightD());
         this.checkList.add(new FlightE());
+        this.checkList.add(new FlightF());
 
         this.checkList.add(new Speed());
 

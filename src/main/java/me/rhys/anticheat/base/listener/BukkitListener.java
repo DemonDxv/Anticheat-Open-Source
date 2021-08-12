@@ -92,6 +92,10 @@ public class BukkitListener implements Listener {
                     user.getLastExplosionTimer().reset();
                 }
 
+                if (((EntityDamageEvent) event).getCause() == EntityDamageEvent.DamageCause.SUFFOCATION) {
+                    user.getLastSuffocationTimer().reset();
+                }
+
             }
         }
 

@@ -32,6 +32,7 @@ public class StepA extends Check {
                         || user.getBlockData().snowTicks > 0
                         || user.getBlockData().cakeTicks > 0
                         || user.getBlockData().piston
+                        || user.getBlockData().underBlock
                         || EntityUtil.isOnBoat(user)
                         || user.getVehicleTicks() > 0
                         || user.getLastFallDamageTimer().hasNotPassed(20)

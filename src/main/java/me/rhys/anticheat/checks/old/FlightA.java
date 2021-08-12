@@ -26,7 +26,8 @@ public class FlightA extends Check {
 
                 if (user.shouldCancel()
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
-                        || user.getLastTeleportTimer().hasNotPassed(20)
+                        || user.getLastTeleportTimer().hasNotPassed(20
+                        + user.getConnectionProcessor().getClientTick())
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getVehicleTicks() > 0
                         || EntityUtil.isOnBoat(user)

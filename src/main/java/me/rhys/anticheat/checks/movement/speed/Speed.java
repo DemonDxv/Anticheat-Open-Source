@@ -24,8 +24,10 @@ public class Speed extends Check {
                         || user.getTick() < 60
                         || user.getVehicleTicks() > 0
                         || user.shouldCancel()
-                        || user.getLastTeleportTimer().hasNotPassed(20)
+                        || user.getLastTeleportTimer().hasNotPassed(20 + user.getConnectionProcessor().getClientTick() + 5)
                         || user.getMovementProcessor().isBouncedOnSlime()
+                        || user.getMovementProcessor().getRespawnTimer().hasNotPassed(20)
+                        || user.getPlayer().isDead()
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(5)
                         || user.getElytraProcessor().isUsingElytra()) {
                     return;
@@ -34,6 +36,8 @@ public class Speed extends Check {
                 double motionXZ = user.getPredictionProcessor().getMotionXZ();
 
                 double deltaXZ = user.getMovementProcessor().getDeltaXZ();
+
+               // Bukkit.broadcastMessage(""+motionXZ);
 
                 if (motionXZ > 0.005) {
                     if (deltaXZ > 0.2) {

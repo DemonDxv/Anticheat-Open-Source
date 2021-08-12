@@ -61,7 +61,18 @@ public class User {
             false, System.currentTimeMillis());
     private PlayerLocation lastLocation = currentLocation, lastLastLocation = lastLocation;
 
-    private EventTimer lastBlockBreakTimer = new EventTimer(20, this), vehicleTimer = new EventTimer(40, this), lastExplosionTimer = new EventTimer(40, this), lastShotByArrowTimer = new EventTimer(20, this), lastAttackByEntityTimer = new EventTimer(20, this), lastFireTickTimer = new EventTimer(20, this), lastBlockPlaceCancelTimer = new EventTimer(20, this), lastBlockPlaceTimer = new EventTimer(20, this), lastFallDamageTimer = new EventTimer(20, this), lastTeleportTimer = new EventTimer(20, this), lastUnknownTeleportTimer = new EventTimer(20, this);
+    private EventTimer lastSuffocationTimer = new EventTimer(20, this),
+            lastBlockBreakTimer = new EventTimer(20, this),
+            vehicleTimer = new EventTimer(40, this),
+            lastExplosionTimer = new EventTimer(40, this),
+            lastShotByArrowTimer = new EventTimer(20, this),
+            lastAttackByEntityTimer = new EventTimer(20, this),
+            lastFireTickTimer = new EventTimer(20, this),
+            lastBlockPlaceCancelTimer = new EventTimer(20, this),
+            lastBlockPlaceTimer = new EventTimer(20, this),
+            lastFallDamageTimer = new EventTimer(20, this),
+            lastTeleportTimer = new EventTimer(20, this),
+            lastUnknownTeleportTimer = new EventTimer(20, this);
 
     public User(Player player) {
         this.player = player;

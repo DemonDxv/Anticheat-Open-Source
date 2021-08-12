@@ -7,46 +7,74 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockPlacePacket;
+import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutPositionPacket;
+import me.rhys.anticheat.util.PlayerLocation;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
-@CheckInformation(checkName = "BadPackets", checkType = "H", lagBack = false, punishmentVL = 10, canPunish = false)
+@CheckInformation(checkName = "BadPackets", checkType = "I", lagBack = false, canPunish = false, description = "Detection for NoRotate")
 public class BadPacketsI extends Check {
 
-    private long lastDig;
-    private double threshold;
+    private double posYaw, teleportTicks, ticks;
+    private PlayerLocation serverPosLoc;
+
+    /**
+     * Thanks to Rhys for the check/idea on how to make it.
+     */
 
     @Override
     public void onPacket(PacketEvent event) {
         User user = event.getUser();
 
         switch (event.getType()) {
-            case Packet.Client.BLOCK_DIG: {
-                WrappedInBlockDigPacket digPacket = new WrappedInBlockDigPacket(event.getPacket(), user.getPlayer());
+            case Packet.Server.POSITION: {
+                WrappedOutPositionPacket positionPacket =
+                        new WrappedOutPositionPacket(event.getPacket(), user.getPlayer());
 
-                if (digPacket.getAction() == WrappedInBlockDigPacket.EnumPlayerDigType.START_DESTROY_BLOCK) {
-                    lastDig = System.currentTimeMillis();
-                } else if (digPacket.getAction() == WrappedInBlockDigPacket.EnumPlayerDigType.ABORT_DESTROY_BLOCK) {
-                    lastDig = System.currentTimeMillis();
-                } else if (digPacket.getAction() == WrappedInBlockDigPacket.EnumPlayerDigType.STOP_DESTROY_BLOCK) {
-                    lastDig = System.currentTimeMillis();
-                }
-                break;
-            }
+                teleportTicks = 60;
+                ticks = 3;
+                posYaw = positionPacket.getYaw();
 
-            case Packet.Client.BLOCK_PLACE: {
-
+                serverPosLoc = new PlayerLocation(positionPacket.getX(), positionPacket.getY(),
+                        positionPacket.getZ(), System.currentTimeMillis());
 
                 break;
             }
-
             case Packet.Client.FLYING:
             case Packet.Client.LOOK:
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
-                if (user.getLastBlockBreakTimer().hasNotPassed(5)) {
-                  //  Bukkit.broadcastMessage(""+(System.currentTimeMillis() - lastDig));
-                }
 
+               //TODO: account for lag with players moving head.
+
+                if (serverPosLoc != null) {
+                    if (ticks-- > 0) {
+
+                        double serverYaw = posYaw;
+                        double currentYaw = user.getCurrentLocation().getYaw();
+
+                        double yawDifference = Math.abs(serverYaw - currentYaw);
+
+                        if (yawDifference < 1E-9) {
+                            ticks = 0;
+                        } else {
+                            if (yawDifference > .3) {
+                                ticks = 3;
+
+                                if (teleportTicks-- < 1) {
+                                    teleportTicks = 20;
+
+                                    user.getPlayer().teleport(serverPosLoc
+                                                    .toBukkitLocation(user.getPlayer().getWorld()),
+                                            PlayerTeleportEvent.TeleportCause.PLUGIN);
+
+                                    flag(user, "Possibly using NoRotate");
+                                }
+                            }
+                        }
+                    }
+                }
                 break;
             }
         }

@@ -32,6 +32,7 @@ public class FlightE extends Check {
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getVehicleTicks() > 0
                         || user.getBlockData().webTicks > 0
+                        || user.getTick() < 60
                         || user.getBlockData().cakeTicks > 0
                         || user.getBlockData().lavaTicks > 0
                         || user.getBlockData().skullTicks > 0
@@ -42,30 +43,21 @@ public class FlightE extends Check {
                         || user.getBlockData().underBlockTicks > 0
                         || user.getBlockData().collidesHorizontal
                         || user.getCombatProcessor().getVelocityTicks() <= 20
-                        || checkConditions(user)) {
+                        || user.getBlockData().waterTicks > 0) {
                     threshold = 0;
                     return;
                 }
 
+                double maxJumpHeight = 0.42F;
 
                 boolean isGround = user.getMovementProcessor().isOnGround(),
                         lastGround = user.getMovementProcessor().isLastGround();
 
-                if (!isGround && lastGround && deltaY > 0.0 && (deltaY < 0.42f || deltaY > 0.42f)) {
-                    flag(user, "Invalid Jump Height", "dy: "+deltaY);
+                if (!isGround && lastGround && deltaY > 0.0 && (deltaY < 0.42f || deltaY > maxJumpHeight)) {
+                    flag(user, "Invalid Jump Height", "dy: " + deltaY);
                 }
 
             }
         }
-    }
-    boolean checkConditions(User user) {
-        return user.getBlockData().liquidTicks > 0
-                || user.getTick() < 60
-                || user.getBlockData().underBlockTicks > 0
-                || user.getBlockData().stairTicks > 0
-                || user.getBlockData().slabTicks > 0
-                || user.shouldCancel()
-                || user.getBlockData().climbableTicks > 0
-                || user.getBlockData().climbableTimer.hasNotPassed();
     }
 }

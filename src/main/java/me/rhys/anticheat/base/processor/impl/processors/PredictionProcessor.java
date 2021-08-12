@@ -10,9 +10,7 @@ import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockPlacePacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutExplosionPacket;
-import me.rhys.anticheat.util.EventTimer;
-import me.rhys.anticheat.util.MathUtil;
-import me.rhys.anticheat.util.PlayerLocation;
+import me.rhys.anticheat.util.*;
 import me.rhys.anticheat.util.math.OptifineMath;
 import me.rhys.anticheat.util.math.VanillaMath;
 import org.bukkit.Bukkit;
@@ -23,6 +21,7 @@ import org.bukkit.util.Vector;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collections;
 import java.util.HashMap;
 
 @ProcessorInformation(name = "Prediction")
@@ -87,6 +86,37 @@ public class PredictionProcessor extends Processor {
 
                 double deltaXZ = user.getMovementProcessor().getDeltaXZ();
                 double lastDeltaXZ = user.getMovementProcessor().getLastDeltaXZ();
+
+                Vector vector = new Vector(user.getCurrentLocation().getX(),
+                        user.getCurrentLocation().getY(), user.getCurrentLocation().getZ());
+
+                Vector pastVec = new Vector(user.getLastLocation().getX(),
+                        user.getLastLocation().getY(), user.getLastLocation().getZ());
+
+                Vector offsetVector = pastVec.subtract(vector);
+
+                double offset = offsetVector.length();
+
+                if (user.getBlockData().pistonTicks > 0) {
+                    offset -= 1;
+                }
+
+                // Boats are too glitchy to check.
+                // Yes, they have caused an insane amount of uncertainty!
+                // Even 1 block offset reduction isn't enough... damn it mojang
+                if (EntityUtil.isNearBoat(user) || user.getVehicleTicks() > 0) {
+                    offset -= 1.2;
+                }
+
+                // Checking slime is too complicated
+                if (user.getMovementProcessor().isBouncedOnSlime()
+                        || user.getBlockData().slimeTimer.hasNotPassed(20)) {
+                    offset -= 0.03;
+                }
+
+                offset = Math.max(0, offset);
+
+                user.getTrigHandler().setOffset(offset);
 
                 double deltaY = user.getMovementProcessor().getDeltaY();
 
@@ -205,6 +235,39 @@ public class PredictionProcessor extends Processor {
                     friction = 0.026F;
                 }
 
+                float f4 = 0.02F;
+                float f5 = 0.8F;
+
+                if (user.getBlockData().nearWater) {
+                    if (user.getPlayer().getInventory().getBoots() != null
+                            && user.getPlayer().getInventory().getBoots().getEnchantments() != null) {
+
+                        float f3 = user.getPlayer().getInventory().getBoots().getEnchantmentLevel(Enchantment.DEPTH_STRIDER);
+
+                        if (f3 > 3.0F) {
+                            f3 = 3.0F;
+                        }
+
+                        if (!user.getMovementProcessor().isLastGround()) {
+                            f3 *= 0.5F;
+                        }
+
+                        if (f3 > 0.0F) {
+                            f5 += (0.54600006F - f5) * f3 / 3.0F;
+                            f4 += (getAIMoveSpeed * 1.0F - f4) * f3 / 3.0F;
+                        }
+
+                        friction = f4;
+                    }
+
+                    blockFriction = f5;
+
+                    if (user.getBlockData().liquidTicks < 20) {
+                        prediction += 0.03F;
+                    }
+                }
+
+
                 if (f >= 1.0E-4F) {
                     f = (float) Math.sqrt(f);
                     if (f < 1.0F) {
@@ -244,13 +307,21 @@ public class PredictionProcessor extends Processor {
                     prediction += .5;
                 }
 
+                if (user.getLastSuffocationTimer().hasNotPassed(5 + user.getConnectionProcessor().getClientTick())
+                        && user.getBlockData().insideBlock) {
+                    prediction += 0.1;
+                }
+
+                if (user.getBlockData().collideSlimeTimer.hasNotPassed(20)) {
+                    prediction += 0.5;
+                }
+
                 if (user.getCombatProcessor().getVelocityTicks() <= (5 + user.getConnectionProcessor().getClientTick())
-                        && user.getConnectionProcessor().getClientTick() < 20) {
+                ) {
                     prediction += user.getCombatProcessor().getVelocityHNoTrans();
                 }
 
-                if (user.getCombatProcessor().getVelocityTicks() <= 5
-                        && user.getLastFallDamageTimer().hasNotPassed(5)) {
+                if (user.getLastFallDamageTimer().hasNotPassed(5 + user.getConnectionProcessor().getClientTick())) {
                     prediction += user.getCombatProcessor().getVelocityHNoTrans();
                 }
 
@@ -258,10 +329,8 @@ public class PredictionProcessor extends Processor {
                     prediction += 0.1F;
                 }
 
-                if (user.getBlockData().waterTicks > 0) {
-                    prediction += 0.4f;
-                } else if (user.getBlockData().waterTicks > 0 && user.getBlockData().climbableTicks > 0) {
-                    prediction += 0.4f;
+                if (user.getBlockData().climbable) {
+                    prediction += 0.1f;
                 }
 
                 if (user.getLastExplosionTimer().hasNotPassed(20 + user.getConnectionProcessor().getClientTick())
