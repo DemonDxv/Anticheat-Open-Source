@@ -215,6 +215,15 @@ public class MovementProcessor extends Processor {
                 this.lastGround = this.onGround;
                 this.onGround = ground;
 
+                if (ground) {
+                    this.lastGroundTimer.reset();
+                    this.airTicks = 0;
+                    if (this.groundTicks < 20) this.groundTicks++;
+                } else {
+                    this.groundTicks = 0;
+                    if (this.airTicks < 20) this.airTicks++;
+                }
+
                 if (wrappedInFlyingPacket.isPos()) {
 
                     if (user.getLastLocation() != null) {
@@ -242,15 +251,6 @@ public class MovementProcessor extends Processor {
 
                   //   this.lastGround = this.onGround;
                   ////  this.onGround = ground;
-
-                    if (ground) {
-                        this.lastGroundTimer.reset();
-                        this.airTicks = 0;
-                        if (this.groundTicks < 20) this.groundTicks++;
-                    } else {
-                        this.groundTicks = 0;
-                        if (this.airTicks < 20) this.airTicks++;
-                    }
                 }
 
                 if (wrappedInFlyingPacket.isLook()) {

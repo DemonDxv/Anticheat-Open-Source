@@ -18,6 +18,8 @@ public class TimerA extends Check {
     private long lastPacket = -1337L;
     private long balance;
 
+    private int threshold;
+
     @Override
     public void onPacket(PacketEvent event) {
         User user = event.getUser();
@@ -55,12 +57,17 @@ public class TimerA extends Check {
                     }
 
                     if (this.balance > this.maxValue) {
-                        this.flag(user,
-                                "balance=" + this.balance,
-                                "packetDelta=" + delta
-                        );
+
+                        if (threshold++ > 1) {
+                            this.flag(user,
+                                    "balance=" + this.balance,
+                                    "packetDelta=" + delta
+                            );
+                        }
 
                         this.balance = 0;
+                    } else {
+                        threshold -= Math.min(threshold, 0.001);
                     }
                 }
 

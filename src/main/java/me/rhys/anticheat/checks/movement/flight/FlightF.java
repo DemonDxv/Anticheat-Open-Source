@@ -22,7 +22,6 @@ public class FlightF extends Check {
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
 
-
                 if (user.shouldCancel()
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
                         || user.getLastTeleportTimer().hasNotPassed(20
@@ -39,8 +38,8 @@ public class FlightF extends Check {
                         || user.getBlockData().lavaTicks > 0
                         || user.getBlockData().waterTicks > 0
                         || user.getBlockData().stairSlabTimer.hasNotPassed(20)
-                        || user.getCombatProcessor().getVelocityTicks() <= (20
-                        + user.getConnectionProcessor().getClientTick())) {
+                        || user.getCombatProcessor().getVelocityTicks() <= (5
+                        + user.getConnectionProcessor().getClientTick() + 5)) {
                     threshold = 0;
                     return;
                 }
@@ -48,7 +47,7 @@ public class FlightF extends Check {
 
                 double deltaY = user.getMovementProcessor().getDeltaY();
 
-                if (deltaY > 0.0 && user.getMovementProcessor().getAirTicks() > 5) {
+                if (deltaY > 0.0 && user.getMovementProcessor().getAirTicks() > 7) {
                     if (threshold++ > 5) {
                         flag(user, "Moving upwards abnormal");
                     }

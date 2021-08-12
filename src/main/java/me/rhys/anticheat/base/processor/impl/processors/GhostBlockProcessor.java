@@ -70,16 +70,19 @@ public class GhostBlockProcessor extends Processor {
 
                     Location groundBelow = MathUtil.getGroundLocation(user);
 
-                    if (lastGroundLocation != null) {
+                    if (flags++ > 1) {
+                        if (lastGroundLocation != null) {
 
-                        user.getPlayer().teleport(lastGroundLocation,
-                                PlayerTeleportEvent.TeleportCause.UNKNOWN);
-                    } else {
-                        user.getPlayer().teleport(groundBelow,
-                                PlayerTeleportEvent.TeleportCause.UNKNOWN);
+                            user.getPlayer().teleport(lastGroundLocation,
+                                    PlayerTeleportEvent.TeleportCause.UNKNOWN);
+                        } else {
+                            user.getPlayer().teleport(groundBelow,
+                                    PlayerTeleportEvent.TeleportCause.UNKNOWN);
+                        }
+
+                        ghostBlockTeleportTimer.reset();
+                        flags = 0;
                     }
-
-                    ghostBlockTeleportTimer.reset();
                 }
 
             }

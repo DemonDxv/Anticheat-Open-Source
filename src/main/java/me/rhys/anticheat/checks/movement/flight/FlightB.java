@@ -26,6 +26,8 @@ public class FlightB extends Check {
             case Packet.Client.POSITION: {
 
                 if (user.shouldCancel()
+                        || user.getLastBlockPlaceTimer().hasNotPassed(20 + user.getConnectionProcessor().getClientTick())
+                        || user.getLastBlockPlaceCancelTimer().hasNotPassed(20 + user.getConnectionProcessor().getClientTick())
                         || user.getTick() < 60) {
                     return;
                 }

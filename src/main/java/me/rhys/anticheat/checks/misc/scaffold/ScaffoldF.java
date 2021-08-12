@@ -28,13 +28,22 @@ public class ScaffoldF extends Check {
 
                 int faceInt = blockPlace.getFace().b();
 
-                if (faceInt >= 0 && faceInt <= 3 && user.getLastBlockPlaceTimer().hasNotPassed(5)) {
+                double blockY = blockPlace.getPosition().getY();
+                double deltaY = user.getCurrentLocation().getY();
 
-                    if (threshold++ > 10) {
-                        flag(user, "Never sneaking while placing blocks");
+                double yDelta = Math.abs(blockY - deltaY);
+                double pitch = user.getCurrentLocation().getPitch();
+
+                if (yDelta <= 2.02 && pitch > 50) {
+                    if (faceInt >= 0 && faceInt <= 3 && user.getLastBlockPlaceTimer()
+                            .hasNotPassed(user.getConnectionProcessor().getClientTick())) {
+
+                        if (threshold++ > 10) {
+                            flag(user, "Never sneaking while placing blocks");
+                        }
+                    } else {
+                        threshold = 0;
                     }
-                } else {
-                    threshold = 0;
                 }
 
                 break;

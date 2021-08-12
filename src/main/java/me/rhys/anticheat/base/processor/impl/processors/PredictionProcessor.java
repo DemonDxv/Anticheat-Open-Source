@@ -187,7 +187,7 @@ public class PredictionProcessor extends Processor {
                 moveS *= 0.98F;
                 moveF *= 0.98F;
 
-                float strafe = 0.98F, forward = 0.98F;
+                float strafe = moveS, forward = moveF;
                 float f = strafe * strafe + forward * forward;
 
                 float friction;
