@@ -48,3 +48,7 @@ funkemunky & Rhys & Luke (bounding boxes, reflection, protocol from Atlas https:
 ItzLucky (Prediction calculations)
 
 Sim0n (Autoclicker utils from Nemesis)
+
+**
+DEPENDENCIES:**
+None required...
