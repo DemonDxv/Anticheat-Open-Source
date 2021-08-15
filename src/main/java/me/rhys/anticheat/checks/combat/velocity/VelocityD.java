@@ -25,6 +25,7 @@ public class VelocityD extends Check {
                 if (user.shouldCancel()
                         || user.getTick() < 60
                         || user.getVehicleTicks() > 0
+                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(20)
                         || user.getLastTeleportTimer().hasNotPassed(20
                         + user.getConnectionProcessor().getClientTick())
                         || !user.isChunkLoaded()) {

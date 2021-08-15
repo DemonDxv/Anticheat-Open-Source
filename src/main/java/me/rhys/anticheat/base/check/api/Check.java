@@ -59,6 +59,7 @@ public class Check implements CallableEvent, Cloneable {
         }
 
         String alert = Anticheat.getInstance().getConfigValues().getAlertsMessage()
+                .replace("%MAX-VL%", String.valueOf(maxViolation))
                 .replace("%PLAYER%", user.getPlayer().getName())
                 .replace("%PREFIX%", Anticheat.getInstance().getConfigValues().getPrefix())
                 .replace("%CHECK%", checkName)
@@ -118,14 +119,23 @@ public class Check implements CallableEvent, Cloneable {
             @Override
             public void run() {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Anticheat.getInstance().getConfigValues()
-                        .getPunishCommand().replace("%PLAYER%", user.getPlayer().getName())
+                        .getPunishCommand()
+                        .replace("%MAX-VL%", String.valueOf(maxViolation))
+                        .replace("%CHECK%", checkName)
+                        .replace("%CHECKTYPE%", checkType)
+                        .replace("%VL%", String.valueOf(violation))
+                        .replace("%PLAYER%", user.getPlayer().getName())
                         .replace("%PREFIX%", Anticheat.getInstance().getConfigValues().getPrefix())
                         .replaceFirst("/", ""));
 
                 if (Anticheat.getInstance().getConfigValues().isAnnounce()) {
                     Bukkit.broadcastMessage(Anticheat.getInstance().getConfigValues().getAnnounceMessage()
-                            .replace("%PREFIX%", Anticheat.getInstance().getConfigValues().getPrefix())
-                            .replace("%PLAYER%", user.getPlayer().getName()));
+                            .replace("%MAX-VL%", String.valueOf(maxViolation))
+                            .replace("%CHECK%", checkName)
+                            .replace("%CHECKTYPE%", checkType)
+                            .replace("%VL%", String.valueOf(violation))
+                            .replace("%PLAYER%", user.getPlayer().getName())
+                            .replace("%PREFIX%", Anticheat.getInstance().getConfigValues().getPrefix()));
                 }
             }
         }.runTask(Anticheat.getInstance());

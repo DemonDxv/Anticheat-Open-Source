@@ -7,7 +7,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 
-@CheckInformation(checkName = "Killaura", lagBack = false, description = "Post Attack Check (unstable)", canPunish = false)
+@CheckInformation(checkName = "Killaura", lagBack = false, description = "Post Attack Check (unstable)",  punishmentVL = 15)
 public class KillauraA extends Check {
 
     private long lastFlyingPacket;
@@ -32,6 +32,7 @@ public class KillauraA extends Check {
                 if (attack.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
 
                     if (user.shouldCancel()
+                            || user.getConnectionProcessor().getClientTick() > 5
                             || user.getConnectionProcessor().getFlyingTick() > 1
                             || user.getConnectionProcessor().getDropTransTime() > 50L
                             || user.getTick() < 60) {

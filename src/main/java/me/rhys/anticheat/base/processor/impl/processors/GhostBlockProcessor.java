@@ -64,13 +64,13 @@ public class GhostBlockProcessor extends Processor {
                 boolean serverGround = user.getBlockData().onGround;
 
                 if (ground && serverPositionGround
-                        && !user.getBlockData().onGround) {
+                        && !serverGround) {
 
                     Location lastGroundLocation = user.getMovementProcessor().getLastGroundLocation();
 
                     Location groundBelow = MathUtil.getGroundLocation(user);
 
-                    if (flags++ > 1) {
+                    if (++flags > 1) {
                         if (lastGroundLocation != null) {
 
                             user.getPlayer().teleport(lastGroundLocation,

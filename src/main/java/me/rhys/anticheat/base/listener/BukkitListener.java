@@ -103,6 +103,8 @@ public class BukkitListener implements Listener {
             User user = Anticheat.getInstance().getUserManager().getUser(((BlockPlaceEvent) event).getPlayer());
 
             if (user != null) {
+                user.setBlockPlaced(((BlockPlaceEvent) event).getBlockPlaced());
+
                 if (((BlockPlaceEvent) event).getItemInHand().getType().isBlock()) {
                     user.getLastBlockPlaceTimer().reset();
 

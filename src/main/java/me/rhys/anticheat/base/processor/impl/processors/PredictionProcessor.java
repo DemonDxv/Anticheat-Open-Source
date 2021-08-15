@@ -10,6 +10,7 @@ import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockPlacePacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutExplosionPacket;
+import me.rhys.anticheat.tinyprotocol.packet.types.MathHelper;
 import me.rhys.anticheat.util.*;
 import me.rhys.anticheat.util.math.OptifineMath;
 import me.rhys.anticheat.util.math.VanillaMath;
@@ -34,7 +35,7 @@ public class PredictionProcessor extends Processor {
     private boolean hit = false, useSword, dropItem;
     private EventTimer lastSlotChange;
     public boolean fastMath, fMath = false;
-    private double lastExpX, lastExpZ, explosionSpeed;
+    private double lastExpX, lastExpZ, explosionSpeed, lastDeltaXZ, lastDeltaX, lastDeltaZ;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -47,6 +48,7 @@ public class PredictionProcessor extends Processor {
             case Packet.Client.POSITION: {
 
                 if (user.getMovementProcessor().isLastLastGround()) {
+
                     blockFriction = 0.91F * 0.6F;
 
                     if (user.getBlockData().slimeTimer.hasNotPassed(20)
@@ -84,45 +86,18 @@ public class PredictionProcessor extends Processor {
                     hit = false;
                 }
 
-                double deltaXZ = user.getMovementProcessor().getDeltaXZ();
-                double lastDeltaXZ = user.getMovementProcessor().getLastDeltaXZ();
+                double deltaX = Math.abs(Math.abs(user.getCurrentLocation().getX())
+                        - Math.abs(user.getLastLocation().getX()));
+                double deltaZ = Math.abs(Math.abs(user.getCurrentLocation().getZ())
+                        - Math.abs(user.getLastLocation().getZ()));
 
-                Vector vector = new Vector(user.getCurrentLocation().getX(),
-                        user.getCurrentLocation().getY(), user.getCurrentLocation().getZ());
-
-                Vector pastVec = new Vector(user.getLastLocation().getX(),
-                        user.getLastLocation().getY(), user.getLastLocation().getZ());
-
-                Vector offsetVector = pastVec.subtract(vector);
-
-                double offset = offsetVector.length();
-
-                if (user.getBlockData().pistonTicks > 0) {
-                    offset -= 1;
-                }
-
-                // Boats are too glitchy to check.
-                // Yes, they have caused an insane amount of uncertainty!
-                // Even 1 block offset reduction isn't enough... damn it mojang
-                if (EntityUtil.isNearBoat(user) || user.getVehicleTicks() > 0) {
-                    offset -= 1.2;
-                }
-
-                // Checking slime is too complicated
-                if (user.getMovementProcessor().isBouncedOnSlime()
-                        || user.getBlockData().slimeTimer.hasNotPassed(20)) {
-                    offset -= 0.03;
-                }
-
-                offset = Math.max(0, offset);
-
-                user.getTrigHandler().setOffset(offset);
-
-                double deltaY = user.getMovementProcessor().getDeltaY();
+                //Assume the player is sprinting because checking if the player is sprinting is unreliable.
+                double deltaXZ = Math.hypot(deltaX, deltaZ);
 
                 double prediction = lastDeltaXZ * blockFriction;
 
-                PlayerLocation to = user.getCurrentLocation(), from = user.getLastLocation();
+                PlayerLocation to = user.getMovementProcessor().getCurrentLocation(),
+                        from = user.getMovementProcessor().getLastLocation();
 
                 double preD = 0.01D;
 
@@ -193,10 +168,10 @@ public class PredictionProcessor extends Processor {
                 float friction;
 
                 float var3 = (0.6F * 0.91F);
-                float getAIMoveSpeed = 0.13000001F;
+                float getAIMoveSpeed = MathUtil.getWalkSpeed(user.getPlayer()) + .00000001F;
 
 
-                if (user.getPotionProcessor().getSpeedTicks() > 0) {
+            /*    if (user.getPotionProcessor().getSpeedTicks() > 0) {
                     switch (MathUtil.getPotionEffectLevel(user.getPlayer(), PotionEffectType.SPEED)) {
                         case 0: {
                             getAIMoveSpeed = 0.23400002F;
@@ -225,11 +200,11 @@ public class PredictionProcessor extends Processor {
                         }
 
                     }
-                }
+                }*/
 
                 float var4 = 0.16277136F / (var3 * var3 * var3);
 
-                if (from.isClientGround()) {
+                if (user.getMovementProcessor().isLastGround()) {
                     friction = getAIMoveSpeed * var4;
                 } else {
                     friction = 0.026F;
@@ -239,6 +214,8 @@ public class PredictionProcessor extends Processor {
                 float f5 = 0.8F;
 
                 if (user.getBlockData().nearWater) {
+
+
                     if (user.getPlayer().getInventory().getBoots() != null
                             && user.getPlayer().getInventory().getBoots().getEnchantments() != null) {
 
@@ -258,9 +235,9 @@ public class PredictionProcessor extends Processor {
                         }
 
                         friction = f4;
-                    }
 
-                    blockFriction = f5;
+                        blockFriction = f5;
+                    }
 
                     if (user.getBlockData().liquidTicks < 20) {
                         prediction += 0.03F;
@@ -276,32 +253,22 @@ public class PredictionProcessor extends Processor {
                     f = friction / f;
                     strafe = strafe * f;
                     forward = forward * f;
-                    float f1 = user.getTrigHandler().sin(to.getYaw() * (float) Math.PI / 180.0F);
-                    float f2 = user.getTrigHandler().cos(to.getYaw() * (float) Math.PI / 180.0F);
+
+                    float f1 = (float) Math.sin(user.getMovementProcessor().getYawDeltaClamped()
+                            * (float) Math.PI / 180.0F);
+                    float f2 = (float) Math.cos(user.getMovementProcessor().getYawDeltaClamped()
+                            * (float) Math.PI / 180.0F);
+
                     float motionXAdd = (strafe * f2 - forward * f1);
                     float motionZAdd = (forward * f2 + strafe * f1);
                     prediction += Math.hypot(motionXAdd, motionZAdd);
                 }
 
-                double maxDeltaY = user.getBlockData().underBlockTicks > 0 ? 0.2D : 0.42f;
-
-                boolean jumpCheck = deltaY == maxDeltaY || deltaY >= .404f && deltaY <= .406f;
-
-                if (user.getMovementProcessor().isServerYGround()
-                        && user.getMovementProcessor().isLastGround() && deltaY > 0.42f) {
-                    prediction += 0.2F;
-                }
-
                 if (!user.getMovementProcessor().isOnGround()
-                        && user.getMovementProcessor().isLastGround()
-                        && jumpCheck) {
+                        && user.getMovementProcessor().isLastGround()) {
                     prediction += 0.2F;
                 }
 
-                if (!user.getMovementProcessor().isOnGround()
-                        && user.getMovementProcessor().isLastGround() && user.getBlockData().underBlockTicks > 0) {
-                    prediction += 0.2F;
-                }
 
                 if (user.getBlockData().pistonTicks > 0) {
                     prediction += .5;
@@ -316,13 +283,13 @@ public class PredictionProcessor extends Processor {
                     prediction += 0.5;
                 }
 
-                if (user.getCombatProcessor().getVelocityTicks() <= (5 + user.getConnectionProcessor().getClientTick())
-                ) {
+                if (user.getCombatProcessor().getVelocityTicks() <= (5
+                        + (user.getConnectionProcessor().getClientTick() + 5))) {
                     prediction += user.getCombatProcessor().getVelocityHNoTrans();
                 }
 
-                if (user.getLastFallDamageTimer().hasNotPassed(5 + user.getConnectionProcessor().getClientTick())) {
-                    prediction += user.getCombatProcessor().getVelocityHNoTrans();
+                if (user.getLastFallDamageTimer().hasNotPassed(20 + user.getConnectionProcessor().getClientTick())) {
+                    prediction += 0.4;
                 }
 
                 if (user.getBlockData().carpetTicks > 0) {
@@ -338,8 +305,19 @@ public class PredictionProcessor extends Processor {
                     prediction += explosionSpeed;
                 }
 
+                if (user.getLastBlockPlaceTimer().hasNotPassed(10
+                        + user.getConnectionProcessor().getClientTick())
+                        && !user.getMovementProcessor().isOnGround() && user.getMovementProcessor().isLastGround()) {
+                    prediction += 0.04f;
+                }
+
                 motionXZ = deltaXZ - prediction;
 
+
+                this.lastDeltaX = deltaX;
+                this.lastDeltaZ = deltaZ;
+
+                lastDeltaXZ = Math.hypot(lastDeltaX, lastDeltaZ);
                 break;
             }
 

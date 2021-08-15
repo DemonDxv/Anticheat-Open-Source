@@ -6,12 +6,13 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.MathUtil;
+import org.bukkit.Bukkit;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-@CheckInformation(checkName = "Strafe", punishmentVL = 25, description = "Detects if player is strafing in the air")
+@CheckInformation(checkName = "Strafe", canPunish = false, description = "Detects if player is strafing in the air")
 public class Strafe extends Check {
 
     private static final Set<Integer> DIRECTIONS = new HashSet<>(Arrays.asList(45, 90, 135, 180));
@@ -27,7 +28,12 @@ public class Strafe extends Check {
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
 
-                if (user.shouldCancel() || user.getTick() < 60) {
+                if (user.shouldCancel()
+                        || user.getTick() < 60
+                        || user.getLastTeleportTimer().hasNotPassed(10
+                        + user.getConnectionProcessor().getClientTick())
+                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(10
+                        + user.getConnectionProcessor().getClientTick())) {
                     return;
                 }
 
@@ -37,13 +43,22 @@ public class Strafe extends Check {
                     double deltaXZ = user.getMovementProcessor().getDeltaXZ(),
                             lastDeltaXZ = user.getMovementProcessor().getLastDeltaXZ();
 
-                    if (deltaXZ > 0.01 && lastDeltaXZ > 0.01 && !user.getMovementProcessor().isOnGround()) {
-                        if (DIRECTIONS.stream().anyMatch(direction -> Math.abs(direction - moveAngle) < 0.0001F)) {
-                            if (threshold++ > 5) {
-                                flag(user, "Strafing in the air");
-                            }
-                        } else {
-                            threshold -= Math.min(threshold, 0.005f);
+                    double yaw = user.getMovementProcessor().getYawDelta();
+
+                    if (yaw > 0.1 && yaw <= 360) {
+                        if (deltaXZ > 0.01 && lastDeltaXZ > 0.01 && !user.getMovementProcessor().isOnGround()) {
+                            DIRECTIONS.forEach(direction -> {
+
+                                double change = Math.abs(direction - moveAngle);
+
+                                if (change < 0.0001F) {
+                                    if (threshold++ > 9) {
+                                        flag(user, "Strafing in the air");
+                                    }
+                                } else {
+                                    threshold -= Math.min(threshold, 0.02f);
+                                }
+                            });
                         }
                     }
                 }

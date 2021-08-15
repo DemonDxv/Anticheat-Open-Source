@@ -18,7 +18,7 @@ public class TimerA extends Check {
     private long lastPacket = -1337L;
     private long balance;
 
-    private int threshold;
+    private double threshold;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -57,9 +57,8 @@ public class TimerA extends Check {
                     }
 
                     if (this.balance > this.maxValue) {
-
                         if (threshold++ > 1) {
-                            this.flag(user,
+                            flag(user,
                                     "balance=" + this.balance,
                                     "packetDelta=" + delta
                             );

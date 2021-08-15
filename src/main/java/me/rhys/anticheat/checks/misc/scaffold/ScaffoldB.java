@@ -7,6 +7,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockPlacePacket;
 import me.rhys.anticheat.util.MathUtil;
+import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,21 +34,23 @@ public class ScaffoldB extends Check {
                 double yaw = Math.abs(user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw());
 
                 if (yaw > 0) {
-                    if (faceInt >= 0 && faceInt <= 2) {
-                        placeList.add(vecY);
+                    if (user.getBlockPlaced().getLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
+                        if (faceInt >= 0 && faceInt <= 3) {
+                            placeList.add(vecY);
 
-                        if (placeList.size() == 10) {
-                            double std = MathUtil.getStandardDeviation(placeList);
+                            if (placeList.size() == 10) {
+                                double std = MathUtil.getStandardDeviation(placeList);
 
-                            if (std < 0.06) {
-                                if (++threshold > 2) {
-                                    flag(user, "HitVec Consistency");
+                                if (std < 0.06) {
+                                    if (++threshold > 2) {
+                                        flag(user, "HitVec Consistency");
+                                    }
+                                } else {
+                                    threshold -= Math.min(threshold, 0.25);
                                 }
-                            } else {
-                                threshold -= Math.min(threshold, 0.25);
-                            }
 
-                            placeList.clear();
+                                placeList.clear();
+                            }
                         }
                     }
                 }

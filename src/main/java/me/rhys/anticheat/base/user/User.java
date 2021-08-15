@@ -15,6 +15,7 @@ import me.rhys.anticheat.util.box.BoundingBox;
 import me.rhys.anticheat.util.math.TrigHandler;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -45,6 +46,8 @@ public class User {
 
     private TrigHandler trigHandler;
 
+    private Block blockPlaced;
+
     private final Map<Long, Long> connectionMap = new EvictingMap<>(100);
     private final Map<Long, Long> connectionMap2 = new EvictingMap<>(100);
     private int tick, vehicleTicks;
@@ -61,7 +64,8 @@ public class User {
             false, System.currentTimeMillis());
     private PlayerLocation lastLocation = currentLocation, lastLastLocation = lastLocation;
 
-    private EventTimer lastSuffocationTimer = new EventTimer(20, this),
+    private EventTimer lastFlaggedFlightCTimer = new EventTimer(20, this), lastFlightToggleTimer = new EventTimer(20, this),
+            lastSuffocationTimer = new EventTimer(20, this),
             lastBlockBreakTimer = new EventTimer(20, this),
             vehicleTimer = new EventTimer(40, this),
             lastExplosionTimer = new EventTimer(40, this),
@@ -109,7 +113,8 @@ public class User {
     }
 
     public boolean shouldCancel() {
-        return !this.chunkLoaded || TPSUtil.getTPS() <= 19.0 || this.movementProcessor.isWasFlying() || this.player.getAllowFlight()
+        return !this.chunkLoaded || TPSUtil.getTPS() <= 19.0 || this.lastFlightToggleTimer.hasNotPassed(20
+                + connectionProcessor.getClientTick()) || this.player.getAllowFlight()
                 || this.player.isFlying() || this.player.getGameMode() == GameMode.CREATIVE
                 || this.player.getGameMode() == GameMode.SPECTATOR;
     }

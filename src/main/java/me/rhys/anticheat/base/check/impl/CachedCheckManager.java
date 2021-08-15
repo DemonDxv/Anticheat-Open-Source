@@ -17,10 +17,12 @@ import me.rhys.anticheat.checks.misc.scaffold.*;
 import me.rhys.anticheat.checks.misc.timer.*;
 import me.rhys.anticheat.checks.movement.flight.*;
 import me.rhys.anticheat.checks.movement.jesus.*;
+import me.rhys.anticheat.checks.movement.phase.*;
 import me.rhys.anticheat.checks.movement.sneak.*;
 import me.rhys.anticheat.checks.movement.speed.*;
+import me.rhys.anticheat.checks.movement.sprint.*;
 import me.rhys.anticheat.checks.movement.step.*;
-import me.rhys.anticheat.checks.movement.strafe.Strafe;
+import me.rhys.anticheat.checks.movement.strafe.*;
 import me.rhys.anticheat.util.file.ChecksFile;
 
 import java.util.ArrayList;
@@ -58,6 +60,9 @@ public class CachedCheckManager {
         this.checkList.add(new AimAssistH());
         this.checkList.add(new AimAssistI());
         this.checkList.add(new AimAssistJ());
+        this.checkList.add(new AimAssistK());
+        this.checkList.add(new AimAssistL());
+        this.checkList.add(new AimAssistM());
 
         this.checkList.add(new KillauraA());
         this.checkList.add(new KillauraB());
@@ -89,6 +94,9 @@ public class CachedCheckManager {
 
         this.checkList.add(new Speed());
 
+        this.checkList.add(new PhaseA());
+        this.checkList.add(new PhaseB());
+
         this.checkList.add(new Strafe());
 
         this.checkList.add(new StepA());
@@ -98,6 +106,9 @@ public class CachedCheckManager {
         this.checkList.add(new SneakA());
        // this.checkList.add(new SneakB());
 
+        this.checkList.add(new SprintA());
+        this.checkList.add(new SprintB());
+
         this.checkList.add(new ScaffoldA());
         this.checkList.add(new ScaffoldB());
         this.checkList.add(new ScaffoldC());
@@ -105,6 +116,7 @@ public class CachedCheckManager {
         this.checkList.add(new ScaffoldE());
         this.checkList.add(new ScaffoldF());
         this.checkList.add(new ScaffoldG());
+        this.checkList.add(new ScaffoldH());
 
         this.checkList.add(new BadPacketsA());
      //   this.checkList.add(new BadPacketsB());

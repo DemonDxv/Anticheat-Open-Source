@@ -7,7 +7,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 
-@CheckInformation(checkName = "Killaura", checkType = "B", lagBack = false, description = "Post Swing Check", canPunish = false)
+@CheckInformation(checkName = "Killaura", checkType = "B", lagBack = false, description = "Post Swing Check", punishmentVL = 50)
 public class KillauraB extends Check {
 
     private long lastFlyingPacket;
@@ -31,6 +31,7 @@ public class KillauraB extends Check {
             case Packet.Client.ARM_ANIMATION: {
 
                 if (user.shouldCancel()
+                        || user.getConnectionProcessor().getClientTick() > 5
                         || user.getConnectionProcessor().getFlyingTick() > 1
                         || user.getConnectionProcessor().getDropTransTime() > 50L
                         || user.getTick() < 60) {

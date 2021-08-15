@@ -140,6 +140,13 @@ public class MathUtil {
         return 0.26f + (getPotionEffectLevel(player, PotionEffectType.SPEED) * 0.062f) + ((player.getWalkSpeed() - 0.2f) * 1.6f);
     }
 
+    public static float getBaseSpeed_2(Player player) {
+        return 0.23f + (getPotionEffectLevel(player, PotionEffectType.SPEED) * 0.062f) + ((player.getWalkSpeed() - 0.2f) * 1.6f);
+    }
+
+    public static float getWalkSpeed(Player player) {
+        return (getPotionEffectLevel(player, PotionEffectType.SPEED) * 0.0260001f) + player.getWalkSpeed() * 0.65F;
+    }
     public static int getPotionEffectLevel(Player player, PotionEffectType pet) {
         for (PotionEffect pe : player.getActivePotionEffects()) {
             if (pe.getType().getName().equalsIgnoreCase(pet.getName())) {

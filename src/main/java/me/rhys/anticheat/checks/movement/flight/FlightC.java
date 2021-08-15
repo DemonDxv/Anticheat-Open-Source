@@ -36,7 +36,9 @@ public class FlightC extends Check {
                         || user.getBlockData().stairSlabTimer.hasNotPassed(20)
                         || user.getBlockData().webTicks > 0
                         || user.getBlockData().cakeTicks > 0
+                        || user.getBlockData().door
                         || user.getCombatProcessor().getVelocityTicks() <= 20
+                        && user.getLastFallDamageTimer().passed(20)
                         || user.getBlockData().lavaTicks > 0
                         || user.getTick() < 60) {
                      return;
@@ -51,6 +53,7 @@ public class FlightC extends Check {
                             && !user.getBlockData().onGround) {
                         if (threshold++ > 2) {
                             flag(user);
+                            user.getLastFlaggedFlightCTimer().reset();
                         }
                     } else {
                         threshold -= Math.min(threshold, 0.001);

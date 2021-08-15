@@ -8,6 +8,7 @@ import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockPlacePacket;
 import me.rhys.anticheat.util.MathUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,15 +29,11 @@ public class ScaffoldF extends Check {
 
                 int faceInt = blockPlace.getFace().b();
 
-                double blockY = blockPlace.getPosition().getY();
-                double deltaY = user.getCurrentLocation().getY();
-
-                double yDelta = Math.abs(blockY - deltaY);
-                double pitch = user.getCurrentLocation().getPitch();
-
-                if (yDelta <= 2.02 && pitch > 50) {
+                if (user.getBlockPlaced().getLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
                     if (faceInt >= 0 && faceInt <= 3 && user.getLastBlockPlaceTimer()
-                            .hasNotPassed(user.getConnectionProcessor().getClientTick())) {
+                            .hasNotPassed(user.getConnectionProcessor().getClientTick())
+                            && user.getPlayer().getItemInHand() != null
+                            && user.getPlayer().getItemInHand().getType().isBlock()) {
 
                         if (threshold++ > 10) {
                             flag(user, "Never sneaking while placing blocks");

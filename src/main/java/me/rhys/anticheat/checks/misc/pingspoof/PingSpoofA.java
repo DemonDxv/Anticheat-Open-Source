@@ -25,8 +25,11 @@ public class PingSpoofA extends Check {
                 if (user.shouldCancel()
                         || user.getTick() < 60
                         || user.getPlayer().isDead()
+                        || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getMovementProcessor().getRespawnTimer().hasNotPassed(20)
-                        || user.getCombatProcessor().getVelocityTicks() <= 20) {
+                        || user.getCombatProcessor().getVelocityTicks() <= 10
+                        + user.getConnectionProcessor().getClientTick()
+                        && user.getConnectionProcessor().getClientTick() < 20) {
                     return;
                 }
 

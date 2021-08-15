@@ -36,10 +36,14 @@ public class FlightA extends Check {
                         || user.getBlockData().climbableTicks > 0
                         || user.getBlockData().stairTicks > 0
                         || user.getBlockData().slabTicks > 0
+                        || user.getLastBlockPlaceTimer().hasNotPassed(10
+                        + user.getConnectionProcessor().getClientTick())
                         || user.getBlockData().underBlockTicks > 0
                         || user.getBlockData().waterTicks > 0
                         || user.getBlockData().lavaTicks > 0
                         || user.getBlockData().door
+                        || user.getMovementProcessor().getDeltaXZ() < 0.2
+                        && user.getPotionProcessor().getJumpTicks() > 0
                         || user.getCombatProcessor().getVelocityTicks() <= 20
                         || user.getTick() < 60) {
                     threshold = 0;
@@ -58,15 +62,11 @@ public class FlightA extends Check {
 
                 if (!user.getMovementProcessor().isOnGround()
                         && user.getMovementProcessor().isLastGround() && deltaY > 0.0) {
-                    prediction = 0.42F;
+                    prediction = 0.42F + (user.getPotionProcessor().getJumpAmplifier() * 0.1F);
                 }
 
                 double totalUp = Math.abs(deltaY - prediction);
 
-                if (user.getMovementProcessor().getDeltaXZ() < 0.1 &&
-                        user.getLastBlockPlaceTimer().hasNotPassed(10)) {
-                    totalUp = 0.0;
-                }
 
                 double max = 0.005;
 

@@ -52,7 +52,6 @@ public class BlockChecker {
                 (float) this.user.getCurrentLocation().getX(),
                 (float) this.user.getPlayer().getEyeLocation().getY(),
                 (float) this.user.getCurrentLocation().getZ()).expand(1.2, .0, 1.2)
-
                 .getCollidedBlocks(this.user.getPlayer())
                 .stream().filter(CollideEntry::isChunkLoaded)
                 .anyMatch(collideEntry -> collideEntry.getBlock().getType().isSolid());
@@ -96,6 +95,18 @@ public class BlockChecker {
                         && (collideEntry.getBlock().getType() == Material.LAVA
                         || collideEntry.getBlock().getType() == Material.STATIONARY_LAVA));
 
+
+        insideBlock = new BoundingBox(
+                (float) this.user.getCurrentLocation().getX(),
+                (float) this.user.getPlayer().getEyeLocation().getY(),
+                (float) this.user.getCurrentLocation().getZ(),
+                (float) this.user.getCurrentLocation().getX(),
+                (float) this.user.getPlayer().getEyeLocation().getY(),
+                (float) this.user.getCurrentLocation().getZ()).expand(-.0626f, 0, -.0626f)
+                .getCollidedBlocks(this.user.getPlayer())
+                .stream().filter(CollideEntry::isChunkLoaded)
+                .anyMatch(collideEntry -> collideEntry.getBlock().getType().isSolid());
+
         BoundingBox expandFence = new BoundingBox(
                 (float) this.user.getCurrentLocation().getX(),
                 (float) this.user.getPlayer().getEyeLocation().getY(),
@@ -136,10 +147,6 @@ public class BlockChecker {
 
             if (collideEntry.getBlock().getType().isSolid()) {
                 this.onGround = true;
-
-                if (collideEntry.getBoundingBox().intersectsWithBox(user.getBoundingBox())) {
-                    insideBlock = true;
-                }
             }
 
 

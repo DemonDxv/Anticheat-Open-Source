@@ -1,6 +1,7 @@
 package me.rhys.anticheat.util.math;
 
 import me.rhys.anticheat.base.user.User;
+import org.bukkit.Bukkit;
 
 public class TrigHandler {
     private User player;
@@ -27,6 +28,8 @@ public class TrigHandler {
             buffer = 0;
             isVanillaMath = !isVanillaMath;
         }
+
+        Bukkit.broadcastMessage(""+isVanillaMath);
 
         // Try and identify the math system within 0.5 seconds (At best) of joining
         // Switch systems in 2 seconds (At best) if the player changes their math system

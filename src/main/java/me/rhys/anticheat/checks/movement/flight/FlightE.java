@@ -42,13 +42,14 @@ public class FlightE extends Check {
                         || user.getBlockData().door
                         || user.getBlockData().underBlockTicks > 0
                         || user.getBlockData().collidesHorizontal
-                        || user.getCombatProcessor().getVelocityTicks() <= 20
+                        || user.getCombatProcessor().getVelocityTicks() <= (10
+                        + user.getConnectionProcessor().getClientTick())
                         || user.getBlockData().waterTicks > 0) {
                     threshold = 0;
                     return;
                 }
 
-                double maxJumpHeight = 0.42F;
+                double maxJumpHeight = 0.42F + (user.getPotionProcessor().getJumpAmplifier() * 0.1F);
 
                 boolean isGround = user.getMovementProcessor().isOnGround(),
                         lastGround = user.getMovementProcessor().isLastGround();

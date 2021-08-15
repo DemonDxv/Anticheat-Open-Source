@@ -7,6 +7,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockPlacePacket;
 import me.rhys.anticheat.util.MathUtil;
+import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,23 +33,30 @@ public class ScaffoldE extends Check {
 
                 double yaw = Math.abs(user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw());
 
-                if (yaw > 0) {
-                    if (faceInt >= 0 && faceInt <= 2) {
-                        placeList.add(vecY);
+                if (user.getBlockPlaced().getType().isBlock()) {
+                    if (user.getBlockPlaced().getLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
+                        if (yaw > 0 && user.getPlayer().getItemInHand() != null
+                                && user.getPlayer().getItemInHand().getType().isBlock()) {
+                            if (faceInt >= 0 && faceInt <= 3) {
+                                placeList.add(vecY);
 
-                        if (placeList.size() == 5) {
-                            double std = MathUtil.getStandardDeviation(placeList);
+                                if (placeList.size() == 5) {
+                                    double std = MathUtil.getStandardDeviation(placeList);
 
-                            if (std < 0.05 || std == lastSTD) {
-                                if (++threshold > 3) {
-                                    flag(user, "HitVec Consistency");
+                                    if (std < 0.05 || std == lastSTD) {
+                                        if (++threshold > 3) {
+                                            flag(user, "HitVec Consistency");
+                                        }
+                                    } else {
+                                        threshold -= Math.min(threshold, 0.5);
+                                    }
+
+                                    lastSTD = std;
+                                    placeList.clear();
                                 }
                             } else {
-                                threshold -= Math.min(threshold, 0.5);
+                                placeList.clear();
                             }
-
-                            lastSTD = std;
-                            placeList.clear();
                         }
                     }
                 }

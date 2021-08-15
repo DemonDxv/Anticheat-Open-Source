@@ -37,6 +37,7 @@ public class FlightF extends Check {
                         || user.getBlockData().pistonTicks > 0
                         || user.getBlockData().lavaTicks > 0
                         || user.getBlockData().waterTicks > 0
+                        || user.getPotionProcessor().getJumpTicks() > 0
                         || user.getBlockData().stairSlabTimer.hasNotPassed(20)
                         || user.getCombatProcessor().getVelocityTicks() <= (5
                         + user.getConnectionProcessor().getClientTick() + 5)) {

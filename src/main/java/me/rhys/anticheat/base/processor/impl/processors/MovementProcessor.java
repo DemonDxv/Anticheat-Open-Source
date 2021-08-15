@@ -12,6 +12,7 @@ import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
 import me.rhys.anticheat.tinyprotocol.packet.in.*;
 import me.rhys.anticheat.tinyprotocol.packet.out.*;
+import me.rhys.anticheat.tinyprotocol.reflection.Reflection;
 import me.rhys.anticheat.util.*;
 import me.rhys.anticheat.util.block.BlockChecker;
 import me.rhys.anticheat.util.box.BoundingBox;
@@ -28,17 +29,24 @@ public class MovementProcessor extends Processor {
     private EventTimer respawnTimer, lastGroundTimer, lastBlockPlacePacketTimer, lastBlockDigTimer;
 
     private boolean sneaking, inInventory, lastLastGround, wasFlying, onGround = false, lastGround = false, positionYGround, lastPositionYGround, bouncedOnSlime, dead, sprinting,
-            lastSprinting, serverYGround = false, isDigging;
+            lastSprinting, serverYGround, isDigging;
     private int groundTicks, airTicks, lagBackTicks, serverAirTicks, serverGroundTicks, ignoreServerPositionTicks;
     private double deltaY, lastDeltaY, deltaXZ, lastDeltaXZ, deltaX, deltaZ, serverPositionSpeed, serverPositionDeltaY;
     private PlayerLocation lastSlimeLocation, serverPositionLocation;
-    private Location lastGroundLocation;
+    private Location lastGroundLocation, lastOutOfBlockLocation;
     private Vector inventoryVector;
+
+    private float yawDelta, pitchDelta, yawDeltaClamped;
+
+    private PlayerLocation currentLocation = new PlayerLocation(null, 0, 0, 0, 0, 0,
+            false, System.currentTimeMillis());
+    private PlayerLocation lastLocation = currentLocation;
 
     private short respawnID = -69;
 
     @Override
     public void onPacket(PacketEvent event) {
+
         switch (event.getType()) {
 
             case Packet.Server.POSITION: {
@@ -123,8 +131,19 @@ public class MovementProcessor extends Processor {
                 break;
             }
 
+            case Packet.Server.ABILITIES: {
+                WrappedOutAbilitiesPacket abilitiesPacket =
+                        new WrappedOutAbilitiesPacket(event.getPacket(), user.getPlayer());
+
+                if (abilitiesPacket.isFlying() || abilitiesPacket.isAllowedFlight() || abilitiesPacket.isCreativeMode()) {
+                    user.getLastFlightToggleTimer().reset();
+                }
+                break;
+            }
+
             case Packet.Client.TRANSACTION: {
-                WrappedInTransactionPacket transactionPacket = new WrappedInTransactionPacket(event.getPacket(), user.getPlayer());
+                WrappedInTransactionPacket transactionPacket =
+                        new WrappedInTransactionPacket(event.getPacket(), user.getPlayer());
 
                 if (transactionPacket.getAction() == respawnID) {
                     respawnTimer.reset();
@@ -190,6 +209,35 @@ public class MovementProcessor extends Processor {
                 float pitch = wrappedInFlyingPacket.getPitch();
                 boolean ground = wrappedInFlyingPacket.isGround();
 
+                if (user.getPlayer().getAllowFlight()) {
+                    user.getLastFlightToggleTimer().reset();
+                }
+
+                if (!user.getBlockData().insideBlock) {
+                    lastOutOfBlockLocation = user.getPlayer().getLocation();
+                }
+
+                if (lastGroundLocation != null) {
+                    double yChange = (y - lastGroundLocation.getY());
+
+                    if (yChange < -24.0 && yChange != lastGroundLocation.getY() && yChange != y) {
+                        if (user.getLastFlaggedFlightCTimer().hasNotPassed(20)
+                                || user.getGhostBlockProcessor().getGhostBlockTeleportTimer().hasNotPassed(20)) {
+                            if (user.getBlockData().onGround && !user.getPlayer().isDead()
+                                    && user.getPlayer().getHealth() > 0) {
+                                user.getPlayer().setHealth(0);
+                            }
+                        }
+                    }
+                }
+
+                if (currentLocation != null) {
+                    lastLocation = currentLocation.clone();
+                }
+
+                currentLocation = new PlayerLocation(user.getPlayer().getWorld(),
+                        x,y,z, yaw, pitch, ground, System.currentTimeMillis());
+
                 lastSprinting = sprinting;
 
                 this.dead = user.getPlayer().isDead();
@@ -197,7 +245,7 @@ public class MovementProcessor extends Processor {
 
 
                 if (y % 0.015625 == 0.0
-                        || y % 0.015625 == 0.00625) {
+                        || y % 0.015625 <= 0.009) {
                     serverYGround = true;
                 } else {
                     serverYGround = false;
@@ -244,21 +292,28 @@ public class MovementProcessor extends Processor {
                    // user.setCurrentLocation(new PlayerLocation(user.getPlayer().getWorld(), x, y, z,
               //              yaw, pitch, ground, System.currentTimeMillis()));
 
-
                     this.lastPositionYGround = this.positionYGround;
                     this.positionYGround = y % 0.015625 < 0.009;
-
 
                   //   this.lastGround = this.onGround;
                   ////  this.onGround = ground;
                 }
 
-                if (wrappedInFlyingPacket.isLook()) {
-                    user.getCurrentLocation().setYaw(wrappedInFlyingPacket.getYaw());
-                    user.getCurrentLocation().setPitch(wrappedInFlyingPacket.getPitch());
 
+                if (wrappedInFlyingPacket.isLook()) {
+                    user.getCurrentLocation().setYaw(yaw);
+                    user.getCurrentLocation().setPitch(pitch);
                     updateMousePrediction(user);
                 }
+
+
+                float yawDelta = Math.abs(user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw());
+                float pitchDelta = Math.abs(user.getCurrentLocation().getPitch() - user.getLastLocation().getPitch());
+
+                this.yawDelta = yawDelta;
+                this.pitchDelta = pitchDelta;
+                yawDeltaClamped = MathUtil.wrapAngleTo180_float(yawDelta);
+
                 this.lastDeltaY = this.deltaY;
                 this.deltaY = (user.getCurrentLocation().getY() - user.getLastLocation().getY());
 
@@ -344,14 +399,6 @@ public class MovementProcessor extends Processor {
         blockChecker.processBlocks();
 
         user.setChunkLoaded(BlockUtil.isChunkLoaded(user.getCurrentLocation().toBukkitLocation(user.getPlayer().getWorld())));
-
-        if ((user.getPlayer().isFlying() || user.getPlayer().getAllowFlight()) && !wasFlying) {
-            wasFlying = true;
-        } else if (wasFlying && !(user.getPlayer().isFlying() || user.getPlayer().getAllowFlight())) {
-            if (user.getBlockData().onGround && user.getBlockData().lastOnGround) {
-                wasFlying = false;
-            }
-        }
 
         user.getBlockData().lastOnGround = user.getBlockData().onGround;
         user.getBlockData().skull = blockChecker.isSkull();
