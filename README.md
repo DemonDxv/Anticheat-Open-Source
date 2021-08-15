@@ -49,6 +49,6 @@ ItzLucky (Prediction calculations)
 
 Sim0n (Autoclicker utils from Nemesis)
 
-**
-DEPENDENCIES:**
+
+**DEPENDENCIES:**
 None required...
