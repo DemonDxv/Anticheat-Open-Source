@@ -275,6 +275,12 @@ public class PredictionProcessor extends Processor {
                 }
 
                 if (!user.getMovementProcessor().isOnGround()
+                        && user.getMovementProcessor().isLastGround()
+                        && user.getBlockData().underBlockTicks > 0) {
+                    prediction += 0.2F;
+                }
+
+                if (!user.getMovementProcessor().isOnGround()
                         && user.getMovementProcessor().isLastGround() && deltaY > 0.42F) {
                     prediction += 0.2F;
                 }
