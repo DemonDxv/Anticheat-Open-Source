@@ -2,14 +2,18 @@ package me.rhys.anticheat.base.listener;
 
 import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.user.User;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
@@ -35,8 +39,22 @@ public class BukkitListener implements Listener {
         this.processEvent(event);
     }
 
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        this.processEvent(event);
+    }
+
+    @EventHandler
+    public void onClickEvent(InventoryClickEvent event) {
+        this.processEvent(event);
+    }
+
     void processEvent(Event event) {
-        Anticheat.getInstance().getExecutorService().execute(() -> this.process(event));
+        if (event instanceof InventoryClickEvent) {
+            process(event);
+        } else {
+            Anticheat.getInstance().getExecutorService().execute(() -> this.process(event));
+        }
     }
 
     void process(Event event) {
@@ -120,6 +138,15 @@ public class BukkitListener implements Listener {
 
             if (user != null) {
                 user.getLastBlockBreakTimer().reset();
+            }
+        }
+
+        if (event instanceof InventoryClickEvent) {
+            String title = ((InventoryClickEvent) event).getInventory().getTitle();
+            String theTitle = "Anticheat GUI";
+
+            if (title.contains(theTitle)) {
+                ((InventoryClickEvent) event).setCancelled(true);
             }
         }
     }

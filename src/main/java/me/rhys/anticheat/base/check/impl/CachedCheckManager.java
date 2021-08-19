@@ -100,6 +100,7 @@ public class CachedCheckManager {
         this.checkList.add(new Strafe());
 
         this.checkList.add(new StepA());
+     //   this.checkList.add(new StepB());
 
         this.checkList.add(new JesusA());
 

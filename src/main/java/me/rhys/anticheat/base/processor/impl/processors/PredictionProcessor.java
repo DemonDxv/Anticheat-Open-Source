@@ -264,8 +264,18 @@ public class PredictionProcessor extends Processor {
                     prediction += Math.hypot(motionXAdd, motionZAdd);
                 }
 
+                double deltaY = user.getMovementProcessor().getDeltaY();
+
+                double jumpHeight = 0.42F;
+
                 if (!user.getMovementProcessor().isOnGround()
-                        && user.getMovementProcessor().isLastGround()) {
+                        && user.getMovementProcessor().isLastGround()
+                        && (deltaY == jumpHeight || deltaY > 0.4044f && deltaY < .406F)) {
+                    prediction += 0.2F;
+                }
+
+                if (!user.getMovementProcessor().isOnGround()
+                        && user.getMovementProcessor().isLastGround() && deltaY > 0.42F) {
                     prediction += 0.2F;
                 }
 

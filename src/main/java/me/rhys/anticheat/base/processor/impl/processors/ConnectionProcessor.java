@@ -9,9 +9,12 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInKeepAlivePacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInTransactionPacket;
+import me.rhys.anticheat.util.MathUtil;
 import me.rhys.anticheat.util.evicting.EvictingMap;
 import org.bukkit.Bukkit;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @ProcessorInformation(name = "Connection")
@@ -23,7 +26,9 @@ public class ConnectionProcessor extends Processor {
     private int ping, transPing, lastTransPing, dropTransTime;
     private int clientTick, flyingTick;
     private boolean isLagging = false;
-    private int dropTick;
+    private int dropTick, averageTransactionPing;
+
+    private List<Integer> pingList = new ArrayList<>();
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -58,6 +63,13 @@ public class ConnectionProcessor extends Processor {
 
             this.flyingTick = 0;
             this.dropTick++;
+
+            pingList.add(transPing);
+
+            if (pingList.size() > 100) {
+                averageTransactionPing = (int) MathUtil.getAverage(pingList);
+            }
+
 
             user.getCheckManager().getCheckList().forEach(check -> check.onConnection(user));
         }

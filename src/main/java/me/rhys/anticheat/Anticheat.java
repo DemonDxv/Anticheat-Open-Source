@@ -6,7 +6,10 @@ import me.rhys.anticheat.base.check.impl.CachedCheckManager;
 import me.rhys.anticheat.base.command.CommandManager;
 import me.rhys.anticheat.base.connection.TransactionHandler;
 import me.rhys.anticheat.base.listener.BukkitListener;
+import me.rhys.anticheat.base.thread.LogThread;
 import me.rhys.anticheat.base.user.UserManager;
+import me.rhys.anticheat.base.user.objects.LogData;
+import me.rhys.anticheat.base.user.objects.LogObject;
 import me.rhys.anticheat.config.ConfigLoader;
 import me.rhys.anticheat.config.ConfigValues;
 import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
@@ -19,6 +22,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -28,12 +33,17 @@ public class Anticheat extends JavaPlugin {
     @Getter private static Anticheat instance;
 
     private UserManager userManager;
+    private List<LogObject> logObjectList;
+    public LogData logData;
+
     private CommandManager commandManager;
 
     private String longLine =
             "-----------------------------------------------------------------------------------------------";
 
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService logService = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService timeService = Executors.newSingleThreadScheduledExecutor();
     private TransactionHandler transactionHandler;
     private TinyProtocolHandler tinyProtocolHandler;
     public String bukkitVersion;
@@ -42,10 +52,18 @@ public class Anticheat extends JavaPlugin {
     private final CachedCheckManager checkManager = new CachedCheckManager();
     private BlockBoxManager blockBoxManager;
     private BanWaveManager banWaveManager;
+    private String currentVersion = "null", latestVersion = "null";
+    public String currentDate = "(NOT SET)";
+
+    public Anticheat() {
+        this.logObjectList = new ArrayList<>();
+    }
 
     @Override
     public void onEnable() {
         instance = this;
+        currentVersion = getDescription().getVersion();
+
         this.tinyProtocolHandler = new TinyProtocolHandler();
         this.checkManager.setup();
 
@@ -60,11 +78,14 @@ public class Anticheat extends JavaPlugin {
 
         this.bukkitVersion = Bukkit.getServer().getClass().getPackage().getName().substring(23);
         this.transactionHandler = new TransactionHandler();
+        this.logData = new LogData();
         this.userManager = new UserManager();
+
         this.commandManager = new CommandManager();
         this.blockBoxManager = new BlockBoxManager();
 
         new MathUtil();
+        new LogThread();
 
         getServer().getPluginManager().registerEvents(new BukkitListener(), this);
 
@@ -79,6 +100,7 @@ public class Anticheat extends JavaPlugin {
 
         banWaveManager = new BanWaveManager();
 
+
         new UpdateChecker(this, 93504).getVersion(version -> {
             if (getDescription().getVersion().equalsIgnoreCase(version)) {
                 getServer().getConsoleSender().sendMessage("\n\n" + ChatColor.GREEN
@@ -92,16 +114,25 @@ public class Anticheat extends JavaPlugin {
                         + "| Please download the latest update here: https://www.spigotmc.org/resources/anticheat.93504/ |"
                         + "\n" + longLine + "\n\n");
             }
+
+            latestVersion = version;
         });
+
     }
 
     @Override
     public void onDisable() {
         this.userManager.getUserMap().forEach((uuid, user) -> {
             TinyProtocolHandler.getInstance().removeChannel(user.getPlayer());
-            user.getExecutorService().shutdownNow();
         });
+
+   //     getLogObjectList().forEach(player -> getLogData().removeUser(player));
+
+ //       getLogObjectList().clear();
+
         this.executorService.shutdownNow();
+        this.logService.shutdownNow();
+        this.timeService.shutdownNow();
 
         commandManager.removeCommand();
     }

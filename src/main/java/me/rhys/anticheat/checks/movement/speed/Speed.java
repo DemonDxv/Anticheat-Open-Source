@@ -39,10 +39,22 @@ public class Speed extends Check {
 
                 double deltaXZ = user.getMovementProcessor().getDeltaXZ();
 
+                double maxMotionXZ = 0.005;
 
+                if (user.getCombatProcessor().getUseEntityTimer().hasNotPassed(20)) {
+                    maxMotionXZ = 0.01019F;
+                }
+
+                if (deltaXZ > 0.25 && user.getMovementProcessor().getLastDeltaXZ() < 0.25) {
+                    maxMotionXZ = 0.01019F;
+                }
+
+                if (!user.getMovementProcessor().isLastLastGround()) {
+                    maxMotionXZ = 0.01019F;
+                }
 
                 if (deltaXZ > 0.25) {
-                    if (motionXZ > .01019f) {
+                    if (motionXZ > maxMotionXZ) {
                         flag(user, "Speeding", ""+motionXZ);
                     }
                 }

@@ -2,11 +2,14 @@ package me.rhys.anticheat.base.user;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.check.impl.CheckManager;
 import me.rhys.anticheat.base.event.EventManager;
 import me.rhys.anticheat.base.processor.impl.ProcessorManager;
 import me.rhys.anticheat.base.processor.impl.processors.*;
 import me.rhys.anticheat.base.user.objects.BlockData;
+import me.rhys.anticheat.base.user.objects.LogData;
+import me.rhys.anticheat.base.user.objects.LogObject;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
 import me.rhys.anticheat.util.*;
 import me.rhys.anticheat.util.evicting.EvictingList;
@@ -55,7 +58,7 @@ public class User {
     public PastLocation previousLocations = new PastLocation();
     private Deque<CustomLocation> customLocations = new LinkedList<>();
 
-    private boolean chunkLoaded = false, alerts = true;
+    private boolean chunkLoaded = false, alerts = true, banned = false;
 
     private double mouseDeltaY, mouseDeltaX, lastAimHDeltaPitch, lastAimHDeltaYaw;
 
@@ -78,6 +81,8 @@ public class User {
             lastTeleportTimer = new EventTimer(20, this),
             lastUnknownTeleportTimer = new EventTimer(20, this);
 
+    private LogObject logObject;
+
     public User(Player player) {
         this.player = player;
         this.uuid = player.getUniqueId();
@@ -88,6 +93,16 @@ public class User {
         this.processorManager.setup();
         this.setupProcessors();
         this.blockData.setupTimers(this);
+
+        if (Anticheat.getInstance().getLogData() != null && Anticheat.getInstance().getLogObjectList() != null) {
+            Anticheat.getInstance().getLogData().addUser(new LogObject(this.uuid.toString()));
+
+            this.logObject = Anticheat.getInstance().getLogData().getUser(this.uuid.toString());
+            this.logObject.name = player.getName();
+        }
+
+
+        eventManager.processTime();
 
         if (customLocations.size() >= 8) {
             customLocations.removeLast();

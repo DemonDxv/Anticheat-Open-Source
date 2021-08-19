@@ -39,16 +39,18 @@ public class SprintA extends Check {
                     return;
                 }
 
-                float moveAngle = MathUtil.getMoveAngle(user.getLastLastLocation(), user.getLastLocation());
+                float moveAngle = MathUtil.getMoveAngle(user.getLastLocation(), user.getCurrentLocation());
 
                 double deltaXZ = user.getMovementProcessor().getDeltaXZ();
 
-                if (moveAngle > 90.0F && deltaXZ > 0.2F && user.getMovementProcessor().isLastSprinting()) {
-                    if (++threshold > 9) {
-                        flag(user, "Omni-directional sprint");
+                if (user.getCurrentLocation() != null && user.getMovementProcessor().getYawDeltaClamped() > 0.1) {
+                    if (moveAngle > 90.0F && deltaXZ > 0.2F && user.getMovementProcessor().isLastSprinting()) {
+                        if (++threshold > 9) {
+                            flag(user, "Omni-directional sprint");
+                        }
+                    } else {
+                        threshold = 0;
                     }
-                } else {
-                    threshold = 0;
                 }
 
                 break;

@@ -28,7 +28,7 @@ import org.bukkit.util.Vector;
 public class MovementProcessor extends Processor {
     private EventTimer respawnTimer, lastGroundTimer, lastBlockPlacePacketTimer, lastBlockDigTimer;
 
-    private boolean sneaking, inInventory, lastLastGround, wasFlying, onGround = false, lastGround = false, positionYGround, lastPositionYGround, bouncedOnSlime, dead, sprinting,
+    private boolean lastServerYGround, sneaking, inInventory, lastLastGround, wasFlying, onGround = false, lastGround = false, positionYGround, lastPositionYGround, bouncedOnSlime, dead, sprinting,
             lastSprinting, serverYGround, isDigging;
     private int groundTicks, airTicks, lagBackTicks, serverAirTicks, serverGroundTicks, ignoreServerPositionTicks;
     private double deltaY, lastDeltaY, deltaXZ, lastDeltaXZ, deltaX, deltaZ, serverPositionSpeed, serverPositionDeltaY;
@@ -243,6 +243,7 @@ public class MovementProcessor extends Processor {
                 this.dead = user.getPlayer().isDead();
                 this.ignoreServerPositionTicks -= (this.ignoreServerPositionTicks > 0 ? 1 : 0);
 
+                lastServerYGround = serverYGround;
 
                 if (y % 0.015625 == 0.0
                         || y % 0.015625 <= 0.009) {
@@ -282,15 +283,8 @@ public class MovementProcessor extends Processor {
                         user.setLastLocation(user.getCurrentLocation().clone());
                     }
 
-                    user.getCurrentLocation().setWorld(user.getPlayer().getWorld());
-                    user.getCurrentLocation().setX(x);
-                    user.getCurrentLocation().setY(y);
-                    user.getCurrentLocation().setZ(z);
-                    user.getCurrentLocation().setClientGround(ground);
-                    user.getCurrentLocation().setTimeStamp(System.currentTimeMillis());
-
-                   // user.setCurrentLocation(new PlayerLocation(user.getPlayer().getWorld(), x, y, z,
-              //              yaw, pitch, ground, System.currentTimeMillis()));
+                    user.setCurrentLocation(new PlayerLocation(user.getPlayer().getWorld(), x, y, z,
+                            yaw, pitch, ground, System.currentTimeMillis()));
 
                     this.lastPositionYGround = this.positionYGround;
                     this.positionYGround = y % 0.015625 < 0.009;

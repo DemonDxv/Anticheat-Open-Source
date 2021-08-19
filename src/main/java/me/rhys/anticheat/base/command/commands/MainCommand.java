@@ -1,10 +1,7 @@
 package me.rhys.anticheat.base.command.commands;
 
 import me.rhys.anticheat.Anticheat;
-import me.rhys.anticheat.base.command.commands.sub.AlertsCommand;
-import me.rhys.anticheat.base.command.commands.sub.BanWaveCommand;
-import me.rhys.anticheat.base.command.commands.sub.ChecksCommand;
-import me.rhys.anticheat.base.command.commands.sub.ForceBanCommand;
+import me.rhys.anticheat.base.command.commands.sub.*;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -21,6 +18,8 @@ public class MainCommand extends BukkitCommand {
     private final AlertsCommand alertsCommand = new AlertsCommand();
     private final ChecksCommand checksCommand = new ChecksCommand();
     private final ForceBanCommand forceBanCommand = new ForceBanCommand();
+    private final GUICommand guiCommand = new GUICommand();
+    private final PingCommand pingCommand = new PingCommand();
     private final BanWaveCommand banWaveCommand = new BanWaveCommand();
 
 
@@ -72,6 +71,12 @@ public class MainCommand extends BukkitCommand {
                     } else if (s.equalsIgnoreCase("banwave")) {
                       //  found = true;
                       //  banWaveCommand.execute(args, s, commandSender);
+                    } else if (s.equalsIgnoreCase("gui")) {
+                        found = true;
+                        guiCommand.execute(args, s, commandSender);
+                    } else if (s.equalsIgnoreCase("ping")) {
+                        found = true;
+                        pingCommand.execute(args, s, commandSender);
                     }
 
                     if (!found) commandSender.sendMessage(ChatColor.RED + "Sub command doesn't exist!");

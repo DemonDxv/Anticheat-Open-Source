@@ -25,8 +25,14 @@ public class CommandManager {
         addCommand(new Command(new MainCommand("ac"), "ac forceban", "/ac forceban [player]",
                 "Forceban a player with the anticheat.", true));
 
+        addCommand(new Command(new MainCommand("ac"), "ac ping", "/ac ping [player]",
+                "Gets the ping of the target player.", true));
+
      //   addCommand(new Command(new MainCommand("ac"), "ac banwave", "/ac banwave",
        //         "Banwave Settings", true));
+
+        addCommand(new Command(new MainCommand("ac"), "ac gui", "/ac gui",
+                "GUI for the anticheat.", true));
     }
 
     private void addCommand(Command... commands) {

@@ -44,18 +44,22 @@ public class Check implements CallableEvent, Cloneable {
             }
         }
 
+        if (user.getConnectionProcessor().getClientTick() > 18) {
+            return;
+        }
+
         if (TPSUtil.getTPS() <= 19.0
                 || (user.getPlayer().hasPermission("anticheat.bypass") && !user.getPlayer().isOp()
                 || user.getPlayer().isOp() && Anticheat.getInstance().getConfigValues().isAllowOp()
                 && user.getPlayer().hasPermission("anticheat.bypass"))) {
-
             return;
         }
 
-        if (Anticheat.getInstance().getConfigValues().isPunish() && this.canPunish && this.violation > this.maxViolation) {
-            this.violation = 0;
-
+        if (Anticheat.getInstance().getConfigValues().isPunish() && !user.isBanned()
+                && this.canPunish && this.violation > this.maxViolation) {
             punishPlayer(user);
+            user.setBanned(true);
+            this.violation = 0;
         }
 
         String alert = Anticheat.getInstance().getConfigValues().getAlertsMessage()
@@ -68,21 +72,31 @@ public class Check implements CallableEvent, Cloneable {
                 .replace("%DEBUG%", (data.length > 0 ? ChatColor.GRAY + " ["
                         + ChatColor.GRAY + stringBuilder.toString().trim() + ChatColor.GRAY + "]" : ""));
 
-        if (isCanPunish()) {
+        if (isCanPunish() && !user.isBanned()) {
             violation++;
         }
 
         Bukkit.getServer().getOnlinePlayers().parallelStream().filter(player ->
-                       user.isAlerts() && (player.hasPermission("anticheat.alerts") ||
-                             player.isOp())).forEach(player -> player.sendMessage(alert));
+                user.isAlerts() && (player.hasPermission("anticheat.alerts") ||
+                        player.isOp())).forEach(player -> player.sendMessage(alert));
 
         if (Anticheat.getInstance().getConfigValues().isLagBack()) {
             // LOL
             user.getMovementProcessor().setLagBackTicks((this.lagBack ? 3 : 0));
         }
 
+        int ping = user.getConnectionProcessor().getTransPing();
+        boolean banned = user.isBanned();
 
-      //  LogInfo.getQueue().add(new LogInfo(user.getPlayer().getName(), checkName, checkType, violation));
+        if (Anticheat.getInstance().getConfigValues().isLogs()) {
+            user.getLogObject().logUtil.addLog(user.getPlayer().getName(),
+                    this.checkName, checkType, violation, maxViolation, !canPunish, ping, banned);
+        }
+
+        if (user.isBanned()) {
+            user.getLogObject().logUtil.addLogString(user.getPlayer().getName()
+                    + " has been banned for unfair advantages.");
+        }
     }
 
     @Override
@@ -115,6 +129,8 @@ public class Check implements CallableEvent, Cloneable {
     }
 
     public void punishPlayer(User user) {
+        user.setBanned(true);
+
         new BukkitRunnable() {
             @Override
             public void run() {

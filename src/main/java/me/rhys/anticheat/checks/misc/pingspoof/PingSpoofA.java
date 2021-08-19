@@ -33,7 +33,7 @@ public class PingSpoofA extends Check {
                     return;
                 }
 
-                if (user.getConnectionProcessor().getClientTick() >= 20) {
+                if (user.getConnectionProcessor().getClientTick() >= 18) {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
