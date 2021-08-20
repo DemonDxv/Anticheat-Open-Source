@@ -21,6 +21,7 @@ public class MainCommand extends BukkitCommand {
     private final GUICommand guiCommand = new GUICommand();
     private final PingCommand pingCommand = new PingCommand();
     private final BanWaveCommand banWaveCommand = new BanWaveCommand();
+    private final LogsCommand logsCommand = new LogsCommand();
 
 
     public MainCommand(String name) {
@@ -77,6 +78,9 @@ public class MainCommand extends BukkitCommand {
                     } else if (s.equalsIgnoreCase("ping")) {
                         found = true;
                         pingCommand.execute(args, s, commandSender);
+                    } else if (s.equalsIgnoreCase("logs")) {
+                        found = true;
+                        logsCommand.execute(args, s, commandSender);
                     }
 
                     if (!found) commandSender.sendMessage(ChatColor.RED + "Sub command doesn't exist!");

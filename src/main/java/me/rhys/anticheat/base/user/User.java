@@ -3,6 +3,7 @@ package me.rhys.anticheat.base.user;
 import lombok.Getter;
 import lombok.Setter;
 import me.rhys.anticheat.Anticheat;
+import me.rhys.anticheat.base.check.api.Check;
 import me.rhys.anticheat.base.check.impl.CheckManager;
 import me.rhys.anticheat.base.event.EventManager;
 import me.rhys.anticheat.base.processor.impl.ProcessorManager;
@@ -17,6 +18,7 @@ import me.rhys.anticheat.util.evicting.EvictingMap;
 import me.rhys.anticheat.util.box.BoundingBox;
 import me.rhys.anticheat.util.math.TrigHandler;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -55,19 +57,24 @@ public class User {
     private final Map<Long, Long> connectionMap2 = new EvictingMap<>(100);
     private int tick, vehicleTicks;
 
+    private WeakHashMap<Check, Integer> flaggedChecks = new WeakHashMap<>();
+
     public PastLocation previousLocations = new PastLocation();
     private Deque<CustomLocation> customLocations = new LinkedList<>();
 
     private boolean chunkLoaded = false, alerts = true, banned = false;
 
-    private double mouseDeltaY, mouseDeltaX, lastAimHDeltaPitch, lastAimHDeltaYaw;
+    private double enderPearlDistance, mouseDeltaY, mouseDeltaX, lastAimHDeltaPitch, lastAimHDeltaYaw;
 
     private BoundingBox boundingBox = new BoundingBox(0f, 0f, 0f, 0f, 0f, 0f);
     private PlayerLocation currentLocation = new PlayerLocation(null, 0, 0, 0, 0, 0,
             false, System.currentTimeMillis());
+    private Location enderPearlThrowLocation;
     private PlayerLocation lastLocation = currentLocation, lastLastLocation = lastLocation;
 
-    private EventTimer lastFlaggedFlightCTimer = new EventTimer(20, this), lastFlightToggleTimer = new EventTimer(20, this),
+    private EventTimer lastEnderPearlTimer = new EventTimer(20, this),
+            lastFlaggedFlightCTimer = new EventTimer(20, this),
+            lastFlightToggleTimer = new EventTimer(20, this),
             lastSuffocationTimer = new EventTimer(20, this),
             lastBlockBreakTimer = new EventTimer(20, this),
             vehicleTimer = new EventTimer(40, this),

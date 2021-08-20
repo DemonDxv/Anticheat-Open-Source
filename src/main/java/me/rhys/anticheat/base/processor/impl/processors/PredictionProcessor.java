@@ -281,7 +281,7 @@ public class PredictionProcessor extends Processor {
                 }
 
                 if (!user.getMovementProcessor().isOnGround()
-                        && user.getMovementProcessor().isLastGround() && deltaY > 0.42F) {
+                        && user.getMovementProcessor().isLastGround() && deltaY > 0.42f && deltaY < 1.0) {
                     prediction += 0.2F;
                 }
 

@@ -33,6 +33,9 @@ public class CommandManager {
 
         addCommand(new Command(new MainCommand("ac"), "ac gui", "/ac gui",
                 "GUI for the anticheat.", true));
+
+        addCommand(new Command(new MainCommand("ac"), "ac logs", "/ac logs (player)",
+                "Shows recent flags of the desired player that are stored", true));
     }
 
     private void addCommand(Command... commands) {

@@ -128,6 +128,7 @@ public class CachedCheckManager {
         this.checkList.add(new BadPacketsG());
         this.checkList.add(new BadPacketsH());
         this.checkList.add(new BadPacketsI());
+        this.checkList.add(new BadPacketsJ());
 
         this.checkList.add(new InventoryA());
         this.checkList.add(new InventoryB());

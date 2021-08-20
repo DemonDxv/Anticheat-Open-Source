@@ -45,8 +45,8 @@ public class Strafe extends Check {
 
                     double yaw = user.getMovementProcessor().getYawDelta();
 
-                    if (yaw > 0.1 && yaw <= 360) {
-                        if (deltaXZ > 0.01 && lastDeltaXZ > 0.01 && !user.getMovementProcessor().isOnGround()) {
+                    if (yaw > 0.01 && yaw <= 360) {
+                        if (deltaXZ > 0.01 && !user.getMovementProcessor().isOnGround()) {
                             DIRECTIONS.forEach(direction -> {
 
                                 double change = Math.abs(direction - moveAngle);

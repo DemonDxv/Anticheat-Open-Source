@@ -10,8 +10,10 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -49,6 +51,11 @@ public class BukkitListener implements Listener {
         this.processEvent(event);
     }
 
+    @EventHandler
+    public void onInteractEvent(PlayerInteractEvent event) {
+        this.processEvent(event);
+    }
+
     void processEvent(Event event) {
         if (event instanceof InventoryClickEvent) {
             process(event);
@@ -79,6 +86,15 @@ public class BukkitListener implements Listener {
 
                 if (((PlayerTeleportEvent) event).getCause() == PlayerTeleportEvent.TeleportCause.UNKNOWN) {
                     user.getLastUnknownTeleportTimer().reset();
+                }
+
+                if (((PlayerTeleportEvent) event).getCause() == PlayerTeleportEvent.TeleportCause.ENDER_PEARL) {
+                    if (user.getEnderPearlThrowLocation() != null
+                            && user.getEnderPearlThrowLocation().getWorld().equals(user.getPlayer().getWorld())) {
+                        user.setEnderPearlDistance(user.getEnderPearlThrowLocation()
+                                .distance(user.getPlayer().getLocation()));
+                    }
+                    user.getLastEnderPearlTimer().reset();
                 }
             }
         }
@@ -114,6 +130,16 @@ public class BukkitListener implements Listener {
                     user.getLastSuffocationTimer().reset();
                 }
 
+                if (((EntityDamageByEntityEvent) event).getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
+                    int ticks = user.getCombatProcessor().getCancelTicks();
+                    if (((EntityDamageByEntityEvent) event).isCancelled()) {
+                        ticks += (ticks < 20 ? 1 : 0);
+                    } else {
+                        ticks -= (ticks > 0 ? 5 : 0);
+                    }
+                    user.getCombatProcessor().setCancelTicks(ticks);
+                }
+
             }
         }
 
@@ -147,6 +173,23 @@ public class BukkitListener implements Listener {
 
             if (title.contains(theTitle)) {
                 ((InventoryClickEvent) event).setCancelled(true);
+            }
+        }
+
+        if (event instanceof PlayerInteractEvent) {
+            User user = Anticheat.getInstance().getUserManager().getUser(((PlayerInteractEvent) event).getPlayer());
+
+            if (user != null) {
+
+
+                if (((PlayerInteractEvent) event).getAction() == Action.RIGHT_CLICK_AIR
+                        || ((PlayerInteractEvent) event).getAction() == Action.RIGHT_CLICK_BLOCK) {
+
+                    if (((PlayerInteractEvent) event)
+                            .getPlayer().getItemInHand().getType().equals(Material.ENDER_PEARL)) {
+                        user.setEnderPearlThrowLocation(user.getPlayer().getLocation());
+                    }
+                }
             }
         }
     }

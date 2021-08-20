@@ -44,7 +44,7 @@ public class CombatProcessor extends Processor {
 
     private Vector velocity = new Vector(), velocityNoTrans = new Vector();
 
-    private int velocityTicks, velocityNoTransTicks;
+    private int cancelTicks, velocityTicks, velocityNoTransTicks;
 
     private short velocityID = 9000, relMoveID = -9, reachID = 9001;
 

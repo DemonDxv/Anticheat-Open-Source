@@ -29,6 +29,11 @@ public class KillauraF extends Check {
 
                 if (attack.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
 
+                    if (user.getCombatProcessor().getCancelTicks() > 0) {
+                        attacks = 0;
+                        return;
+                    }
+
                     double yawDiff = Math.abs(user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw());
                     if (yawDiff > 3.5f && yawDiff < 120 && user.getMovementProcessor().getDeltaXZ() > 0.1
                             && user.getCombatProcessor().isInsideHitbox()) {
@@ -43,6 +48,8 @@ public class KillauraF extends Check {
                 if (user.shouldCancel()
                         || user.getTick() < 60) {
                     threshold.setVerbose(0);
+                    attacks = 0;
+                    swings = 0;
                     return;
                 }
 

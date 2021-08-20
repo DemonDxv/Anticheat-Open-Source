@@ -97,6 +97,10 @@ public class Check implements CallableEvent, Cloneable {
             user.getLogObject().logUtil.addLogString(user.getPlayer().getName()
                     + " has been banned for unfair advantages.");
         }
+
+        if (user.getFlaggedChecks().containsKey(this)) {
+            user.getFlaggedChecks().put(this, user.getFlaggedChecks().get(this) + 1);
+        } else user.getFlaggedChecks().put(this, 1);
     }
 
     @Override
