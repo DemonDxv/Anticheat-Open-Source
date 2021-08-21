@@ -35,6 +35,11 @@ If your planning on forking / taking code to resell make sure to leave credits.
 
 * /ac forceban (player) - bans the player using the anticheat
 
+* /ac logs (player) - shows logs from MongoDB database collection
+
+* /ac ping (player) - shows the players ping
+
+* /ac gui - currently underdevelopment
 
 
 **Credits:**
