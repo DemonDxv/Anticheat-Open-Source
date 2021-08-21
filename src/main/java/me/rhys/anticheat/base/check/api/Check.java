@@ -6,6 +6,7 @@ import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.event.CallableEvent;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
+import me.rhys.anticheat.database.api.InputData;
 import me.rhys.anticheat.util.TPSUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -101,6 +102,17 @@ public class Check implements CallableEvent, Cloneable {
         if (user.getFlaggedChecks().containsKey(this)) {
             user.getFlaggedChecks().put(this, user.getFlaggedChecks().get(this) + 1);
         } else user.getFlaggedChecks().put(this, 1);
+
+        Anticheat.getInstance().getDatabaseManager().getLogQueue().add(
+                new InputData(
+                        user.getPlayer().getUniqueId().toString(),
+                        user.getPlayer().getName(),
+                        this.checkName,
+                        this.checkType,
+                        user.getFlaggedChecks().getOrDefault(this, 1),
+                        false
+                )
+        );
     }
 
     @Override

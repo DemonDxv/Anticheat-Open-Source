@@ -15,5 +15,5 @@ Punishment:
 Bypass:
   Op-Bypass: false
 Logs:
-  Enabled: true
-  Time: 30
+  Enabled: false
+  MongoDBURI: "mongodb+srv://user:password@node.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"

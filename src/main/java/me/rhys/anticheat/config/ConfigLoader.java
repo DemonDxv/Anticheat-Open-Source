@@ -29,11 +29,8 @@ public class ConfigLoader {
         Anticheat.getInstance().getConfigValues().setLogs(Anticheat.getInstance().getConfig()
                 .getBoolean("Logs.Enabled"));
 
-        Anticheat.getInstance().getConfigValues().setLogTime(Anticheat.getInstance().getConfig()
-                .getInt("Logs.Time"));
-
-        //       Anticheat.getInstance().getConfigValues().setJudgementDay(Anticheat.getInstance().getConfig()
-//                .getBoolean("Banwave.Enabled"));
+        Anticheat.getInstance().getConfigValues().setMongoDBURI(Anticheat.getInstance().getConfig()
+                .getString("Logs.MongoDBURI"));
     }
 
     String convertColor(String in) {

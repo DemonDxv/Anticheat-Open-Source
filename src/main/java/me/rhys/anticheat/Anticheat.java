@@ -6,12 +6,12 @@ import me.rhys.anticheat.base.check.impl.CachedCheckManager;
 import me.rhys.anticheat.base.command.CommandManager;
 import me.rhys.anticheat.base.connection.TransactionHandler;
 import me.rhys.anticheat.base.listener.BukkitListener;
-import me.rhys.anticheat.base.thread.LogThread;
 import me.rhys.anticheat.base.user.UserManager;
 import me.rhys.anticheat.base.user.objects.LogData;
 import me.rhys.anticheat.base.user.objects.LogObject;
 import me.rhys.anticheat.config.ConfigLoader;
 import me.rhys.anticheat.config.ConfigValues;
+import me.rhys.anticheat.database.DatabaseManager;
 import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
 import me.rhys.anticheat.util.MathUtil;
@@ -50,6 +50,7 @@ public class Anticheat extends JavaPlugin {
     private final ConfigValues configValues = new ConfigValues();
     private final ConfigLoader configLoader = new ConfigLoader();
     private final CachedCheckManager checkManager = new CachedCheckManager();
+    private final DatabaseManager databaseManager = new DatabaseManager();
     private BlockBoxManager blockBoxManager;
     private BanWaveManager banWaveManager;
     private String currentVersion = "null", latestVersion = "null";
@@ -85,7 +86,6 @@ public class Anticheat extends JavaPlugin {
         this.blockBoxManager = new BlockBoxManager();
 
         new MathUtil();
-        new LogThread();
 
         getServer().getPluginManager().registerEvents(new BukkitListener(), this);
 
@@ -118,17 +118,16 @@ public class Anticheat extends JavaPlugin {
             latestVersion = version;
         });
 
+        this.databaseManager.setup();
     }
 
     @Override
     public void onDisable() {
-        this.userManager.getUserMap().forEach((uuid, user) -> {
-            TinyProtocolHandler.getInstance().removeChannel(user.getPlayer());
-        });
 
-   //     getLogObjectList().forEach(player -> getLogData().removeUser(player));
+        this.databaseManager.shutdown();
 
- //       getLogObjectList().clear();
+        this.userManager.getUserMap().forEach((uuid, user) ->
+                TinyProtocolHandler.getInstance().removeChannel(user.getPlayer()));
 
         this.executorService.shutdownNow();
         this.logService.shutdownNow();
