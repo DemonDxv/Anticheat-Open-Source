@@ -1,6 +1,5 @@
 # %PLAYER% = the player cheating. %PREFIX% = the prefix of the anticheat you set below. %DEBUG% - dev/check info
 # Op-Bypass: if set to true, a player that is op will automatically bypass else if false they will need the permission "anticheat.bypass" to bypass
-# Time for "Logs" is how often logs are stored in seconds.
 Alert:
   Prefix: '&8[&cAnticheat&8]&r'
   Alert-Message: '%PREFIX% &f%PLAYER% &7flagged &c%CHECK% &8(&c%CHECKTYPE%&8) &8[&c%VL%/%MAX-VL%&8]'
