@@ -11,7 +11,7 @@ import org.bukkit.Bukkit;
 import java.util.ArrayList;
 import java.util.List;
 
-@CheckInformation(checkName = "AimAssist", checkType = "M", lagBack = false, punishmentVL = 10)
+@CheckInformation(checkName = "AimAssist", checkType = "M", canPunish = false, punishmentVL = 10)
 public class AimAssistM extends Check {
 
     private double threshold, lastSTD;
@@ -35,14 +35,14 @@ public class AimAssistM extends Check {
 
                 double yaw = user.getMovementProcessor().getYawDeltaClamped();
 
-                if (yaw > 1.0 && lastDeltaYaw > 1.0) {
+                if (yaw > 1.0) {
                     deltaYawList.add(yaw);
 
                     if (deltaYawList.size() >= 25) {
                         double std = MathUtil.getStandardDeviation(deltaYawList);
 
 
-                        if (std < 0.3 || Math.abs(std - lastSTD) < 0.01) {
+                        if (std < 0.15 || Math.abs(std - lastSTD) < 0.001) {
                             flag(user, "Invalid yaw movements");
                         }
 

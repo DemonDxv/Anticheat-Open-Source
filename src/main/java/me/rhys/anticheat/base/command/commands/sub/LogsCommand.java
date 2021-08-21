@@ -34,7 +34,7 @@ public class LogsCommand {
 
                         Map<String, Integer> integerMap = new HashMap<>();
                         logs.forEach(inputData -> {
-                            String name = inputData.getCheckName() + inputData.getCheckType();
+                            String name = inputData.getCheckName() + " " + inputData.getCheckType();
                             integerMap.put(name, integerMap.getOrDefault(name, 0) + 1);
                         });
 

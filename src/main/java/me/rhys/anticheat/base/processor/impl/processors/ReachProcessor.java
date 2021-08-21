@@ -91,6 +91,11 @@ public class ReachProcessor extends Processor {
 
                     reachData = doubleShortEntry.getValue();
 
+                    if (user.getCombatProcessor().getLastAttackedEntity() != null) {
+                        user.getCombatProcessor().getHitboxLocations().addLocation(user.getCombatProcessor()
+                                .getLastAttackedEntity().getLocation());
+                    }
+
                     reachTestMap.clear();
                 }
             }

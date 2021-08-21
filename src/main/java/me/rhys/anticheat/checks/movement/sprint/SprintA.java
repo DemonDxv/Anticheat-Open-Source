@@ -43,7 +43,7 @@ public class SprintA extends Check {
 
                 double deltaXZ = user.getMovementProcessor().getDeltaXZ();
 
-                if (user.getCurrentLocation() != null && user.getMovementProcessor().getYawDeltaClamped() > 0.1) {
+                if (user.getCurrentLocation() != null) {
                     if (moveAngle > 90.0F && deltaXZ > 0.2F && user.getMovementProcessor().isLastSprinting()) {
                         if (++threshold > 9) {
                             flag(user, "Omni-directional sprint");

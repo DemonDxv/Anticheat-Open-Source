@@ -9,7 +9,7 @@ import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
-@CheckInformation(checkName = "AimAssist", checkType = "I", lagBack = false, punishmentVL = 10, canPunish = false)
+@CheckInformation(checkName = "AimAssist", checkType = "I", punishmentVL = 10, canPunish = false)
 public class AimAssistI extends Check {
 
     private double threshold;
@@ -34,12 +34,12 @@ public class AimAssistI extends Check {
 
                     double mouseY = user.getMouseDeltaY();
 
-                    if (mouseY > 1000 && deltaPitch < 4) {
+                    if (mouseY > 10000 && deltaPitch < 4) {
                         if (threshold++ > 5) {
                             flag(user, "Invalid pitch changes");
                         }
                     } else {
-                        threshold -= Math.min(threshold, 0.09f);
+                        threshold -= Math.min(threshold, 0.6f);
                     }
 
                 }

@@ -14,6 +14,7 @@ import me.rhys.anticheat.config.ConfigValues;
 import me.rhys.anticheat.database.DatabaseManager;
 import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
+import me.rhys.anticheat.util.FileManager;
 import me.rhys.anticheat.util.MathUtil;
 import me.rhys.anticheat.util.TPSUtil;
 import me.rhys.anticheat.util.UpdateChecker;
@@ -55,6 +56,7 @@ public class Anticheat extends JavaPlugin {
     private BanWaveManager banWaveManager;
     private String currentVersion = "null", latestVersion = "null";
     public String currentDate = "(NOT SET)";
+    private FileManager fileManager;
 
     public Anticheat() {
         this.logObjectList = new ArrayList<>();
@@ -118,6 +120,7 @@ public class Anticheat extends JavaPlugin {
             latestVersion = version;
         });
 
+        this.fileManager = new FileManager();
         this.databaseManager.setup();
     }
 

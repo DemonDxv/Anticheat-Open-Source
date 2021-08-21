@@ -162,7 +162,7 @@ public class PredictionProcessor extends Processor {
                 moveS *= 0.98F;
                 moveF *= 0.98F;
 
-                float strafe = moveS, forward = moveF;
+                float strafe = 0.98F, forward = 0.98F;
                 float f = strafe * strafe + forward * forward;
 
                 float friction;
@@ -254,9 +254,9 @@ public class PredictionProcessor extends Processor {
                     strafe = strafe * f;
                     forward = forward * f;
 
-                    float f1 = (float) Math.sin(user.getMovementProcessor().getYawDeltaClamped()
+                    float f1 = (float) MathHelper.sin(user.getMovementProcessor().getYawDeltaClamped()
                             * (float) Math.PI / 180.0F);
-                    float f2 = (float) Math.cos(user.getMovementProcessor().getYawDeltaClamped()
+                    float f2 = (float) MathHelper.cos(user.getMovementProcessor().getYawDeltaClamped()
                             * (float) Math.PI / 180.0F);
 
                     float motionXAdd = (strafe * f2 - forward * f1);
@@ -266,11 +266,9 @@ public class PredictionProcessor extends Processor {
 
                 double deltaY = user.getMovementProcessor().getDeltaY();
 
-                double jumpHeight = 0.42F;
-
                 if (!user.getMovementProcessor().isOnGround()
                         && user.getMovementProcessor().isLastGround()
-                        && (deltaY == jumpHeight || deltaY > 0.4044f && deltaY < .406F)) {
+                        && deltaY > 0.005) {
                     prediction += 0.2F;
                 }
 

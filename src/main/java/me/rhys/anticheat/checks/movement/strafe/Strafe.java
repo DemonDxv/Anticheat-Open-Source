@@ -40,19 +40,18 @@ public class Strafe extends Check {
                 if (user.getLastLocation() != null && user.getLastLastLocation() != null) {
                     float moveAngle = MathUtil.getMoveAngle(user.getLastLastLocation(), user.getLastLocation());
 
-                    double deltaXZ = user.getMovementProcessor().getDeltaXZ(),
-                            lastDeltaXZ = user.getMovementProcessor().getLastDeltaXZ();
+                    double deltaXZ = user.getMovementProcessor().getDeltaXZ();
 
-                    double yaw = user.getMovementProcessor().getYawDelta();
+                    double yaw = user.getMovementProcessor().getYawDeltaClamped();
 
-                    if (yaw > 0.01 && yaw <= 360) {
+                    if (yaw > 0.001 && yaw <= 360) {
                         if (deltaXZ > 0.01 && !user.getMovementProcessor().isOnGround()) {
                             DIRECTIONS.forEach(direction -> {
 
                                 double change = Math.abs(direction - moveAngle);
 
                                 if (change < 0.0001F) {
-                                    if (threshold++ > 9) {
+                                    if (threshold++ > 4) {
                                         flag(user, "Strafing in the air");
                                     }
                                 } else {

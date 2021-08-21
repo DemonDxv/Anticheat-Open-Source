@@ -258,8 +258,6 @@ public class MovementProcessor extends Processor {
                 }
 
 
-
-
                 this.lastLastGround = this.lastGround;
                 this.lastGround = this.onGround;
                 this.onGround = ground;
@@ -273,6 +271,8 @@ public class MovementProcessor extends Processor {
                     if (this.airTicks < 20) this.airTicks++;
                 }
 
+                user.getCurrentLocation().setClientGround(ground);
+
                 if (wrappedInFlyingPacket.isPos()) {
 
                     if (user.getLastLocation() != null) {
@@ -283,8 +283,14 @@ public class MovementProcessor extends Processor {
                         user.setLastLocation(user.getCurrentLocation().clone());
                     }
 
-                    user.setCurrentLocation(new PlayerLocation(user.getPlayer().getWorld(), x, y, z,
-                            yaw, pitch, ground, System.currentTimeMillis()));
+                    if (user.getPlayer().getWorld() != null) {
+                        user.getCurrentLocation().setWorld(user.getPlayer().getWorld());
+                    }
+
+                    user.getCurrentLocation().setX(x);
+                    user.getCurrentLocation().setY(y);
+                    user.getCurrentLocation().setZ(z);
+                    user.getCurrentLocation().setTimeStamp(System.currentTimeMillis());
 
                     this.lastPositionYGround = this.positionYGround;
                     this.positionYGround = y % 0.015625 < 0.009;

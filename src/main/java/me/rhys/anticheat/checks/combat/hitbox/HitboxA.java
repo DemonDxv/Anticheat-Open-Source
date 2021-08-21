@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CheckInformation(checkName = "Hitbox", lagBack = false, punishmentVL = 25, canPunish = false)
+@CheckInformation(checkName = "Hitbox", lagBack = false, punishmentVL = 30)
 public class HitboxA extends Check {
 
     private double threshold;
@@ -34,29 +34,23 @@ public class HitboxA extends Check {
 
         switch (event.getType()) {
 
-            case Packet.Client.USE_ENTITY: {
-                WrappedInUseEntityPacket useEntityPacket = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
+            case Packet.Client.FLYING:
+            case Packet.Client.LOOK:
+            case Packet.Client.POSITION_LOOK:
+            case Packet.Client.POSITION: {
 
-                if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
+                if (user.getTick() < 120 || user.getCombatProcessor().getCancelTicks() > 0 || user.shouldCancel()) {
+                    threshold = 0;
+                    return;
+                }
 
-                    if (user.shouldCancel() || user.getTick() < 60 || user.getCombatProcessor().getCancelTicks() > 0) {
-                        threshold = 0;
-                        return;
-                    }
-
-                    Location location = user.getCurrentLocation().clone()
-                            .toBukkitLocation(user.getPlayer().getWorld());
-
-                    LivingEntity livingEntity = (LivingEntity) useEntityPacket.getEntity();
-
-                    if (livingEntity != null && location != null && user.getMovementProcessor().getDeltaXZ() > 0.01) {
-                        if (!user.getCombatProcessor().isInsideHitbox()) {
-                            if (threshold++ > 5) {
-                                flag(user, "Expanded Hitbox");
-                            }
-                        } else {
-                            threshold -= Math.min(threshold, 0.25);
+                if (user.getCombatProcessor().getUseEntityTimer().hasNotPassed(2)) {
+                    if (!user.getCombatProcessor().isInsideHitbox()) {
+                        if (threshold++ > 12) {
+                            flag(user, "Expanded Hitbox");
                         }
+                    } else {
+                        threshold -= Math.min(threshold, 4.2);
                     }
                 }
 

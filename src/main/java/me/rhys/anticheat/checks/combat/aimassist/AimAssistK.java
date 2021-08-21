@@ -16,7 +16,6 @@ import java.util.List;
 public class AimAssistK extends Check {
 
     private double threshold;
-    private double lastDeltaYaw;
     private List<Double> deltaYawList = new ArrayList<>();
 
     @Override
@@ -36,7 +35,7 @@ public class AimAssistK extends Check {
 
                 double yaw = user.getMovementProcessor().getYawDeltaClamped();
 
-                if (yaw > 1.0 && lastDeltaYaw > 1.0) {
+                if (yaw > 1.0) {
                     deltaYawList.add(yaw);
 
                     if (deltaYawList.size() >= 100) {
@@ -51,8 +50,6 @@ public class AimAssistK extends Check {
                     }
                 }
 
-
-                lastDeltaYaw = yaw;
                 break;
             }
         }

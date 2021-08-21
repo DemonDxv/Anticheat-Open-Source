@@ -12,7 +12,7 @@ import org.bukkit.Bukkit;
 import java.util.ArrayList;
 import java.util.List;
 
-@CheckInformation(checkName = "AimAssist", checkType = "H", lagBack = false, punishmentVL = 10, canPunish = false)
+@CheckInformation(checkName = "AimAssist", checkType = "H", lagBack = false, punishmentVL = 5)
 public class AimAssistH extends Check {
 
     @Override
@@ -31,14 +31,13 @@ public class AimAssistH extends Check {
                         return;
                     }
 
-                    double deltaYaw = Math.abs(user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw());
+                    double deltaYaw = user.getMovementProcessor().getYawDeltaClamped();
 
-                    double deltaMouse = (deltaYaw - user.getMouseDeltaX());
+                    double deltaMouse = Math.abs(deltaYaw - user.getMouseDeltaX());
 
-                    if (deltaMouse > 60.0 && deltaMouse != 360) {
-
-                        if (deltaYaw > 0.0 && deltaYaw >= 100) {
-                            flag(user, "Head Snapping");
+                    if (deltaMouse > 60.0 && deltaMouse != 360 && deltaMouse < 360) {
+                        if (deltaYaw >= 100) {
+                            flag(user, "Head Snapping", "dm="+deltaMouse + ", y=" + deltaYaw);
                         }
                     }
 

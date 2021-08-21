@@ -48,7 +48,7 @@ public class CombatProcessor extends Processor {
 
     private short velocityID = 9000, relMoveID = -9, reachID = 9001;
 
-    private Player lastAttackedEntity, lastLastAttackedEntity;
+    private Entity lastAttackedEntity, lastLastAttackedEntity;
 
     private PastLocation hitboxLocations = new PastLocation();
     private List<BoundingBox> boundingBoxList = new ArrayList<>();
@@ -65,42 +65,12 @@ public class CombatProcessor extends Processor {
                 if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
 
                     lastLastAttackedEntity = lastAttackedEntity;
-                    lastAttackedEntity = (Player) useEntityPacket.getEntity();
+                    lastAttackedEntity = useEntityPacket.getEntity();
                     useEntityTimer.reset();
 
 
                     velocity.setX(velocity.getX() * 0.6F);
                     velocity.setZ(velocity.getZ() * 0.6F);
-
-                    Location location = user.getCurrentLocation().clone()
-                            .toBukkitLocation(user.getPlayer().getWorld());
-
-                    LivingEntity livingEntity = (LivingEntity) useEntityPacket.getEntity();
-
-                    List<PlayerLocation> pastLocation = hitboxLocations.getEstimatedLocation(event.getTimestamp(),
-                            user.getConnectionProcessor().getTransPing(), 200L);
-
-                    if (pastLocation.size() > 0) {
-
-                        if (livingEntity != null && location != null) {
-
-                            pastLocation.forEach(loc1 -> boundingBoxList.add(MathUtil.getHitbox(livingEntity, loc1, user)));
-
-                            location.setY(location.getY() + (user.getPlayer().isSneaking() ? 1.53 : user.getPlayer().getEyeHeight()));
-
-                            RayTrace trace = new RayTrace(location.toVector(), user.getPlayer().getEyeLocation().getDirection());
-
-
-                            boolean outsideHitbox = boundingBoxList.stream().noneMatch(box ->
-                                    trace.intersects(box, box.getMinimum().distance(location.toVector()) + 1.0,
-                                            .4));
-
-                            insideHitbox = !outsideHitbox;
-
-                            boundingBoxList.clear();
-                            pastLocation.clear();
-                        }
-                    }
                 }
             }
 
@@ -111,8 +81,37 @@ public class CombatProcessor extends Processor {
                 velocityTicks++;
                 velocityNoTransTicks++;
 
-                if (lastAttackedEntity != null) {
-                    hitboxLocations.addLocation(lastAttackedEntity.getLocation());
+                Location location = user.getCurrentLocation().clone()
+                        .toBukkitLocation(user.getPlayer().getWorld());
+
+                LivingEntity livingEntity = (LivingEntity) lastAttackedEntity;
+
+                List<PlayerLocation> pastLocation = hitboxLocations.getEstimatedLocation(event.getTimestamp(),
+                        user.getConnectionProcessor().getTransPing(), 200);
+
+                if (pastLocation.size() > 0) {
+
+                    if (livingEntity != null && location != null) {
+
+                        if (useEntityTimer.hasNotPassed(5)) {
+                            pastLocation.forEach(loc1 -> boundingBoxList.add(MathUtil.getHitbox(livingEntity, loc1, user)));
+
+                            location.setY(location.getY() + (user.getPlayer().isSneaking() ? 1.53 - 0.4f
+                                    : user.getPlayer().getEyeHeight() - .4f));
+
+                            RayTrace trace = new RayTrace(location.toVector(),
+                                    user.getPlayer().getEyeLocation().getDirection());
+
+                            boolean outsideHitbox = boundingBoxList.stream().noneMatch(box ->
+                                    trace.intersects(box, box.getMinimum().distance(location.toVector())
+                                            + 1.0, .4f));
+
+                            insideHitbox = !outsideHitbox;
+
+                            boundingBoxList.clear();
+                            pastLocation.clear();
+                        }
+                    }
                 }
 
                 break;

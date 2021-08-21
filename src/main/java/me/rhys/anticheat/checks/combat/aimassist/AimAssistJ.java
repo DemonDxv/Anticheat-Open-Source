@@ -8,7 +8,7 @@ import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.util.MathUtil;
 
-@CheckInformation(checkName = "AimAssist", checkType = "J", lagBack = false, punishmentVL = 10)
+@CheckInformation(checkName = "AimAssist", checkType = "J", canPunish = false, punishmentVL = 10)
 public class AimAssistJ extends Check {
 
     private double threshold;
@@ -30,8 +30,7 @@ public class AimAssistJ extends Check {
                         return;
                     }
 
-                    double yaw = MathUtil.wrapAngleTo180_float(
-                            user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw());
+                    double yaw = user.getMovementProcessor().getYawDeltaClamped();
 
                     double difference = Math.abs(yaw - lastDeltaYaw);
 
