@@ -58,7 +58,30 @@ public class Check implements CallableEvent, Cloneable {
 
         if (Anticheat.getInstance().getConfigValues().isPunish() && !user.isBanned()
                 && this.canPunish && this.violation > this.maxViolation) {
-            punishPlayer(user);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Anticheat.getInstance().getConfigValues()
+                            .getPunishCommand()
+                            .replace("%MAX-VL%", String.valueOf(maxViolation))
+                            .replace("%CHECK%", checkName)
+                            .replace("%CHECKTYPE%", checkType)
+                            .replace("%VL%", String.valueOf(violation))
+                            .replace("%PLAYER%", user.getPlayer().getName())
+                            .replace("%PREFIX%", Anticheat.getInstance().getConfigValues().getPrefix())
+                            .replaceFirst("/", ""));
+
+                    if (Anticheat.getInstance().getConfigValues().isAnnounce()) {
+                        Bukkit.broadcastMessage(Anticheat.getInstance().getConfigValues().getAnnounceMessage()
+                                .replace("%MAX-VL%", String.valueOf(maxViolation))
+                                .replace("%CHECK%", checkName)
+                                .replace("%CHECKTYPE%", checkType)
+                                .replace("%VL%", String.valueOf(violation))
+                                .replace("%PLAYER%", user.getPlayer().getName())
+                                .replace("%PREFIX%", Anticheat.getInstance().getConfigValues().getPrefix()));
+                    }
+                }
+            }.runTask(Anticheat.getInstance());
             user.setBanned(true);
             this.violation = 0;
         }
@@ -144,14 +167,14 @@ public class Check implements CallableEvent, Cloneable {
         return null;
     }
 
+
     public void punishPlayer(User user) {
         user.setBanned(true);
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Anticheat.getInstance().getConfigValues()
-                        .getPunishCommand()
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "/ban %PLAYER% %PREFIX% Unfair Advantage!"
                         .replace("%MAX-VL%", String.valueOf(maxViolation))
                         .replace("%CHECK%", checkName)
                         .replace("%CHECKTYPE%", checkType)
