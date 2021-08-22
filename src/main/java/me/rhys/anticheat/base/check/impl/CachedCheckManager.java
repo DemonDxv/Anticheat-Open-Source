@@ -77,6 +77,7 @@ public class CachedCheckManager {
         this.checkList.add(new KillauraK());
         this.checkList.add(new KillauraL());
         this.checkList.add(new KillauraM());
+        this.checkList.add(new KillauraN());
 
         this.checkList.add(new ReachA());
         this.checkList.add(new ReachB());
@@ -105,7 +106,9 @@ public class CachedCheckManager {
         this.checkList.add(new JesusA());
 
         this.checkList.add(new SneakA());
-       // this.checkList.add(new SneakB());
+        this.checkList.add(new SneakB());
+        this.checkList.add(new SneakC());
+        this.checkList.add(new SneakD());
 
         this.checkList.add(new SprintA());
         this.checkList.add(new SprintB());
@@ -118,6 +121,9 @@ public class CachedCheckManager {
         this.checkList.add(new ScaffoldF());
         this.checkList.add(new ScaffoldG());
         this.checkList.add(new ScaffoldH());
+        this.checkList.add(new ScaffoldI());
+        this.checkList.add(new ScaffoldJ());
+        this.checkList.add(new ScaffoldK());
 
         this.checkList.add(new BadPacketsA());
      //   this.checkList.add(new BadPacketsB());
@@ -219,5 +225,9 @@ public class CachedCheckManager {
         ChecksFile.getInstance().setup(Anticheat.getInstance());
         this.checkList.forEach(this::setupFile);
         ChecksFile.getInstance().saveData();
+    }
+
+    public List<Check> getCheckList() {
+        return this.checkList;
     }
 }

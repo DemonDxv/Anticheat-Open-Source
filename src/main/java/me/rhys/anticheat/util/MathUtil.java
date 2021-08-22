@@ -20,6 +20,7 @@ import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class MathUtil {
@@ -76,6 +77,16 @@ public class MathUtil {
         vector.setX(-xz * Math.sin(Math.toRadians(rotX)));
         vector.setZ(xz * Math.cos(Math.toRadians(rotX)));
         return vector;
+    }
+
+    public static double yawCheck( double yaw, double lastYaw) {
+        double perc_value = lastYaw;
+        double numb_value = yaw;
+
+        double rslt_value;
+        rslt_value = perc_value * numb_value / 100.0;
+        rslt_value = 1000.0 * rslt_value / 1000.0;
+        return Double.parseDouble(String.valueOf(rslt_value));
     }
 
     /**
@@ -328,7 +339,7 @@ public class MathUtil {
     public static BoundingBox getHitbox(LivingEntity entity, PlayerLocation l, User user) {
         float d = (float) user.getMovementProcessor().getDeltaXZ();
         Vector dimensions = MathUtil.entityDimensions.getOrDefault(entity.getType(), new Vector(0.4, 2, 0.4));
-        return new BoundingBox(0, 0, 0, 0, 0, 0).add((float) l.getX(), (float) l.getY(), (float) l.getZ()).grow((float) dimensions.getX(), (float) dimensions.getY(), (float) dimensions.getZ()).grow(.1f, 0.1f, .1f)
+        return new BoundingBox(0, 0, 0, 0, 0, 0).add((float) l.getX(), (float) l.getY(), (float) l.getZ()).grow((float) dimensions.getX(), (float) dimensions.getY(), (float) dimensions.getZ()).grow(.3f, 0.1f, .3f)
                 .grow((entity.getVelocity().getY() > 0 ? 0.15f : 0) + d / 1.25f, 0, (entity.getVelocity().getY() > 0 ? 0.15f : 0) + d / 1.25f);
     }
 

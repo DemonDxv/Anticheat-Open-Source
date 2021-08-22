@@ -34,25 +34,27 @@ public class KillauraJ extends Check {
 
             case Packet.Client.BLOCK_PLACE: {
 
-                if (movements < 10) {
-                    delays.add(movements);
+                if (user.isSword(user.getPlayer().getItemInHand()) && user.getPlayer().getItemInHand() != null) {
+                    if (movements < 10) {
+                        delays.add(movements);
 
-                    if (delays.size() == 25) {
-                        double std = MathUtil.getStandardDeviation(delays);
+                        if (delays.size() == 25) {
+                            double std = MathUtil.getStandardDeviation(delays);
 
-                        if (std < 0.34) {
-                            if (threshold++ > 1) {
-                                flag(user, "Blocking to consistent");
+                            if (std < 0.34) {
+                                if (threshold++ > 1) {
+                                    flag(user, "Blocking to consistent");
+                                }
+                            } else {
+                                threshold -= Math.min(threshold, 0.5);
                             }
-                        } else {
-                            threshold -= Math.min(threshold, 0.5);
+
+                            delays.clear();
                         }
 
-                        delays.clear();
                     }
-
+                    movements = 0;
                 }
-                movements = 0;
                 break;
             }
         }

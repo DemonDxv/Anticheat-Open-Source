@@ -24,7 +24,6 @@ public class KillauraC extends Check {
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
                 block = dig = false;
-
                 break;
             }
 

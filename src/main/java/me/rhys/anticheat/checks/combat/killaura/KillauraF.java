@@ -25,9 +25,9 @@ public class KillauraF extends Check {
 
         switch (event.getType()) {
             case Packet.Client.USE_ENTITY: {
-                WrappedInUseEntityPacket attack = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
+                WrappedInUseEntityPacket useEntityPacket = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
 
-                if (attack.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
+                if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
 
                     if (user.getCombatProcessor().getCancelTicks() > 0) {
                         attacks = 0;

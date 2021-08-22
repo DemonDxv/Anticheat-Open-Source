@@ -11,19 +11,13 @@ import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockPlacePacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutExplosionPacket;
 import me.rhys.anticheat.tinyprotocol.packet.types.MathHelper;
-import me.rhys.anticheat.util.*;
-import me.rhys.anticheat.util.math.OptifineMath;
-import me.rhys.anticheat.util.math.VanillaMath;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import me.rhys.anticheat.util.EventTimer;
+import me.rhys.anticheat.util.MathUtil;
+import me.rhys.anticheat.util.PlayerLocation;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collections;
-import java.util.HashMap;
 
 @ProcessorInformation(name = "Prediction")
 @Getter
@@ -47,6 +41,7 @@ public class PredictionProcessor extends Processor {
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
 
+                //We must get the friction of the block the player is currently on.
                 if (user.getMovementProcessor().isLastLastGround()) {
 
                     blockFriction = 0.91F * 0.6F;
@@ -66,6 +61,7 @@ public class PredictionProcessor extends Processor {
                     }
 
                 } else {
+                    //When the player is in the air their friction is always 0.91F
                     blockFriction = 0.91F;
                 }
 
@@ -76,7 +72,7 @@ public class PredictionProcessor extends Processor {
                 dropItem = false;
 
 
-                if (lastSlotChange.hasNotPassed(9)) {
+                if (lastSlotChange.hasNotPassed(20)) {
                     useSword = false;
                 }
 
@@ -96,8 +92,8 @@ public class PredictionProcessor extends Processor {
 
                 double prediction = lastDeltaXZ * blockFriction;
 
-                PlayerLocation to = user.getMovementProcessor().getCurrentLocation(),
-                        from = user.getMovementProcessor().getLastLocation();
+                PlayerLocation to = user.getCurrentLocation(),
+                        from = user.getLastLocation();
 
                 double preD = 0.01D;
 
@@ -244,6 +240,10 @@ public class PredictionProcessor extends Processor {
                     }
                 }
 
+                if (user.getBlockData().liquidTicks > 0) {
+                    prediction += 0.05F;
+                }
+
 
                 if (f >= 1.0E-4F) {
                     f = (float) Math.sqrt(f);
@@ -268,18 +268,13 @@ public class PredictionProcessor extends Processor {
 
                 if (!user.getMovementProcessor().isOnGround()
                         && user.getMovementProcessor().isLastGround()
-                        && deltaY > 0.005) {
+                        && deltaY > 0.0) {
                     prediction += 0.2F;
                 }
 
                 if (!user.getMovementProcessor().isOnGround()
                         && user.getMovementProcessor().isLastGround()
                         && user.getBlockData().underBlockTicks > 0) {
-                    prediction += 0.2F;
-                }
-
-                if (!user.getMovementProcessor().isOnGround()
-                        && user.getMovementProcessor().isLastGround() && deltaY > 0.42f && deltaY < 1.0) {
                     prediction += 0.2F;
                 }
 

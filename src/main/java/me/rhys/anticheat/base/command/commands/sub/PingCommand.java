@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 
 public class PingCommand {
 
+    private final String line = ChatColor.GRAY + "§m------------------------------------------";
+
     public void execute(String[] args, String s, CommandSender commandSender) {
         User user = Anticheat.getInstance().getUserManager().getUser(((Player) commandSender));
 
@@ -21,14 +23,18 @@ public class PingCommand {
                     if (targetName.length() > 0) {
                         User target = Anticheat.getInstance().getUserManager().getUser(Bukkit.getPlayer(args[1]));
                         if (target != null) {
-                            commandSender.sendMessage(target.getPlayer().getName() + "'s ping is " + ChatColor.GREEN
-                                    + target.getConnectionProcessor().getTransPing() + "." + ChatColor.RESET +
 
-                                    "\nKeepAlive Ping: " + ChatColor.GREEN
-                                            + user.getConnectionProcessor().getPing() + "." +
+                            int transPing = target.getConnectionProcessor().getTransPing();
+                            int avgPing = target.getConnectionProcessor().getAverageTransactionPing();
+                            int keepPing = target.getConnectionProcessor().getPing();
 
-                                    ChatColor.RESET + "\nAvg Ping: " + ChatColor.GREEN
-                                            + user.getConnectionProcessor().getAverageTransactionPing() + ".");
+                            commandSender.sendMessage("\n" + line);
+                            commandSender.sendMessage("Player: " + ChatColor.RED + target.getPlayer().getName());
+                            commandSender.sendMessage("\n");
+                            commandSender.sendMessage("Transaction Ping: " + ChatColor.GREEN + transPing);
+                            commandSender.sendMessage("KeepAlive Ping: " + ChatColor.GREEN + keepPing);
+                            commandSender.sendMessage("Average Ping: " + ChatColor.GREEN + avgPing);
+                            commandSender.sendMessage(line + "\n");
                         } else {
                             commandSender.sendMessage("[ERROR] Player your trying to ban is NULL, try another name.");
                         }

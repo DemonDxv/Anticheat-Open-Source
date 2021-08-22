@@ -33,27 +33,30 @@ public class ScaffoldD extends Check {
 
                 double yaw = Math.abs(user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw());
 
-                if (user.getBlockPlaced().getLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
-                    if (yaw > 0.1 && user.getPlayer().getItemInHand() != null
-                            && user.getPlayer().getItemInHand().getType().isBlock()) {
-                        if (faceInt >= 0 && faceInt <= 3) {
-                            placeList.add(vecY);
+                if (user.getLastBlockPlaceTimer().hasNotPassed(2)) {
+                    if (user.getBlockPlaced().getLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
+                        if (yaw > 0.2 && user.getPlayer().getItemInHand() != null
+                                && user.getPlayer().getItemInHand().getType().isBlock()) {
+                            if (faceInt >= 0 && faceInt <= 3) {
+                                placeList.add(vecY);
 
-                            if (placeList.size() == 3) {
-                                double std = MathUtil.getStandardDeviation(placeList);
+                                if (placeList.size() == 3) {
+                                    double std = MathUtil.getStandardDeviation(placeList);
 
-                                if (std < 0.03) {
-                                    if (++threshold > 2) {
-                                        flag(user, "HitVec Consistency");
+                                    if (std < 0.03) {
+                                        if (++threshold > 2) {
+                                            flag(user, "HitVec Consistency");
+                                        }
+                                    } else {
+                                        threshold -= Math.min(threshold, 0.6);
                                     }
-                                } else {
-                                    threshold -= Math.min(threshold, 0.6);
-                                }
 
+                                    placeList.clear();
+                                }
+                            } else {
+                                threshold = 0;
                                 placeList.clear();
                             }
-                        } else {
-                            placeList.clear();
                         }
                     }
                 }

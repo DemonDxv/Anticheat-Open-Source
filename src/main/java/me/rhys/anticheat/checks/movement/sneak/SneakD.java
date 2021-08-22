@@ -7,17 +7,15 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInEntityActionPacket;
 import me.rhys.anticheat.util.MathUtil;
-import me.rhys.anticheat.util.TimeUtils;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@CheckInformation(checkName = "Sneak", checkType = "B", canPunish = false, description = "Checks consistency of the players Sneaks")
-public class SneakB extends Check {
+@CheckInformation(checkName = "Sneak", checkType = "D", description = "Checks if lots of sneak packets are sent at once")
+public class SneakD extends Check {
 
-    private List<Long> sneakList = new ArrayList<>();
-    private double lastSTD;
+    private double sneakTicks, threshold;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -30,6 +28,15 @@ public class SneakB extends Check {
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.LOOK: {
 
+                if (this.sneakTicks > 1) {
+                    if (threshold++ > 2) {
+                        this.flag(user, "Large amounts of sneak packets");
+                    }
+                } else {
+                    threshold -= Math.min(threshold, 0.04f);
+                }
+
+                this.sneakTicks = 0;
                 break;
             }
 
@@ -38,22 +45,10 @@ public class SneakB extends Check {
                         new WrappedInEntityActionPacket(event.getPacket(), user.getPlayer());
 
                 if (actionPacket.getAction() == WrappedInEntityActionPacket.EnumPlayerAction.START_SNEAKING) {
-                    sneakList.add(System.currentTimeMillis());
-
-                    if (sneakList.size() == 25) {
-                        double std = MathUtil.getStandardDeviation(sneakList);
-
-                        double stdDiff = Math.abs(std - lastSTD);
-
-                        if (stdDiff < .7) {
-                            flag(user, "Invalid Sneaking");
-                        }
-
-                        lastSTD = std;
-                        sneakList.clear();
-                    }
+                    this.sneakTicks++;
+                } else if (actionPacket.getAction() == WrappedInEntityActionPacket.EnumPlayerAction.STOP_SNEAKING) {
+                    this.sneakTicks++;
                 }
-
                 break;
             }
         }

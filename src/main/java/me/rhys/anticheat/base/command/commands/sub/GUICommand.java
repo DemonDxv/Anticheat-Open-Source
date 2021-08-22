@@ -1,6 +1,8 @@
 package me.rhys.anticheat.base.command.commands.sub;
 
 import me.rhys.anticheat.Anticheat;
+import me.rhys.anticheat.base.check.api.Check;
+import me.rhys.anticheat.base.check.impl.CheckManager;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.util.ui.UiUtil;
 import org.bukkit.Bukkit;
@@ -22,10 +24,14 @@ public class GUICommand {
                "Anticheat GUI");
 
         inventory.setItem(13, UiUtil.generateItem(new ItemStack(Material.BOOK, 1),
-                ChatColor.RESET + "Information", Arrays.asList(ChatColor.RED + "Version: "
-                                + Anticheat.getInstance().getCurrentVersion(),
+                ChatColor.RESET + "Information", Arrays.asList(
+                        ChatColor.WHITE + "Authors: "+Anticheat.getInstance().getDescription().getAuthors(),
+                        ChatColor.GRAY + "Total Checks: " + user.getCheckManager().getCheckList().size(),
+                        "",
+                        ChatColor.GOLD + "Version: " + Anticheat.getInstance().getCurrentVersion(),
                         ChatColor.GREEN + "Latest Version: "+Anticheat.getInstance().getLatestVersion(),
-                        ChatColor.DARK_RED + "This GUI is still under development.")));
+                        "",
+                        ChatColor.RED + "This GUI is still under development.")));
 
 
 

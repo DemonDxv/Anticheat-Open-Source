@@ -7,17 +7,16 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInEntityActionPacket;
 import me.rhys.anticheat.util.MathUtil;
-import me.rhys.anticheat.util.TimeUtils;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@CheckInformation(checkName = "Sneak", checkType = "B", canPunish = false, description = "Checks consistency of the players Sneaks")
-public class SneakB extends Check {
+@CheckInformation(checkName = "Sneak", checkType = "C", canPunish = false, description = "Checks consistency of the players Sneaks")
+public class SneakC extends Check {
 
     private List<Long> sneakList = new ArrayList<>();
-    private double lastSTD;
+    private double lastSTD, threshold;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -38,19 +37,23 @@ public class SneakB extends Check {
                         new WrappedInEntityActionPacket(event.getPacket(), user.getPlayer());
 
                 if (actionPacket.getAction() == WrappedInEntityActionPacket.EnumPlayerAction.START_SNEAKING) {
-                    sneakList.add(System.currentTimeMillis());
+                    this.sneakList.add(System.currentTimeMillis());
 
-                    if (sneakList.size() == 25) {
-                        double std = MathUtil.getStandardDeviation(sneakList);
+                    if (this.sneakList.size() == 5) {
+                        double std = MathUtil.getStandardDeviation(this.sneakList);
 
-                        double stdDiff = Math.abs(std - lastSTD);
+                        double stdDiff = Math.abs(std - this.lastSTD);
 
-                        if (stdDiff < .7) {
-                            flag(user, "Invalid Sneaking");
+                        if (stdDiff < 1) {
+                            if (++threshold > 2) {
+                                flag(user, "Invalid Sneaking");
+                            }
+                        } else {
+                            threshold -= Math.min(threshold, 0.26);
                         }
 
-                        lastSTD = std;
-                        sneakList.clear();
+                        this.lastSTD = std;
+                        this.sneakList.clear();
                     }
                 }
 

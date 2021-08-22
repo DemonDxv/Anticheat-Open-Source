@@ -33,29 +33,32 @@ public class ScaffoldE extends Check {
 
                 double yaw = Math.abs(user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw());
 
-                if (user.getBlockPlaced().getType().isBlock()) {
-                    if (user.getBlockPlaced().getLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
-                        if (yaw > 0 && user.getPlayer().getItemInHand() != null
-                                && user.getPlayer().getItemInHand().getType().isBlock()) {
-                            if (faceInt >= 0 && faceInt <= 3) {
-                                placeList.add(vecY);
+                if (user.getLastBlockPlaceTimer().hasNotPassed(2)) {
+                    if (user.getBlockPlaced().getType().isBlock()) {
+                        if (user.getBlockPlaced().getLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
+                            if (yaw > 0 && user.getPlayer().getItemInHand() != null
+                                    && user.getPlayer().getItemInHand().getType().isBlock()) {
+                                if (faceInt >= 0 && faceInt <= 3) {
+                                    placeList.add(vecY);
 
-                                if (placeList.size() == 5) {
-                                    double std = MathUtil.getStandardDeviation(placeList);
+                                    if (placeList.size() == 5) {
+                                        double std = MathUtil.getStandardDeviation(placeList);
 
-                                    if (std < 0.05 || std == lastSTD) {
-                                        if (++threshold > 3) {
-                                            flag(user, "HitVec Consistency");
+                                        if (std < 0.05 || std == lastSTD) {
+                                            if (++threshold > 3) {
+                                                flag(user, "HitVec Consistency");
+                                            }
+                                        } else {
+                                            threshold -= Math.min(threshold, 0.5);
                                         }
-                                    } else {
-                                        threshold -= Math.min(threshold, 0.5);
-                                    }
 
-                                    lastSTD = std;
+                                        lastSTD = std;
+                                        placeList.clear();
+                                    }
+                                } else {
+                                    threshold = 0;
                                     placeList.clear();
                                 }
-                            } else {
-                                placeList.clear();
                             }
                         }
                     }

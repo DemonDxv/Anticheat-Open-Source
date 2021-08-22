@@ -10,7 +10,7 @@ import org.bukkit.Bukkit;
 @CheckInformation(checkName = "Speed", punishmentVL = 8, description = "Detecting if the players MotionXZ matched with the predicted calculated speed.")
 public class Speed extends Check {
 
-    private double threshold, thresholdg;
+    private double threshold;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -39,59 +39,13 @@ public class Speed extends Check {
 
                 double deltaXZ = user.getMovementProcessor().getDeltaXZ();
 
-                double maxMotionXZ = 0.005;
-
-                if (user.getCombatProcessor().getUseEntityTimer().hasNotPassed(20)) {
-                    maxMotionXZ = 0.01019F;
-                }
-
-                if (deltaXZ > 0.3 && user.getMovementProcessor().getLastDeltaXZ() < 0.3) {
-                    maxMotionXZ = 0.01019F;
-                }
-
-                if (!user.getMovementProcessor().isLastLastGround()) {
-                    maxMotionXZ = 0.01019F;
-                }
-
-                if (deltaXZ > 0.25) {
-                    if (motionXZ > maxMotionXZ) {
-                        flag(user, "Speeding", ""+motionXZ);
+                if (motionXZ > 0.005 && deltaXZ > 0.2) {
+                    if (threshold++ > 2) {
+                        flag(user, "Invalid MotionXZ", ""+motionXZ);
                     }
+                } else {
+                    threshold -= Math.min(threshold, 0.001);
                 }
-
-             /*  if (user.getMovementProcessor().isOnGround()
-                        || user.getMovementProcessor().isLastGround()
-                        || user.getMovementProcessor().isLastLastGround()) {
-                    if (deltaXZ > 0.25) {
-                        if (motionXZ > 0.005) {
-                            if (thresholdg++ > 6) {
-                                flag(user, "Speeding on ground", "[A]");
-                            }
-                        } else {
-                            thresholdg -= Math.min(thresholdg, 0.012f);
-                        }
-
-                        if (motionXZ > 0.0102) {
-                            flag(user, "Speed on ground", "[B]");
-                        }
-                    }
-                }
-
-                if (!user.getMovementProcessor().isOnGround() || !user.getMovementProcessor().isLastGround()
-                        || !user.getMovementProcessor().isLastLastGround() ) {
-                    if (motionXZ > 0.1 && deltaXZ > 0.01) {
-                        flag(user, "Speeding in air", "[A]");
-                    }
-
-                    if (motionXZ > 0.005 && deltaXZ > 0.01) {
-                        if (threshold++ > 6) {
-                            flag(user, "Speeding in air", "[B]");
-                        }
-                    } else {
-                        threshold -= Math.min(threshold, 0.03f);
-                    }
-                }
-*/
 
                 break;
             }
