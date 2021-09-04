@@ -44,15 +44,12 @@ If your planning on forking / taking code to resell make sure to leave credits.
 
 **Credits:**
 
-darkandblue (prediction processing)
+darkandblue (Prediction/Key Processing)
 
 funkemunky & Rhys & Luke (bounding boxes, reflection, protocol from Atlas https://github.com/funkemunky/Atlas) 
+(original code of Atlas is from Luke (firefly dev) but I still gotta give funke his credit lol)
 
-(original code of atlas is from Luke (firefly dev) and the Atlas code was modified to be less heavy by Rhys but I still gotta give funke his credit lol)
-
-ItzLucky (Prediction calculations)
-
-Sim0n (Autoclicker utils from Nemesis)
+Sim0n (AutoClicker utilites from Baldr)
 
 
 **DEPENDENCIES:**
