@@ -58,7 +58,7 @@ public class FlightG extends Check {
         }
     }
     boolean checkConditions(User user) {
-        return user.getBlockData().liquidTicks > 0
+        return user.getBlockData().waterTicks > 0
                 || user.getTick() < 60
                 || user.getBlockData().underBlockTicks > 0
                 || user.getBlockData().stairTicks > 0

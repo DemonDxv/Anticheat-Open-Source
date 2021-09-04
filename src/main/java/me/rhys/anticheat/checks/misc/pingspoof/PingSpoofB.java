@@ -22,7 +22,8 @@ public class PingSpoofB extends Check {
 
                 User user = event.getUser();
 
-                if (user.shouldCancel() && user.getTick() < 60) {
+                if (user.shouldCancel() || user.getTick() < 60) {
+                    threshold = 0;
                     return;
                 }
 

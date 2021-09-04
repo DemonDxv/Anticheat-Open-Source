@@ -28,24 +28,26 @@ public class SneakA extends Check {
                 if (user.shouldCancel()
                         || user.getTick() < 100
                         || user.getLastTeleportTimer().hasNotPassed(20)
+                        || !user.isChunkLoaded()
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)) {
                     threshold = 0;
                     return;
                 }
 
-                long diff = Math.abs(System.currentTimeMillis() - lastSneaking);
-
-                if (diff < 5L) {
-                    if (threshold++ > 12) {
-                        flag(user, "Sneaking rapidly");
-                    }
-                } else {
-                    threshold -= Math.min(threshold, 0.25);
-                }
-
                 if (user.getPlayer().isSneaking()) {
+                    long diff = Math.abs(System.currentTimeMillis() - lastSneaking);
+
+                    if (diff <= 0L) {
+                        if (threshold++ > 12) {
+                            flag(user, "Sneaking rapidly");
+                        }
+                    } else {
+                        threshold -= Math.min(threshold, 0.25);
+                    }
+
                     lastSneaking = System.currentTimeMillis();
                 }
+
 
                 break;
             }

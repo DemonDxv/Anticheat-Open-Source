@@ -28,8 +28,9 @@ public class SprintB extends Check {
                         || user.getLastTeleportTimer().hasNotPassed(10
                         + user.getConnectionProcessor().getClientTick())
                         || user.getPlayer().isDead()
-                        || user.getMovementProcessor().getRespawnTimer().hasNotPassed(20
+                        || user.getActionProcessor().getRespawnTimer().hasNotPassed(20
                         + user.getConnectionProcessor().getClientTick())
+                        || !user.isChunkLoaded()
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(10
                         + user.getConnectionProcessor().getClientTick())) {
                     return;

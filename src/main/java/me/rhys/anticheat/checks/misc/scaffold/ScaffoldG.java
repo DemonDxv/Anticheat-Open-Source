@@ -16,6 +16,11 @@ public class ScaffoldG extends Check {
         switch (event.getType()) {
 
             case Packet.Client.BLOCK_PLACE: {
+
+                if (user.shouldCancel() || user.getTick() < 60) {
+                    return;
+                }
+
                 if (user.getMovementProcessor().isInInventory()) {
                     flag(user, "Blocking/Placing blocks while in inventory");
                 }

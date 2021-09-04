@@ -23,21 +23,19 @@ public class PingSpoofA extends Check {
                 User user = event.getUser();
 
                 if (user.shouldCancel()
-                        || user.getTick() < 60
-                        || user.getPlayer().isDead()
-                        || user.getLastTeleportTimer().hasNotPassed(20)
-                        || user.getMovementProcessor().getRespawnTimer().hasNotPassed(20)
-                        || user.getCombatProcessor().getVelocityTicks() <= 10
-                        + user.getConnectionProcessor().getClientTick()
-                        && user.getConnectionProcessor().getClientTick() < 20) {
+                        || user.getLastTeleportTimer().hasNotPassed(20
+                        + user.getConnectionProcessor().getClientTick())
+                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)) {
                     return;
                 }
 
-                if (user.getConnectionProcessor().getClientTick() >= 18) {
+                boolean canKick = user.getTick() > 350;
+
+                if (user.getConnectionMap().size() > (canKick ? 18 : 25)) {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            user.getPlayer().kickPlayer("Timed out.");
+                            user.getPlayer().kickPlayer("Disconnected.");
                         }
                     }.runTask(Anticheat.getInstance());
                 }

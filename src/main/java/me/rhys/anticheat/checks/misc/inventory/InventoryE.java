@@ -29,6 +29,10 @@ public class InventoryE extends Check {
 
                 WrappedInWindowClickPacket clickPacket = new WrappedInWindowClickPacket(event.getPacket(), user.getPlayer());
 
+                if (user.shouldCancel() || user.getTick() < 60 || !user.isChunkLoaded()) {
+                    return;
+                }
+
                 if (clickPacket.getAction().isShiftClick()) {
                     shiftClickTicks++;
                 }

@@ -33,6 +33,8 @@ public class InventoryF extends Check {
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
                         || user.getBlockData().iceTimer.hasNotPassed(20)
                         || user.getBlockData().slimeTimer.hasNotPassed(20)
+                        || user.getTick() < 60
+                        || !user.isChunkLoaded()
                         || user.getBlockData().pistonTicks > 0) {
                     return;
                 }

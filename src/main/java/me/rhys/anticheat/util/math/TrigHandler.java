@@ -29,7 +29,7 @@ public class TrigHandler {
             isVanillaMath = !isVanillaMath;
         }
 
-        Bukkit.broadcastMessage(""+isVanillaMath);
+       // Bukkit.broadcastMessage(""+isVanillaMath);
 
         // Try and identify the math system within 0.5 seconds (At best) of joining
         // Switch systems in 2 seconds (At best) if the player changes their math system

@@ -24,17 +24,15 @@ public class SneakC extends Check {
         User user = event.getUser();
 
         switch (event.getType()) {
-            case Packet.Client.FLYING:
-            case Packet.Client.POSITION:
-            case Packet.Client.POSITION_LOOK:
-            case Packet.Client.LOOK: {
-
-                break;
-            }
-
             case Packet.Client.ENTITY_ACTION: {
                 WrappedInEntityActionPacket actionPacket =
                         new WrappedInEntityActionPacket(event.getPacket(), user.getPlayer());
+
+                if (user.shouldCancel()
+                        || !user.isChunkLoaded()
+                        || user.getTick() < 60) {
+                    return;
+                }
 
                 if (actionPacket.getAction() == WrappedInEntityActionPacket.EnumPlayerAction.START_SNEAKING) {
                     this.sneakList.add(System.currentTimeMillis());

@@ -5,9 +5,8 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
-import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "Flight", checkType = "F", punishmentVL = 9, description = "Jump height check")
+@CheckInformation(checkName = "Flight", checkType = "F", canPunish = false, description = "Checks if going upwards incorrectly")
 public class FlightF extends Check {
 
     private double threshold;
@@ -35,26 +34,30 @@ public class FlightF extends Check {
                         || user.getBlockData().climbableTimer.hasNotPassed(20
                         + user.getConnectionProcessor().getClientTick())
                         || user.getBlockData().pistonTicks > 0
+                        || !user.isChunkLoaded()
                         || user.getBlockData().lavaTicks > 0
                         || user.getBlockData().waterTicks > 0
                         || user.getPotionProcessor().getJumpTicks() > 0
                         || user.getBlockData().stairSlabTimer.hasNotPassed(20)
-                        || user.getCombatProcessor().getVelocityTicks() <= (5
-                        + user.getConnectionProcessor().getClientTick() + 5)) {
+                        || user.getActionProcessor().getVelocityTimer().hasNotPassed(10
+                        + user.getConnectionProcessor().getClientTick())
+                        && user.getLastFallDamageTimer().passed(20)) {
                     threshold = 0;
                     return;
                 }
 
-
                 double deltaY = user.getMovementProcessor().getDeltaY();
+                double maxDeltaYSpeed = user.getMovementProcessor().getAirTicks() > 7 ? 0.0
+                        : 0.42f + (user.getPotionProcessor().getJumpAmplifier() * 0.1F);
 
-                if (deltaY > 0.0 && user.getMovementProcessor().getAirTicks() > 7) {
-                    if (threshold++ > 5) {
-                        flag(user, "Moving upwards abnormal");
+                if (deltaY > maxDeltaYSpeed && !user.getMovementProcessor().isOnGround()) {
+                    if (++threshold > 2) {
+                        flag(user, "Flying up abnormally");
                     }
                 } else {
-                    threshold -= Math.min(threshold, 0.025);
+                    threshold -= Math.min(threshold, 0.01f);
                 }
+
             }
         }
     }

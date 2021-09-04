@@ -25,6 +25,7 @@ public class PhaseB extends Check {
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(5)
                         || user.getBlockData().slimeTimer.hasNotPassed(20)
+                        || !user.isChunkLoaded()
                         || user.getTick() < 60) {
                     return;
                 }

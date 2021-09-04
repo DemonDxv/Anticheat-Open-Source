@@ -5,6 +5,7 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
+import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "Flight", checkType = "D", punishmentVL = 45, description = "Checks if player is using yPort")
 public class FlightD extends Check {
@@ -28,7 +29,11 @@ public class FlightD extends Check {
                         || user.getVehicleTicks() > 0
                         || user.getBlockData().webTicks > 0
                         || user.getBlockData().cakeTicks > 0
-                        || user.getCombatProcessor().getVelocityTicks() <= 20
+                        || !user.isChunkLoaded()
+                        || user.getPotionProcessor().getJumpTicks() > 0
+                        || user.getActionProcessor().getVelocityTimer().hasNotPassed(10
+                        + user.getConnectionProcessor().getClientTick())
+                        && user.getLastFallDamageTimer().passed(20)
                         || user.getBlockData().lavaTicks > 0
                         || checkConditions(user)) {
                     threshold = 0;
@@ -57,7 +62,7 @@ public class FlightD extends Check {
         }
     }
     boolean checkConditions(User user) {
-        return user.getBlockData().liquidTicks > 0
+        return user.getBlockData().waterTicks > 0
                 || user.getTick() < 60
                 || user.getBlockData().underBlockTicks > 0
                 || user.getBlockData().stairTicks > 0

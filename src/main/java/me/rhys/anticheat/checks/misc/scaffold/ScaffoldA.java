@@ -22,6 +22,11 @@ public class ScaffoldA extends Check {
                 WrappedInBlockPlacePacket blockPlace =
                         new WrappedInBlockPlacePacket(event.getPacket(), user.getPlayer());
 
+                if (user.shouldCancel() || user.getTick() < 60) {
+                    vl = 0;
+                    return;
+                }
+
                 float vecX = blockPlace.getVecX();
                 float vecY = blockPlace.getVecY();
                 float vecZ = blockPlace.getVecZ();

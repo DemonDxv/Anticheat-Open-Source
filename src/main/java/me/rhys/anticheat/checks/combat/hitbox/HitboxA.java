@@ -39,7 +39,10 @@ public class HitboxA extends Check {
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
 
-                if (user.getTick() < 120 || user.getCombatProcessor().getCancelTicks() > 0 || user.shouldCancel()) {
+                if (user.getTick() < 120
+                        || user.getConnectionProcessor().isLagging()
+                        || user.getCombatProcessor().getCancelTicks() > 0
+                        || user.shouldCancel()) {
                     threshold = 0;
                     return;
                 }

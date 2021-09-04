@@ -25,9 +25,9 @@ public class BadPacketsC extends Check {
                 if (user.shouldCancel()
                         || user.getTick() < 60
                         || user.getLastTeleportTimer().hasNotPassed(20)
-                        || user.getMovementProcessor().getRespawnTimer().hasNotPassed(20)
+                        || user.getActionProcessor().getRespawnTimer().hasNotPassed(20)
                         || user.getBlockData().pistonTicks > 0
-                        || user.getMovementProcessor().getRespawnTimer().hasNotPassed(20)
+                        || user.getActionProcessor().getRespawnTimer().hasNotPassed(20)
                         || user.getPlayer().isDead()
                         || user.getGhostBlockProcessor().getGhostBlockTeleportTimer().hasNotPassed(20)
                         || user.getVehicleTimer().hasNotPassed(20)) {

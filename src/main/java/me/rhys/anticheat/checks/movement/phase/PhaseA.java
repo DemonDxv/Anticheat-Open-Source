@@ -32,6 +32,8 @@ public class PhaseA extends Check {
                         || user.getBlockData().skullTicks > 0
                         || user.getBlockData().door
                         || user.getBlockData().stairSlabTimer.hasNotPassed(20)
+                        || !user.isChunkLoaded()
+                        || user.getBlockData().signTicks > 0
                         || user.getBlockData().underBlockTicks > 0) {
                     threshold = 0;
                     return;

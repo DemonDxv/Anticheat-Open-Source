@@ -49,12 +49,12 @@ public class AutoClickerD extends Check {
                     if (delays.size() == 75) {
                         double std = MathUtil.getStandardDeviation(delays);
 
-                        if (Math.abs(std - lastStd) < 0.03) {
+                        if (Math.abs(std - lastStd) < 0.02) {
                             if (threshold++ > 2) {
                                 flag(user, "Clicking to consistent [S-LS]");
                             }
                         } else {
-                            threshold -= Math.min(threshold, 0.125);
+                            threshold -= Math.min(threshold, 0.45);
                         }
 
                         lastStd = std;

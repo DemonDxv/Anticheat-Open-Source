@@ -32,6 +32,7 @@ public class Strafe extends Check {
                         || user.getTick() < 60
                         || user.getLastTeleportTimer().hasNotPassed(10
                         + user.getConnectionProcessor().getClientTick())
+                        || !user.isChunkLoaded()
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(10
                         + user.getConnectionProcessor().getClientTick())) {
                     return;

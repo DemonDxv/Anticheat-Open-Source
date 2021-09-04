@@ -1,15 +1,11 @@
 package me.rhys.anticheat.checks.combat.reach;
 
-import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.check.api.Check;
 import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
-import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutEntityTeleport;
-import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutRelativePosition;
-import me.rhys.anticheat.util.CustomLocation;
 import me.rhys.anticheat.util.MathUtil;
 import me.rhys.anticheat.util.PastLocation;
 import me.rhys.anticheat.util.PlayerLocation;
@@ -18,20 +14,18 @@ import me.rhys.anticheat.util.world.EntityData;
 import me.rhys.anticheat.util.world.types.RayCollision;
 import me.rhys.anticheat.util.world.types.SimpleCollisionBox;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CheckInformation(checkName = "Reach", lagBack = false, punishmentVL = 7, description = "Detects reach at 3.01")
+@CheckInformation(checkName = "Reach", lagBack = false, punishmentVL = 7, description = "Detects reach at 3.01 using the Average Reach")
 public class ReachA extends Check {
 
-    private PastLocation reachCTargetLocations = new PastLocation();
+    private PastLocation reachATargetLocations = new PastLocation();
+
     private double threshold;
 
     @Override
@@ -44,21 +38,24 @@ public class ReachA extends Check {
                 WrappedInUseEntityPacket useEntityPacket = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
 
                 if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
-                    ///  User target = Anticheat.getInstance().getUserManager().getUser(user.getCombatProcessor().getLastLastAttackedEntity().getPlayer());
 
-                    if (user.shouldCancel() || user.getTick() < 60) {
+                    if (user.shouldCancel()
+                            || user.getConnectionProcessor().isLagging()
+                            || user.getTick() < 60
+                            || user.getCombatProcessor().getCancelTicks() > 0) {
+                        threshold = 0;
                         return;
                     }
 
                     List<SimpleCollisionBox> simpleBoxes = new ArrayList<>();
 
-                    reachCTargetLocations.getEstimatedLocation(event.getTimestamp(),
+                    reachATargetLocations.getEstimatedLocation(event.getTimestamp(),
                             user.getConnectionProcessor().getTransPing(), 200L)
                             .stream()
                             .map(loc -> getHitbox(user.getCombatProcessor().getLastAttackedEntity(), loc)).collect(Collectors.toList())
                             .forEach(box -> box.downCast(simpleBoxes));
 
-                    double distance = 69, horzDistance = 69, totalDistance = 69, hitboxEx = 69;
+                    double distance = 69, horzDistance = 69;
                     int a = 0, collided = 0;
 
                     for (PlayerLocation location : Arrays.asList(user.getCurrentLocation().clone(),
@@ -88,25 +85,32 @@ public class ReachA extends Check {
 
                             distance = Math.min(distance, hitBoxExpand);
 
-                            totalDistance = Math.min(distance, horzDistance);
-
-                            hitboxEx = hitBoxExpand;
-
                         }
                     }
 
-                 //   Bukkit.broadcastMessage(""+totalDistance + " "+horzDistance);
+                  //  Bukkit.broadcastMessage(""+horzDistance + " "+distance + " "+collided);
 
-                    if (horzDistance >= 3.5 && horzDistance <= 6.5) {
-;                        if (threshold++ > 1) {
-                            flag(user, "Reaching "+horzDistance);
+               //     Bukkit.broadcastMessage("t-" +threshold);
+
+                    if (distance >= 3.01 && distance <= 6.5) {
+                        if (collided == 1 || collided == 0) {
+                            threshold += 0.15;
+                        } else if (collided == 2) {
+                            threshold += 0.9;
+                        } else if (collided == 4 || collided == 3) {
+                            threshold += 1.25;
+                        } else if (collided > 4) {
+                            threshold += 2.5;
                         }
-                    } else if (horzDistance < 3.0 && horzDistance != 69) {
-                        threshold -= Math.min(threshold, .11);
+
+                        if (threshold >= 2.5) {
+                            flag(user, "Reaching", ""+distance + " : "+horzDistance);
+                        }
+                    } else {
+                        threshold -= Math.min(threshold, 0.03f);
                     }
 
-                    reachCTargetLocations.addLocation(user.getReachProcessor().getReachData().getCustomLocation());
-
+                    reachATargetLocations.addLocation(user.getReachProcessor().getReachData().getCustomLocation());
                 }
 
                 break;

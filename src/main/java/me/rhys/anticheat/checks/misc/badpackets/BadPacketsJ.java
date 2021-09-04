@@ -29,10 +29,10 @@ public class BadPacketsJ extends Check {
 
                     double deltaXZ = user.getMovementProcessor().getDeltaXZ();
 
-                    double maxXZ = 0.3;
+                    double maxXZ = 0.6;
 
                     if (deltaXZ > maxXZ && user.getEnderPearlDistance() < 8) {
-                        if (threshold++ > 1) {
+                        if (threshold++ > 2) {
                             flag(user, "Invalid teleport");
                         }
                     } else {

@@ -49,11 +49,13 @@ public class TimerA extends Check {
                 long now = System.nanoTime();
                 long delta = (this.maxDelay - (now - this.lastPacket));
 
-                if (!user.shouldCancel() && user.getTick() > 120 && this.lastPacket > -1337L) {
+                if (!user.shouldCancel() && user.getTick() > 120 && this.lastPacket > -1337L && user.isChunkLoaded()) {
                     this.balance += delta;
 
-                    if (balance <= -500000000) {
-                        balance = -500000000;
+                    if (user.getConnectionProcessor().getClientTick() < 18 && balance <= -900000000) {
+                        balance = -900000000;
+                    } else if (user.getConnectionProcessor().getClientTick() >= 18) {
+                        balance = -1000000000;
                     }
 
                     if (this.balance > this.maxValue) {

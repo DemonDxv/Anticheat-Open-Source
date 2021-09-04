@@ -122,9 +122,16 @@ public class BlockBox1_8_R2 implements BlockBox {
         return entity.bZ() != null && entity.bZ().getItem().e(entity.bZ()) != EnumAnimation.NONE;
     }
 
-    @Override
+/*    @Override
     public float getMovementFactor(Player player) {
         return (float) ((CraftPlayer) player).getHandle().getAttributeInstance(GenericAttributes.d).getValue();
+    } */
+
+    @Override
+    public float getMovementFactor(Player player) {
+        return (float) ((CraftPlayer) player).getHandle().getWorld().getType(
+                new BlockPosition(player.getLocation().getX(), player.getLocation().getY() - 1,
+                        player.getLocation().getZ())).getBlock().frictionFactor;
     }
 
     @Override

@@ -7,7 +7,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInWindowClickPacket;
 
-@CheckInformation(checkName = "Inventory", checkType = "B", lagBack = false, punishmentVL = 5)
+@CheckInformation(checkName = "Inventory", checkType = "B", lagBack = false, canPunish = false)
 public class InventoryB extends Check {
 
     @Override
@@ -16,10 +16,18 @@ public class InventoryB extends Check {
             case Packet.Client.WINDOW_CLICK: {
                 User user = event.getUser();
 
-                WrappedInWindowClickPacket clickPacket = new WrappedInWindowClickPacket(event.getPacket(), user.getPlayer());
+                if (user.shouldCancel() || user.getTick() < 60 || !user.isChunkLoaded()) {
+                    return;
+                }
+
+                WrappedInWindowClickPacket clickPacket =
+                        new WrappedInWindowClickPacket(event.getPacket(), user.getPlayer());
+
                 if (clickPacket.getId() == 0) {
                     if (!user.getMovementProcessor().isInInventory()) {
                         flag(user, "Clicking in inventory while its not open");
+                        user.getPlayer().closeInventory();
+                        user.getMovementProcessor().setInInventory(false);
                     }
                 }
                 break;

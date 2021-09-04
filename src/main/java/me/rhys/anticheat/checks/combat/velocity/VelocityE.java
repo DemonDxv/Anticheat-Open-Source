@@ -43,16 +43,12 @@ public class VelocityE extends Check {
                 double ratio = deltaY / velocity;
 
                 if (deltaY < 0.42f && velocity < 2 && velocity > 0.2) {
-
-                    if (user.getCombatProcessor().getVelocityTicks() == 2) {
-
-                        if (ratio <= 0.99 && ratio >= 0.0) {
-                            if (threshold++ > 2) {
-                                flag(user, "Vertical Knockback: " + ratio);
-                            }
-                        } else {
-                            threshold -= Math.min(threshold, 0.0626f);
+                    if (ratio <= 0.99 && user.getCombatProcessor().getVelocityTicks() == 2) {
+                        if ((threshold += 0.95) > 2) {
+                            flag(user, "Vertical Velocity: "+ratio);
                         }
+                    } else {
+                        threshold -= Math.min(threshold, 0.001);
                     }
                 }
                 break;

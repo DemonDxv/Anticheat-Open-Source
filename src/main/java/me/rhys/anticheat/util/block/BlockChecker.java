@@ -25,7 +25,7 @@ public class BlockChecker {
         this.user = user;
     }
 
-    private boolean collideSlime, door, soulSand, lillyPad, skull, carpet, cake, onGround, nearLava, nearWater, nearIce, climbable, slime, piston, snow, fence, bed,
+    private boolean sign, collideSlime, door, soulSand, lillyPad, skull, carpet, cake, onGround, nearLava, nearWater, nearIce, climbable, slime, piston, snow, fence, bed,
             stair, slab, movingUp, underBlock, web, shulker, insideBlock, collideHorizontal;
 
     public void processBlocks() {
@@ -95,6 +95,21 @@ public class BlockChecker {
                         && (collideEntry.getBlock().getType() == Material.LAVA
                         || collideEntry.getBlock().getType() == Material.STATIONARY_LAVA));
 
+        this.climbable = new BoundingBox(
+                (float) this.user.getCurrentLocation().getX(),
+                (float) this.user.getPlayer().getEyeLocation().getY(),
+                (float) this.user.getCurrentLocation().getZ(),
+                (float) this.user.getCurrentLocation().getX(),
+                (float) this.user.getPlayer().getEyeLocation().getY(),
+                (float) this.user.getCurrentLocation().getZ())
+                .expand(0.32, .0, .32)
+                .addXYZ(0.0, -1, 0.0)
+                .getCollidedBlocks(this.user.getPlayer())
+                .stream().filter(CollideEntry::isChunkLoaded)
+                .anyMatch(collideEntry ->
+                        collideEntry.getBlock().getType() == Material.VINE
+                        || collideEntry.getBlock().getType() == Material.LADDER);
+
 
         insideBlock = new BoundingBox(
                 (float) this.user.getCurrentLocation().getX(),
@@ -153,6 +168,11 @@ public class BlockChecker {
             Block block = collideEntry.getBlock();
 
             switch (block.getType()) {
+                case SIGN:
+                case SIGN_POST:
+                case WALL_SIGN: {
+                    sign = true;
+                }
                 case SKULL: {
                     skull = true;
                     break;
@@ -202,7 +222,7 @@ public class BlockChecker {
 
                 case LADDER:
                 case VINE: {
-                    this.climbable = true;
+                  //  this.climbable = true;
                     break;
                 }
 

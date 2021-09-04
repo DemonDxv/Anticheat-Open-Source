@@ -1,4 +1,4 @@
-package me.rhys.anticheat.checks.movement.speed;
+package me.rhys.anticheat.checks.old;
 
 import me.rhys.anticheat.base.check.api.Check;
 import me.rhys.anticheat.base.check.api.CheckInformation;
@@ -22,14 +22,14 @@ public class Speed extends Check {
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
 
-                if (user.getBlockData().liquidTicks > 0
-                        || user.getTick() < 60
+                if (user.getTick() < 60
                         || user.getVehicleTicks() > 0
                         || user.shouldCancel()
                         || user.getLastTeleportTimer().hasNotPassed(5 + user.getConnectionProcessor().getClientTick())
                         || user.getMovementProcessor().isBouncedOnSlime()
-                        || user.getMovementProcessor().getRespawnTimer().hasNotPassed(20)
+                        || user.getActionProcessor().getRespawnTimer().hasNotPassed(20)
                         || user.getPlayer().isDead()
+                        || user.getPlayer().getWalkSpeed() != 0.2F
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(5)
                         || user.getElytraProcessor().isUsingElytra()) {
                     return;

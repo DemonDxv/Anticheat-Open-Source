@@ -37,7 +37,9 @@ public class FlightC extends Check {
                         || user.getBlockData().webTicks > 0
                         || user.getBlockData().cakeTicks > 0
                         || user.getBlockData().door
-                        || user.getCombatProcessor().getVelocityTicks() <= 20
+                        || !user.isChunkLoaded()
+                        || user.getActionProcessor().getVelocityTimer().hasNotPassed(10
+                        + user.getConnectionProcessor().getClientTick())
                         && user.getLastFallDamageTimer().passed(20)
                         || user.getBlockData().lavaTicks > 0
                         || user.getTick() < 60) {

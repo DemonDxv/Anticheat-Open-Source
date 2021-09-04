@@ -10,7 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 
-@CheckInformation(checkName = "Inventory", lagBack = false, punishmentVL = 10)
+@CheckInformation(checkName = "Inventory", canPunish = false, punishmentVL = 45)
 public class InventoryA extends Check {
 
     private double threshold, invTicks;
@@ -30,6 +30,7 @@ public class InventoryA extends Check {
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
                         || user.getBlockData().iceTimer.hasNotPassed(20)
                         || user.getBlockData().slimeTimer.hasNotPassed(20)
+                        || !user.isChunkLoaded()
                         || user.getBlockData().pistonTicks > 0) {
                     threshold = invTicks = 0;
                     return;

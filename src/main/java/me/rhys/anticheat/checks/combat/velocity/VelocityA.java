@@ -40,7 +40,7 @@ public class VelocityA extends Check {
                         || user.getLastShotByArrowTimer().hasNotPassed(20)) {
 
                     if (user.getCombatProcessor().getVelocityTicks() == 1
-                            && user.getMovementProcessor().isOnGround() && user.getMovementProcessor().isLastGround()) {
+                            && user.getMovementProcessor().isLastGround()) {
 
                         if ((deltaY / velocity) == 0.0) {
                             if (threshold++ > 2) {

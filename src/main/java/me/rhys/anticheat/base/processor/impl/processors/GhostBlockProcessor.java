@@ -34,18 +34,19 @@ public class GhostBlockProcessor extends Processor {
 
                 if (user.shouldCancel()
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
-                        || user.getLastTeleportTimer().hasNotPassed(20)
+                        || user.getLastTeleportTimer().hasNotPassed(10 + user.getConnectionProcessor().getClientTick())
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getLastBlockPlaceTimer().hasNotPassed(20)
                         || user.getLastBlockPlaceCancelTimer().hasNotPassed(20)
-                        || user.getLastFallDamageTimer().hasNotPassed(5)
+                        || user.getLastFallDamageTimer().hasNotPassed(10 + user.getConnectionProcessor().getClientTick())
                         || user.getVehicleTicks() > 0
                         || EntityUtil.isOnBoat(user)
                         || user.getBlockData().webTicks > 0
                         || user.getBlockData().cakeTicks > 0
                         || user.getBlockData().climbableTicks > 0
-                        || user.getCombatProcessor().getVelocityTicks() <= 20
-                        || user.getBlockData().liquidTicks > 0
+                        || user.getCombatProcessor().getVelocityTicks() <= 9
+                        + user.getConnectionProcessor().getClientTick()
+                        || user.getBlockData().waterTicks > 0
                         || user.getBlockData().lavaTicks > 0
                         || user.getBlockData().lillyPad
                         || user.getBlockData().carpet
@@ -57,9 +58,10 @@ public class GhostBlockProcessor extends Processor {
                 }
 
 
-                boolean ground = user.getMovementProcessor().isOnGround();
+                boolean ground = user.getMovementProcessor().isOnGround() || user.getMovementProcessor().isLastGround();
 
-                boolean serverPositionGround = user.getMovementProcessor().isServerYGround();
+                boolean serverPositionGround = user.getMovementProcessor().isServerYGround()
+                        || user.getMovementProcessor().isLastPositionYGround();
 
                 boolean serverGround = user.getBlockData().onGround;
 
@@ -70,7 +72,7 @@ public class GhostBlockProcessor extends Processor {
 
                     Location groundBelow = MathUtil.getGroundLocation(user);
 
-                    if (++flags > 1) {
+                    if (++flags > 2) {
                         if (lastGroundLocation != null) {
 
                             user.getPlayer().teleport(lastGroundLocation,

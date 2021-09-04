@@ -173,6 +173,26 @@ public class BukkitListener implements Listener {
 
             if (title.contains(theTitle)) {
                 ((InventoryClickEvent) event).setCancelled(true);
+
+                if (((InventoryClickEvent) event).isLeftClick()) {
+                    if (((InventoryClickEvent) event).getCurrentItem().getType() == Material.REDSTONE) {
+                        User user = Anticheat.getInstance().getUserManager().getUser((Player) ((InventoryClickEvent) event).getWhoClicked());
+
+                        if (user != null) {
+                            user.getPlayer().sendMessage("\n" + Anticheat.getInstance().getConfigValues().getPrefix()
+                                    + ChatColor.GOLD + " Reloading... \n");
+
+                            Anticheat.getInstance().getCheckManager().reloadAnticheat();
+
+                            user.getPlayer().sendMessage("\n" + Anticheat.getInstance().getConfigValues().getPrefix()
+                                    + ChatColor.GREEN + " Reloaded! \n");
+                        }
+                    }
+                }
+            }
+
+            if (title.contains("Player: ")) {
+                ((InventoryClickEvent) event).setCancelled(true);
             }
         }
 

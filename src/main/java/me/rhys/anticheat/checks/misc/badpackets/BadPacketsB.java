@@ -22,13 +22,14 @@ public class BadPacketsB extends Check {
 
                 User user = event.getUser();
 
-                WrappedInFlyingPacket flyingPacket = new WrappedInFlyingPacket(event.getPacket(), user.getPlayer());
-
-                if (user.getConnectionProcessor().getDropTransTime() > 100
-                        || user.getConnectionProcessor().getFlyingTick() > 1) {
-
+                if (user.shouldCancel()
+                        || user.getTick() < 60
+                        || !user.isChunkLoaded()) {
                     streaks = 0;
+                    return;
                 }
+
+                WrappedInFlyingPacket flyingPacket = new WrappedInFlyingPacket(event.getPacket(), user.getPlayer());
 
                 if (flyingPacket.isPos() || user.getPlayer().isInsideVehicle()) {
                     streaks = 0;

@@ -3,6 +3,7 @@ package me.rhys.anticheat.base.processor.impl.processors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.processor.api.Processor;
 import me.rhys.anticheat.base.processor.api.ProcessorInformation;
@@ -82,36 +83,20 @@ public class ReachProcessor extends Processor {
         if (event.getType().equalsIgnoreCase(Packet.Client.TRANSACTION)) {
             WrappedInTransactionPacket transactionPacket = new WrappedInTransactionPacket(event.getPacket(), user.getPlayer());
 
-            double id = user.getReachProcessor().getReachID();
-            double action = transactionPacket.getAction();
+            short action = transactionPacket.getAction();
 
-            if (id == action) {
+            if (user.getReachProcessor().reachTestMap.containsKey(action)) {
 
-                for (Map.Entry<Short, ReachData> doubleShortEntry : reachTestMap.entrySet()) {
+                reachData = user.getReachProcessor().reachTestMap.get(action);
 
-                    reachData = doubleShortEntry.getValue();
-
-                    if (user.getCombatProcessor().getLastAttackedEntity() != null) {
-                        user.getCombatProcessor().getHitboxLocations().addLocation(user.getCombatProcessor()
-                                .getLastAttackedEntity().getLocation());
-                    }
-
-                    reachTestMap.clear();
-                }
+                user.getReachProcessor().reachTestMap.remove(action);
             }
         }
-
     }
 
 
     private static void queueTransaction(ReachData reachData) {
-        reachData.getUser().getReachProcessor().reachID++;
-
-        short random = reachData.getUser().getReachProcessor().getReachID();
-
-        if (reachData.getUser().getReachProcessor().getReachID() > 11000) {
-            reachData.getUser().getReachProcessor().setReachID((short) 10000);
-        }
+        short random = (short) (Anticheat.getInstance().getTransactionHandler().getTimeshort() - 3);
 
         reachData.user.getReachProcessor().reachTestMap.put(random, reachData);
 

@@ -27,6 +27,11 @@ public class ScaffoldJ extends Check {
                 WrappedInBlockPlacePacket blockPlace =
                         new WrappedInBlockPlacePacket(event.getPacket(), user.getPlayer());
 
+                if (user.shouldCancel() || user.getTick() < 60) {
+                    threshold = 0;
+                    return;
+                }
+
              //   double pitch = user.getMovementProcessor().getPitchDelta();
 
                 double calculate = MathUtil.yawCheck(user.getCurrentLocation().getYaw(), lastYaw);
@@ -34,6 +39,9 @@ public class ScaffoldJ extends Check {
                 double yawCompare = Double.compare(user.getCurrentLocation().getYaw(), 0.0);
                 double yawDiffCompare = Double.compare(user.getCurrentLocation().getYaw(), lastYaw);
 
+                if (user.getMovementProcessor().getDeltaY() != 0) {
+                    threshold -= Math.min(threshold, 0.25);
+                }
                 if (user.getLastBlockPlaceTimer().hasNotPassed(2)) {
                     if (user.getPlayer().getEyeLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
 
@@ -46,7 +54,7 @@ public class ScaffoldJ extends Check {
                                         flag(user);
                                     }
                                 } else {
-                                    threshold -= Math.min(threshold, 0.12f);
+                                    threshold -= Math.min(threshold, 0.85f);
                                 }
                             }
                         }

@@ -33,6 +33,12 @@ public class CommandManager {
 
         addCommand(new Command(new MainCommand("ac"), "ac logs", "/ac logs (player)",
                 "Shows recent flags of the desired player that are stored", true));
+
+        addCommand(new Command(new MainCommand("ac"), "ac lookup", "/ac lookup (player)",
+                "Opens a gui of information about the player", true));
+
+        addCommand(new Command(new MainCommand("ac"), "ac reload", "/ac reload",
+                "Reloads the anticheat", true));
     }
 
     private void addCommand(Command... commands) {

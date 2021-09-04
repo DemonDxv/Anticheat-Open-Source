@@ -21,7 +21,7 @@ public class StepA extends Check {
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
 
-                if (user.getBlockData().liquidTicks > 0
+                if (user.getBlockData().waterTicks > 0
                         || user.getTick() < 60
                         || user.shouldCancel()
                         || user.getBlockData().bedTicks > 0
@@ -34,7 +34,9 @@ public class StepA extends Check {
                         || user.getBlockData().piston
                         || user.getBlockData().carpetTicks > 0
                         || user.getBlockData().underBlock
+                        || user.getBlockData().webTicks > 0
                         || EntityUtil.isOnBoat(user)
+                        || !user.isChunkLoaded()
                         || user.getVehicleTicks() > 0
                         || user.getLastFallDamageTimer().hasNotPassed(20)
                         || user.getCombatProcessor().getVelocityTicks() <= 20

@@ -1,6 +1,7 @@
 package me.rhys.anticheat.base.processor.impl.processors;
 
 import lombok.Getter;
+import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.processor.api.Processor;
 import me.rhys.anticheat.base.processor.api.ProcessorInformation;
@@ -14,7 +15,9 @@ import me.rhys.anticheat.tinyprotocol.packet.types.MathHelper;
 import me.rhys.anticheat.util.EventTimer;
 import me.rhys.anticheat.util.MathUtil;
 import me.rhys.anticheat.util.PlayerLocation;
+import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.potion.PotionEffectType;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -164,10 +167,10 @@ public class PredictionProcessor extends Processor {
                 float friction;
 
                 float var3 = (0.6F * 0.91F);
-                float getAIMoveSpeed = MathUtil.getWalkSpeed(user.getPlayer()) + .00000001F;
 
+                float getAIMoveSpeed = 0.13000001F;
 
-            /*    if (user.getPotionProcessor().getSpeedTicks() > 0) {
+                if (user.getPotionProcessor().getSpeedTicks() > 0) {
                     switch (MathUtil.getPotionEffectLevel(user.getPlayer(), PotionEffectType.SPEED)) {
                         case 0: {
                             getAIMoveSpeed = 0.23400002F;
@@ -196,7 +199,7 @@ public class PredictionProcessor extends Processor {
                         }
 
                     }
-                }*/
+                }
 
                 float var4 = 0.16277136F / (var3 * var3 * var3);
 
@@ -206,7 +209,7 @@ public class PredictionProcessor extends Processor {
                     friction = 0.026F;
                 }
 
-                float f4 = 0.02F;
+                float f4 = 0.026F;
                 float f5 = 0.8F;
 
                 if (user.getBlockData().nearWater) {
@@ -235,12 +238,12 @@ public class PredictionProcessor extends Processor {
                         blockFriction = f5;
                     }
 
-                    if (user.getBlockData().liquidTicks < 20) {
+                    if (user.getBlockData().waterTicks < 20) {
                         prediction += 0.03F;
                     }
                 }
 
-                if (user.getBlockData().liquidTicks > 0) {
+                if (user.getBlockData().waterTicks > 0) {
                     prediction += 0.05F;
                 }
 
@@ -254,9 +257,9 @@ public class PredictionProcessor extends Processor {
                     strafe = strafe * f;
                     forward = forward * f;
 
-                    float f1 = (float) MathHelper.sin(user.getMovementProcessor().getYawDeltaClamped()
+                    float f1 = (float) MathHelper.sin(user.getCurrentLocation().getYaw()
                             * (float) Math.PI / 180.0F);
-                    float f2 = (float) MathHelper.cos(user.getMovementProcessor().getYawDeltaClamped()
+                    float f2 = (float) MathHelper.cos(user.getCurrentLocation().getYaw()
                             * (float) Math.PI / 180.0F);
 
                     float motionXAdd = (strafe * f2 - forward * f1);
@@ -292,8 +295,8 @@ public class PredictionProcessor extends Processor {
                     prediction += 0.5;
                 }
 
-                if (user.getCombatProcessor().getVelocityTicks() <= (5
-                        + (user.getConnectionProcessor().getClientTick() + 5))) {
+                if (user.getActionProcessor().getVelocityTimer().hasNotPassed(10
+                        + user.getConnectionProcessor().getClientTick())) {
                     prediction += user.getCombatProcessor().getVelocityHNoTrans();
                 }
 
@@ -321,7 +324,6 @@ public class PredictionProcessor extends Processor {
                 }
 
                 motionXZ = deltaXZ - prediction;
-
 
                 this.lastDeltaX = deltaX;
                 this.lastDeltaZ = deltaZ;

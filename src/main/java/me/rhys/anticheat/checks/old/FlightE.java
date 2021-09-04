@@ -61,7 +61,7 @@ public class FlightE extends Check {
         }
     }
     boolean checkConditions(User user) {
-        return user.getBlockData().liquidTicks > 0
+        return user.getBlockData().waterTicks > 0
                 || user.getTick() < 60
                 || user.shouldCancel()
                 || user.getBlockData().climbableTicks > 0

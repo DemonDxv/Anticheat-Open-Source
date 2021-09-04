@@ -25,6 +25,7 @@ public class JesusA extends Check {
                 if (user.shouldCancel()
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getVehicleTicks() > 0
+                        || !user.isChunkLoaded()
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)) {
                     threshold = 0;
                     return;

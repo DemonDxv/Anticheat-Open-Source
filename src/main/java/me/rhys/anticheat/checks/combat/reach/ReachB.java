@@ -40,7 +40,8 @@ public class ReachB extends Check {
 
                 if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
 
-                    if (user.shouldCancel() || user.getTick() < 60) {
+                    if (user.shouldCancel() || user.getTick() < 60 || user.getCombatProcessor().getCancelTicks() > 0) {
+                        threshold = 0;
                         return;
                     }
 
@@ -93,11 +94,12 @@ public class ReachB extends Check {
                     }
 
 
+
                     if (averageReachThreshold.size() > 9) {
 
                         double averageThreshold = MathUtil.getAverage(averageReachThreshold);
 
-                        if (averageThreshold > 3.6) {
+                        if (averageThreshold > 4.39) {
                             flag(user, "Possibly using low reach settings");
                         }
 

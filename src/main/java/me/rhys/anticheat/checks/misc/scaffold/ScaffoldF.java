@@ -27,7 +27,16 @@ public class ScaffoldF extends Check {
                 WrappedInBlockPlacePacket blockPlace =
                         new WrappedInBlockPlacePacket(event.getPacket(), user.getPlayer());
 
+                if (user.shouldCancel() || user.getTick() < 60) {
+                    threshold = 0;
+                    return;
+                }
+
                 int faceInt = blockPlace.getFace().b();
+
+                if (user.getMovementProcessor().getDeltaY() != 0) {
+                    threshold -= Math.min(threshold, 1);
+                }
 
                 if (user.getBlockPlaced().getLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
                     if (faceInt >= 0 && faceInt <= 3 && user.getLastBlockPlaceTimer()

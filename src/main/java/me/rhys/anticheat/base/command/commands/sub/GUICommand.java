@@ -33,6 +33,10 @@ public class GUICommand {
                         "",
                         ChatColor.RED + "This GUI is still under development.")));
 
+        inventory.setItem(15, UiUtil.generateItem(new ItemStack(Material.REDSTONE, 1),
+                ChatColor.RESET + "Reload", Arrays.asList(
+                        ChatColor.GREEN + "Click to reload the Anticheat")));
+
 
 
         for (int slots = 0; slots < 27; slots++) {

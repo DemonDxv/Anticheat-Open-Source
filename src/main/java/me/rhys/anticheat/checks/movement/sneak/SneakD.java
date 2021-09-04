@@ -28,6 +28,12 @@ public class SneakD extends Check {
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.LOOK: {
 
+                if (user.shouldCancel()
+                        || !user.isChunkLoaded()
+                        || user.getTick() < 60) {
+                    return;
+                }
+
                 if (this.sneakTicks > 1) {
                     if (threshold++ > 2) {
                         this.flag(user, "Large amounts of sneak packets");

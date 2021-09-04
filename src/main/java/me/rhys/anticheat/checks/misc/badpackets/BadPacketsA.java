@@ -17,6 +17,14 @@ public class BadPacketsA extends Check {
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
                 User user = event.getUser();
+
+                if (user.shouldCancel()
+                        || user.getTick() < 60
+                        || user.getLastTeleportTimer().hasNotPassed(20)
+                        || !user.isChunkLoaded()) {
+                    return;
+                }
+
                 double pitch = Math.abs(user.getCurrentLocation().getPitch());
 
                 double maxPitch = user.getBlockData().climbable ? 91.11F : 90.0F;

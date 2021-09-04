@@ -1,5 +1,6 @@
 package me.rhys.anticheat.checks.combat.velocity;
 
+import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.check.api.Check;
 import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
@@ -7,8 +8,9 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.MathUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitRunnable;
 
-@CheckInformation(checkName = "Velocity", checkType = "D", canPunish = false, description = "Checks for canceled velocity transactions")
+@CheckInformation(checkName = "Velocity", checkType = "D", canPunish = false, enabled = false, description = "Checks for canceled velocity transactions")
 public class VelocityD extends Check {
 
     private double threshold;
@@ -38,13 +40,13 @@ public class VelocityD extends Check {
                 int tickChange = Math.abs(velocityTicks - velocityNoTransTicks);
 
                 if (velocityTicks <= 20) {
-
-                    if (tickChange > 8) {
-                        if (threshold++ > 12) {
-                            flag(user);
-                        }
-                    } else {
-                        threshold -= Math.min(threshold, 2);
+                    if (tickChange > 20) {
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                user.getPlayer().kickPlayer("Disconnected.");
+                            }
+                        }.runTask(Anticheat.getInstance());
                     }
                 }
 

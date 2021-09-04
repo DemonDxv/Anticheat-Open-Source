@@ -40,7 +40,7 @@ public class KillauraN extends Check {
                     if (user.getCombatProcessor().getUseEntityTimer().hasNotPassed(1)) {
                         double changeTick = Math.abs(attackTick - interactTick);
 
-                        if (changeTick != 0) {
+                        if (changeTick > 100) {
                             flag(user, "No interact while blocking");
                         }
                     }

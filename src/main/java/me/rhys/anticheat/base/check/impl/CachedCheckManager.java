@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.check.api.Check;
 import me.rhys.anticheat.base.check.api.CheckInformation;
+import me.rhys.anticheat.base.command.CommandManager;
 import me.rhys.anticheat.checks.combat.aimassist.*;
 import me.rhys.anticheat.checks.combat.autoclicker.*;
 import me.rhys.anticheat.checks.combat.hitbox.*;
@@ -17,17 +18,21 @@ import me.rhys.anticheat.checks.misc.scaffold.*;
 import me.rhys.anticheat.checks.misc.timer.*;
 import me.rhys.anticheat.checks.movement.flight.*;
 import me.rhys.anticheat.checks.movement.jesus.*;
+import me.rhys.anticheat.checks.movement.noweb.*;
 import me.rhys.anticheat.checks.movement.phase.*;
 import me.rhys.anticheat.checks.movement.sneak.*;
 import me.rhys.anticheat.checks.movement.speed.*;
 import me.rhys.anticheat.checks.movement.sprint.*;
 import me.rhys.anticheat.checks.movement.step.*;
 import me.rhys.anticheat.checks.movement.strafe.*;
+import me.rhys.anticheat.util.command.CommandUtils;
 import me.rhys.anticheat.util.file.ChecksFile;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 public class CachedCheckManager {
@@ -40,7 +45,10 @@ public class CachedCheckManager {
         this.checkList.add(new VelocityD());
         this.checkList.add(new VelocityE());
         this.checkList.add(new VelocityF());
-       // this.checkList.add(new VelocityG());
+        this.checkList.add(new VelocityG());
+        this.checkList.add(new VelocityH());
+        this.checkList.add(new VelocityI());
+        this.checkList.add(new VelocityJ());
 
         this.checkList.add(new AutoClickerA());
         this.checkList.add(new AutoClickerB());
@@ -78,11 +86,13 @@ public class CachedCheckManager {
         this.checkList.add(new KillauraL());
         this.checkList.add(new KillauraM());
         this.checkList.add(new KillauraN());
+        this.checkList.add(new KillauraO());
 
         this.checkList.add(new ReachA());
         this.checkList.add(new ReachB());
 
         this.checkList.add(new HitboxA());
+        this.checkList.add(new HitboxB());
 
         this.checkList.add(new TimerA());
 
@@ -92,11 +102,16 @@ public class CachedCheckManager {
         this.checkList.add(new FlightD());
         this.checkList.add(new FlightE());
         this.checkList.add(new FlightF());
+        this.checkList.add(new FlightG());
 
-        this.checkList.add(new Speed());
+        this.checkList.add(new SpeedA());
+        this.checkList.add(new SpeedB());
 
         this.checkList.add(new PhaseA());
         this.checkList.add(new PhaseB());
+
+        this.checkList.add(new NoWebA());
+        this.checkList.add(new NoWebB());
 
         this.checkList.add(new Strafe());
 
@@ -104,6 +119,7 @@ public class CachedCheckManager {
      //   this.checkList.add(new StepB());
 
         this.checkList.add(new JesusA());
+        this.checkList.add(new JesusB());
 
         this.checkList.add(new SneakA());
         this.checkList.add(new SneakB());
@@ -124,6 +140,8 @@ public class CachedCheckManager {
         this.checkList.add(new ScaffoldI());
         this.checkList.add(new ScaffoldJ());
         this.checkList.add(new ScaffoldK());
+        this.checkList.add(new ScaffoldL());
+        this.checkList.add(new ScaffoldM());
 
         this.checkList.add(new BadPacketsA());
      //   this.checkList.add(new BadPacketsB());
@@ -142,6 +160,7 @@ public class CachedCheckManager {
         this.checkList.add(new InventoryD());
         this.checkList.add(new InventoryE());
         this.checkList.add(new InventoryF());
+        this.checkList.add(new InventoryG());
 
         this.checkList.add(new PingSpoofA());
         this.checkList.add(new PingSpoofB());
@@ -229,5 +248,22 @@ public class CachedCheckManager {
 
     public List<Check> getCheckList() {
         return this.checkList;
+    }
+
+    public void reloadAnticheat() {
+        Anticheat.getInstance().getCommandManager().removeCommand();
+
+        Anticheat.getInstance().getConfigLoader().load();
+
+        getCheckList().clear();
+        checkList.clear();
+
+        setup();
+        new CommandManager();
+
+        Anticheat.getInstance().getUserManager().getUserMap().forEach((uuid, user) -> {
+            user.getCheckManager().getCheckList().clear();
+            user.getCheckManager().setupChecks(user);
+        });
     }
 }

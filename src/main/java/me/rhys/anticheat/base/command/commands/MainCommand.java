@@ -22,6 +22,8 @@ public class MainCommand extends BukkitCommand {
     private final PingCommand pingCommand = new PingCommand();
     private final BanWaveCommand banWaveCommand = new BanWaveCommand();
     private final LogsCommand logsCommand = new LogsCommand();
+    private final ReloadCommand reloadCommand = new ReloadCommand();
+    private final LookupCommand lookupCommand = new LookupCommand();
 
 
     public MainCommand(String name) {
@@ -81,6 +83,12 @@ public class MainCommand extends BukkitCommand {
                     } else if (s.equalsIgnoreCase("logs")) {
                         found = true;
                         logsCommand.execute(args, s, commandSender);
+                    } else if (s.equalsIgnoreCase("reload")) {
+                        found = true;
+                        reloadCommand.execute(args, s, commandSender);
+                    } else if (s.equalsIgnoreCase("lookup")) {
+                        found = true;
+                        lookupCommand.execute(args, s, commandSender);
                     }
 
                     if (!found) commandSender.sendMessage(ChatColor.RED + "Sub command doesn't exist!");

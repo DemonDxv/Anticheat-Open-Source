@@ -205,7 +205,8 @@ public class MathUtil {
     }
 
     public static double movingFlyingV3(User user) {
-        PlayerLocation to = user.getCurrentLocation(), from = user.getLastLocation();
+        PlayerLocation to = user.getMovementProcessor().getCurrentLocation(),
+                from = user.getMovementProcessor().getLastLocation();
 
         double preD = 0.01D;
 
@@ -340,6 +341,13 @@ public class MathUtil {
         float d = (float) user.getMovementProcessor().getDeltaXZ();
         Vector dimensions = MathUtil.entityDimensions.getOrDefault(entity.getType(), new Vector(0.4, 2, 0.4));
         return new BoundingBox(0, 0, 0, 0, 0, 0).add((float) l.getX(), (float) l.getY(), (float) l.getZ()).grow((float) dimensions.getX(), (float) dimensions.getY(), (float) dimensions.getZ()).grow(.3f, 0.1f, .3f)
+                .grow((entity.getVelocity().getY() > 0 ? 0.15f : 0) + d / 1.25f, 0, (entity.getVelocity().getY() > 0 ? 0.15f : 0) + d / 1.25f);
+    }
+
+    public static BoundingBox getHitboxV2(LivingEntity entity, PlayerLocation l, User user) {
+        float d = (float) user.getMovementProcessor().getDeltaXZ();
+        Vector dimensions = MathUtil.entityDimensions.getOrDefault(entity.getType(), new Vector(0.42, 2, 0.42));
+        return new BoundingBox(0, 0, 0, 0, 0, 0).add((float) l.getX(), (float) l.getY(), (float) l.getZ()).grow((float) dimensions.getX(), (float) dimensions.getY(), (float) dimensions.getZ()).grow(0.1f, 0.1f, 0.1f)
                 .grow((entity.getVelocity().getY() > 0 ? 0.15f : 0) + d / 1.25f, 0, (entity.getVelocity().getY() > 0 ? 0.15f : 0) + d / 1.25f);
     }
 

@@ -42,9 +42,12 @@ public class FlightA extends Check {
                         || user.getBlockData().waterTicks > 0
                         || user.getBlockData().lavaTicks > 0
                         || user.getBlockData().door
+                        || !user.isChunkLoaded()
                         || user.getMovementProcessor().getDeltaXZ() < 0.2
                         && user.getPotionProcessor().getJumpTicks() > 0
-                        || user.getCombatProcessor().getVelocityTicks() <= 20
+                        || user.getActionProcessor().getVelocityTimer().hasNotPassed(10
+                        + user.getConnectionProcessor().getClientTick())
+                        && user.getLastFallDamageTimer().passed(20)
                         || user.getTick() < 60) {
                     threshold = 0;
                     return;
@@ -66,7 +69,6 @@ public class FlightA extends Check {
                 }
 
                 double totalUp = Math.abs(deltaY - prediction);
-
 
                 double max = 0.005;
 

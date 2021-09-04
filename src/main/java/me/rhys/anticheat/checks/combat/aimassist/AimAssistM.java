@@ -42,7 +42,7 @@ public class AimAssistM extends Check {
                         double std = MathUtil.getStandardDeviation(deltaYawList);
 
 
-                        if (std < 0.15 || Math.abs(std - lastSTD) < 0.001) {
+                        if (std < 0.03 || Math.abs(std - lastSTD) < 0.001) {
                             flag(user, "Invalid yaw movements");
                         }
 

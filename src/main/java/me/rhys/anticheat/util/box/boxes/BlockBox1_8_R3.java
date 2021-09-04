@@ -335,9 +335,16 @@ public class BlockBox1_8_R3 implements BlockBox {
         return false;
     }
 
-    @Override
+    /*@Override
     public float getMovementFactor(Player player) {
         return (float) ((CraftPlayer) player).getHandle().getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
+    }*/
+
+    @Override
+    public float getMovementFactor(Player player) {
+        return (float) ((CraftPlayer) player).getHandle().getWorld().getType(
+                new BlockPosition(player.getLocation().getX(), player.getLocation().getY() - 1,
+                        player.getLocation().getZ())).getBlock().frictionFactor;
     }
 
     @Override

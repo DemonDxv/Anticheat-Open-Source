@@ -12,6 +12,7 @@ import me.rhys.anticheat.base.user.objects.LogObject;
 import me.rhys.anticheat.config.ConfigLoader;
 import me.rhys.anticheat.config.ConfigValues;
 import me.rhys.anticheat.database.DatabaseManager;
+import me.rhys.anticheat.discord.DiscordWebhook;
 import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
 import me.rhys.anticheat.util.FileManager;
@@ -23,6 +24,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -41,6 +43,8 @@ public class Anticheat extends JavaPlugin {
 
     private String longLine =
             "-----------------------------------------------------------------------------------------------";
+
+    private DiscordWebhook discordWebhook;
 
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     private final ScheduledExecutorService logService = Executors.newSingleThreadScheduledExecutor();
@@ -122,6 +126,8 @@ public class Anticheat extends JavaPlugin {
 
         this.fileManager = new FileManager();
         this.databaseManager.setup();
+
+        this.discordWebhook = new DiscordWebhook(configValues.getDiscordWebURL());
     }
 
     @Override

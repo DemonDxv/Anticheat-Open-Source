@@ -27,6 +27,12 @@ public class ScaffoldD extends Check {
                 WrappedInBlockPlacePacket blockPlace =
                         new WrappedInBlockPlacePacket(event.getPacket(), user.getPlayer());
 
+                if (user.shouldCancel() || user.getTick() < 60) {
+                    threshold = 0;
+                    placeList.clear();
+                    return;
+                }
+
                 float vecY = blockPlace.getVecY();
 
                 int faceInt = blockPlace.getFace().b();

@@ -1,8 +1,10 @@
 name: Anticheat
-version: 1.1.2
+version: 1.1.3-b01
 main: me.rhys.anticheat.Anticheat
 description: A free open source anticheat for the community to prevent cheating
 authors:
   - Rhys
   - demon
   - funkemunky
+  - sim0n
+  - darkandblue

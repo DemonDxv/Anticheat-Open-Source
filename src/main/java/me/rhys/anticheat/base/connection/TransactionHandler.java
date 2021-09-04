@@ -1,6 +1,7 @@
 package me.rhys.anticheat.base.connection;
 
 import lombok.Getter;
+import lombok.Setter;
 import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutKeepAlivePacket;
@@ -9,12 +10,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
 @Getter
+@Setter
 public class TransactionHandler implements Runnable {
     public TransactionHandler() {
         this.start();
     }
 
     private long time = 999L;
+    private short timeshort = 999;
     private BukkitTask bukkitTask;
 
     public void start() {
@@ -26,6 +29,8 @@ public class TransactionHandler implements Runnable {
 
     @Override
     public void run() {
+        timeshort = (short) time;
+
         if (this.time-- < 1) {
             this.time = 999L;
         }
@@ -48,11 +53,11 @@ public class TransactionHandler implements Runnable {
     }
 
     void processTransaction() {
-        WrappedOutTransaction wrappedOutTransaction = new WrappedOutTransaction(0, (short) this.time,
+        WrappedOutTransaction wrappedOutTransaction = new WrappedOutTransaction(0, this.timeshort,
                 false);
 
         Anticheat.getInstance().getUserManager().getUserMap().forEach((uuid, user) -> {
-            user.getConnectionMap().put(this.time, System.currentTimeMillis());
+            user.getConnectionMap().put(this.timeshort, System.currentTimeMillis());
             user.sendPacket(wrappedOutTransaction.getObject());
         });
     }

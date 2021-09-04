@@ -12,6 +12,7 @@ import me.rhys.anticheat.base.user.objects.BlockData;
 import me.rhys.anticheat.base.user.objects.LogData;
 import me.rhys.anticheat.base.user.objects.LogObject;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
+import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutTransaction;
 import me.rhys.anticheat.util.*;
 import me.rhys.anticheat.util.evicting.EvictingList;
 import me.rhys.anticheat.util.evicting.EvictingMap;
@@ -53,14 +54,14 @@ public class User {
 
     private Block blockPlaced;
 
-    private final Map<Long, Long> connectionMap = new EvictingMap<>(100);
+    private final Map<Short, Long> connectionMap = new EvictingMap<>(100);
     private final Map<Long, Long> connectionMap2 = new EvictingMap<>(100);
     private int tick, vehicleTicks;
 
+    private short transactionId;
     private WeakHashMap<Check, Integer> flaggedChecks = new WeakHashMap<>();
 
     public PastLocation previousLocations = new PastLocation();
-    private Deque<CustomLocation> customLocations = new LinkedList<>();
 
     private boolean chunkLoaded = false, alerts = true, banned = false;
 
@@ -110,10 +111,6 @@ public class User {
 
 
         eventManager.processTime();
-
-        if (customLocations.size() >= 8) {
-            customLocations.removeLast();
-        }
 
         trigHandler = new TrigHandler(this);
     }

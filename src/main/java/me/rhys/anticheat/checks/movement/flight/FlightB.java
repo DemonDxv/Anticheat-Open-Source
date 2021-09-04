@@ -26,6 +26,7 @@ public class FlightB extends Check {
             case Packet.Client.POSITION: {
 
                 if (user.shouldCancel()
+                        || !user.isChunkLoaded()
                         || user.getLastBlockPlaceTimer().hasNotPassed(20 + user.getConnectionProcessor().getClientTick())
                         || user.getLastBlockPlaceCancelTimer().hasNotPassed(20 + user.getConnectionProcessor().getClientTick())
                         || user.getTick() < 60) {
@@ -33,11 +34,11 @@ public class FlightB extends Check {
                 }
 
                 if (user.getGhostBlockProcessor().getGhostBlockTeleportTimer().hasNotPassed(1)) {
-                    if (threshold++ > 4) {
+                    if (++threshold > 6) {
                         flag(user, "Possibly using Fly/Nofall");
                     }
                 } else {
-                    threshold -= Math.min(threshold, 0.001);
+                    threshold = 0;
                 }
             }
         }

@@ -22,7 +22,7 @@ import java.util.Map;
 public class ConnectionProcessor extends Processor {
 
     private final Map<Long, Long> sentKeepAlives = new EvictingMap<>(100);
-    private final Map<Long, Long> sentTransactions = new EvictingMap<>(100);
+    private final Map<Short, Long> sentTransactions = new EvictingMap<>(100);
     private int ping, transPing, lastTransPing, dropTransTime;
     private int clientTick, flyingTick;
     private boolean isLagging = false;
@@ -52,8 +52,10 @@ public class ConnectionProcessor extends Processor {
         }
     }
 
-    void processT(User user, long time) {
-        if (this.user.getConnectionMap().containsKey(time)) {
+    void processT(User user, short time) {
+        if (this.user.getConnectionMap().containsKey(time)
+                && !user.getReachProcessor().reachTestMap.containsKey(time)) {
+
             this.lastTransPing = transPing;
             this.transPing = (int) (System.currentTimeMillis() - this.user.getConnectionMap()
                     .get(time));
@@ -66,11 +68,18 @@ public class ConnectionProcessor extends Processor {
 
             pingList.add(transPing);
 
-            if (pingList.size() > 100) {
+            if (pingList.size() > 250) {
                 averageTransactionPing = (int) MathUtil.getAverage(pingList);
+                pingList.clear();
             }
 
+            if (clientTick >= 18
+                    || dropTransTime > 300
+                    || transPing >= 830) {
+                isLagging = true;
+            }
 
+            user.getConnectionMap().remove(time);
             user.getCheckManager().getCheckList().forEach(check -> check.onConnection(user));
         }
     }
@@ -80,8 +89,9 @@ public class ConnectionProcessor extends Processor {
             this.ping = (int) (System.currentTimeMillis() - this.user.getConnectionMap2()
                     .get(time));
             this.sentKeepAlives.put(time, System.currentTimeMillis());
-            this.clientTick = (int) Math.ceil(this.ping / 50.0);
+           // this.clientTick = (int) Math.ceil(this.ping / 50.0);
 
+            user.getConnectionMap2().remove(time);
             user.getCheckManager().getCheckList().forEach(check -> check.onConnection(user));
         }
     }

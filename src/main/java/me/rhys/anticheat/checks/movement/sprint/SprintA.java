@@ -28,11 +28,14 @@ public class SprintA extends Check {
             case Packet.Client.POSITION: {
 
                 if (user.shouldCancel()
-                        || user.getTick() < 60
+                        || user.getTick() < 250
                         || user.getLastTeleportTimer().hasNotPassed(10
                         + user.getConnectionProcessor().getClientTick())
                         || user.getPlayer().isDead()
-                        || user.getMovementProcessor().getRespawnTimer().hasNotPassed(20
+                        || user.getCombatProcessor().getVelocityTicks() <= 10
+                        + user.getConnectionProcessor().getClientTick()
+                        || !user.isChunkLoaded()
+                        || user.getActionProcessor().getRespawnTimer().hasNotPassed(20
                         + user.getConnectionProcessor().getClientTick())
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(10
                         + user.getConnectionProcessor().getClientTick())) {

@@ -23,7 +23,7 @@ public class ScaffoldK extends Check {
                 WrappedInBlockPlacePacket blockPlace =
                         new WrappedInBlockPlacePacket(event.getPacket(), user.getPlayer());
 
-                if (user.getTick() < 60 || user.shouldCancel()) {
+                if (user.shouldCancel() || user.getTick() < 60) {
                     return;
                 }
 

@@ -26,6 +26,11 @@ public class ScaffoldI extends Check {
                 WrappedInBlockPlacePacket blockPlace =
                         new WrappedInBlockPlacePacket(event.getPacket(), user.getPlayer());
 
+                if (user.shouldCancel() || user.getTick() < 60) {
+                    threshold = 0;
+                    return;
+                }
+
                 double pitch = user.getMovementProcessor().getPitchDelta();
                 double yaw = user.getMovementProcessor().getYawDeltaClamped();
 
@@ -38,15 +43,18 @@ public class ScaffoldI extends Check {
                     threshold = 0;
                 }
 
-                if (user.getPlayer().getEyeLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
+                if (user.getLastBlockPlaceTimer().hasNotPassed(2)) {
 
-                    int faceInt = blockPlace.getFace().b();
+                    if (user.getPlayer().getEyeLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
 
-                    if (faceInt >= 0 && faceInt <= 3) {
-                        if (compare < 0.0) {
-                            lastCompare = System.currentTimeMillis();
-                            if (threshold++ > 15) {
-                                flag(user, "l="+ TimeUtils.elapsed(lastCompare), "t="+threshold);
+                        int faceInt = blockPlace.getFace().b();
+
+                        if (faceInt >= 0 && faceInt <= 3) {
+                            if (compare < 0.0) {
+                                lastCompare = System.currentTimeMillis();
+                                if (threshold++ > 15) {
+                                    flag(user, "l=" + TimeUtils.elapsed(lastCompare), "t=" + threshold);
+                                }
                             }
                         }
                     }

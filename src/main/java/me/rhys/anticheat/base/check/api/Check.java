@@ -7,6 +7,7 @@ import me.rhys.anticheat.base.event.CallableEvent;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.database.api.InputData;
+import me.rhys.anticheat.discord.DiscordWebhook;
 import me.rhys.anticheat.util.TPSUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,10 +44,6 @@ public class Check implements CallableEvent, Cloneable {
             for (String s : data) {
                 stringBuilder.append(s).append(", ");
             }
-        }
-
-        if (user.getConnectionProcessor().getClientTick() > 18) {
-            return;
         }
 
         if (TPSUtil.getTPS() <= 19.0
@@ -96,13 +93,48 @@ public class Check implements CallableEvent, Cloneable {
                 .replace("%DEBUG%", (data.length > 0 ? ChatColor.GRAY + " ["
                         + ChatColor.GRAY + stringBuilder.toString().trim() + ChatColor.GRAY + "]" : ""));
 
+        String discordAlert = Anticheat.getInstance().getConfigValues().getDiscordAlerts()
+                .replace("%MAX-VL%", String.valueOf(maxViolation))
+                .replace("%PLAYER%", user.getPlayer().getName())
+                .replace("%PREFIX%", Anticheat.getInstance().getConfigValues().getPrefix())
+                .replace("%CHECK%", checkName)
+                .replace("%CHECKTYPE%", checkType)
+                .replace("%VL%", String.valueOf(violation))
+                .replace("%DEBUG%", (data.length > 0 ? " ["
+                       + stringBuilder.toString().trim()  + "]" : ""));
+
         if (isCanPunish() && !user.isBanned()) {
             violation++;
         }
 
-        Bukkit.getServer().getOnlinePlayers().parallelStream().filter(player ->
-                user.isAlerts() && (player.hasPermission("anticheat.alerts") ||
-                        player.isOp())).forEach(player -> player.sendMessage(alert));
+
+        if (Anticheat.getInstance().getConfigValues().isConsoleAlerts()) {
+            Anticheat.getInstance().getServer().getConsoleSender().sendMessage(alert);
+        }
+
+        Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+            User staff = Anticheat.getInstance().getUserManager().getUser(player);
+
+            if (staff != null) {
+                if (staff.isAlerts() && (staff.getPlayer().hasPermission("anticheat.alerts")
+                        || staff.getPlayer().isOp())) {
+                    staff.getPlayer().sendMessage(alert);
+                }
+            }
+        });
+
+
+        if (Anticheat.getInstance().getConfigValues().isDiscord()) {
+            Anticheat.getInstance().getDiscordWebhook().addEmbed(
+                    new DiscordWebhook.EmbedObject().setDescription(discordAlert));
+
+            try {
+                Anticheat.getInstance().getDiscordWebhook().execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
 
         if (Anticheat.getInstance().getConfigValues().isLagBack()) {
             // LOL

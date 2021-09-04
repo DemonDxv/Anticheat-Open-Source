@@ -25,6 +25,7 @@ public class PingSpoofC extends Check {
                 if (user.shouldCancel()
                         || user.getTick() < 60
                          || user.getPlayer().isDead()) {
+                    threshold = 0;
                     return;
                 }
 

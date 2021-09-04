@@ -41,7 +41,7 @@ public class VelocityF extends Check {
                 if (user.getCombatProcessor().getVelocityTicks() == 1) {
                     if (deltaY < 0.42f && velocity < 2 && velocity > 0.2) {
                         if (ratio > 1.00001) {
-                            if (threshold++ > 3) {
+                            if (threshold++ > 1) {
                                 flag(user, "Vertical velocity to high " + ratio);
                             }
                         } else {

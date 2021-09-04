@@ -18,6 +18,11 @@ public class ScaffoldC extends Check {
             case Packet.Client.BLOCK_PLACE: {
                 User user = event.getUser();
 
+                if (user.shouldCancel() || user.getTick() < 60) {
+                    threshold = 0;
+                    return;
+                }
+
                 if ((System.currentTimeMillis() - lastFlying) < 5L) {
                     if (++threshold > 8) {
                         flag(user, "Block Placement Packet Sent Late");

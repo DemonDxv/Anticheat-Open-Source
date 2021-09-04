@@ -7,10 +7,12 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.processor.api.Processor;
 import me.rhys.anticheat.base.processor.api.ProcessorInformation;
 import me.rhys.anticheat.base.user.User;
+import me.rhys.anticheat.tinyprotocol.api.NMSObject;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
 import me.rhys.anticheat.tinyprotocol.packet.in.*;
+import me.rhys.anticheat.tinyprotocol.packet.login.WrappedHandshakingInSetProtocol;
 import me.rhys.anticheat.tinyprotocol.packet.out.*;
 import me.rhys.anticheat.tinyprotocol.reflection.Reflection;
 import me.rhys.anticheat.util.*;
@@ -26,7 +28,7 @@ import org.bukkit.util.Vector;
 @ProcessorInformation(name = "Movement")
 @Getter @Setter
 public class MovementProcessor extends Processor {
-    private EventTimer respawnTimer, lastGroundTimer, lastBlockPlacePacketTimer, lastBlockDigTimer;
+    private EventTimer lastGroundTimer, lastBlockPlacePacketTimer, lastBlockDigTimer;
 
     private boolean lastServerYGround, sneaking, inInventory, lastLastGround, wasFlying, onGround = false, lastGround = false, positionYGround, lastPositionYGround, bouncedOnSlime, dead, sprinting,
             lastSprinting, serverYGround, isDigging;
@@ -35,6 +37,8 @@ public class MovementProcessor extends Processor {
     private PlayerLocation lastSlimeLocation, serverPositionLocation;
     private Location lastGroundLocation, lastOutOfBlockLocation;
     private Vector inventoryVector;
+
+    private String clientBrand = "NULL";
 
     private float yawDelta, pitchDelta, yawDeltaClamped;
 
@@ -116,19 +120,17 @@ public class MovementProcessor extends Processor {
 
             }
 
-            case Packet.Server.RESPAWN: {
+            case Packet.Client.CUSTOM_PAYLOAD: {
+                WrappedInCustomPayloadPacket customPayloadPacket = new WrappedInCustomPayloadPacket(event.getPacket(), user.getPlayer());
 
-                respawnID--;
-
-                if (respawnID < -9000) {
-                    respawnID = 69;
+                if (customPayloadPacket.getDecodedData().equalsIgnoreCase("fml,forge")) {
+                    clientBrand = "Forge";
+                } else if (customPayloadPacket.getDecodedData().equalsIgnoreCase("vanilla")) {
+                    clientBrand = "Vanilla";
+                } else if (customPayloadPacket.getDecodedData().contains("Lunar-Client")
+                        || customPayloadPacket.getDecodedData().contains("LC")) {
+                    clientBrand = "Lunar Client";
                 }
-
-                WrappedOutTransaction transaction = new WrappedOutTransaction(0, respawnID, false);
-
-                TinyProtocolHandler.sendPacket(user.getPlayer(), transaction.getObject());
-
-                break;
             }
 
             case Packet.Server.ABILITIES: {
@@ -138,17 +140,6 @@ public class MovementProcessor extends Processor {
                 if (abilitiesPacket.isFlying() || abilitiesPacket.isAllowedFlight() || abilitiesPacket.isCreativeMode()) {
                     user.getLastFlightToggleTimer().reset();
                 }
-                break;
-            }
-
-            case Packet.Client.TRANSACTION: {
-                WrappedInTransactionPacket transactionPacket =
-                        new WrappedInTransactionPacket(event.getPacket(), user.getPlayer());
-
-                if (transactionPacket.getAction() == respawnID) {
-                    respawnTimer.reset();
-                }
-
                 break;
             }
 
@@ -221,8 +212,7 @@ public class MovementProcessor extends Processor {
                     double yChange = (y - lastGroundLocation.getY());
 
                     if (yChange < -24.0 && yChange != lastGroundLocation.getY() && yChange != y) {
-                        if (user.getLastFlaggedFlightCTimer().hasNotPassed(20)
-                                || user.getGhostBlockProcessor().getGhostBlockTeleportTimer().hasNotPassed(20)) {
+                        if (user.getLastFlaggedFlightCTimer().hasNotPassed(9)) {
                             if (user.getBlockData().onGround && !user.getPlayer().isDead()
                                     && user.getPlayer().getHealth() > 0) {
                                 user.getPlayer().setHealth(0);
@@ -405,6 +395,7 @@ public class MovementProcessor extends Processor {
         user.getBlockData().lillyPad = blockChecker.isLillyPad();
         user.getBlockData().door = blockChecker.isDoor();
         user.getBlockData().collideSlime = blockChecker.isCollideSlime();
+        user.getBlockData().sign = blockChecker.isSign();
         user.getBlockData().onGround = blockChecker.isOnGround();
         user.getBlockData().collidesHorizontal = blockChecker.isCollideHorizontal();
         user.getBlockData().carpet = blockChecker.isCarpet();
@@ -437,26 +428,34 @@ public class MovementProcessor extends Processor {
         }
 
         if (user.getBlockData().carpet) {
-            if (user.getBlockData().carpetTicks < 20) this.user.getBlockData().carpetTicks++;
+            if (user.getBlockData().carpetTicks < 20) user.getBlockData().carpetTicks++;
         } else {
             if (user.getBlockData().carpetTicks > 0) {
-                this.user.getBlockData().carpetTicks--;
+                user.getBlockData().carpetTicks--;
+            }
+        }
+
+        if (user.getBlockData().sign) {
+            if (user.getBlockData().signTicks < 20) user.getBlockData().signTicks++;
+        } else {
+            if (user.getBlockData().signTicks > 0) {
+                user.getBlockData().signTicks--;
             }
         }
 
         if (user.getBlockData().skull) {
-            if (user.getBlockData().skullTicks < 20) this.user.getBlockData().skullTicks++;
+            if (user.getBlockData().skullTicks < 20) user.getBlockData().skullTicks++;
         } else {
             if (user.getBlockData().skullTicks > 0) {
-                this.user.getBlockData().skullTicks--;
+                user.getBlockData().skullTicks--;
             }
         }
 
         if (user.getBlockData().cake) {
-            if (user.getBlockData().cakeTicks < 20) this.user.getBlockData().cakeTicks++;
+            if (user.getBlockData().cakeTicks < 20) user.getBlockData().cakeTicks++;
         } else {
             if (user.getBlockData().cakeTicks > 0) {
-                this.user.getBlockData().cakeTicks--;
+                user.getBlockData().cakeTicks--;
             }
         }
 
@@ -586,7 +585,6 @@ public class MovementProcessor extends Processor {
     @Override
     public void setupTimers(User user) {
         this.lastGroundTimer = new EventTimer(20, user);
-        this.respawnTimer = new EventTimer(20, user);
         this.lastBlockPlacePacketTimer = new EventTimer(20, user);
         this.lastBlockDigTimer = new EventTimer(20, user);
         this.lastSlimeLocation = new PlayerLocation(user.getPlayer().getWorld(), 0, 0, 0, 0,

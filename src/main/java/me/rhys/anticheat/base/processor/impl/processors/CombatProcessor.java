@@ -1,37 +1,30 @@
 package me.rhys.anticheat.base.processor.impl.processors;
 
-import lombok.AllArgsConstructor;
+import com.google.common.collect.EvictingQueue;
 import lombok.Getter;
 import lombok.Setter;
-import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.processor.api.Processor;
 import me.rhys.anticheat.base.processor.api.ProcessorInformation;
 import me.rhys.anticheat.base.user.User;
-import me.rhys.anticheat.tinyprotocol.api.NMSObject;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
-import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
-import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInTransactionPacket;
+import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInFlyingPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
-import me.rhys.anticheat.tinyprotocol.packet.out.*;
+import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutVelocityPacket;
 import me.rhys.anticheat.util.EventTimer;
 import me.rhys.anticheat.util.MathUtil;
 import me.rhys.anticheat.util.PastLocation;
 import me.rhys.anticheat.util.PlayerLocation;
 import me.rhys.anticheat.util.block.RayTrace;
 import me.rhys.anticheat.util.box.BoundingBox;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Queue;
 
 @ProcessorInformation(name = "Combat")
 @Getter
@@ -46,11 +39,14 @@ public class CombatProcessor extends Processor {
 
     private int cancelTicks, velocityTicks, velocityNoTransTicks;
 
-    private short velocityID = 9000, relMoveID = -9, reachID = 9001;
+    private short velocityID;
 
     private Entity lastAttackedEntity, lastLastAttackedEntity;
 
     private PastLocation hitboxLocations = new PastLocation();
+
+    private PlayerLocation location;
+
     private List<BoundingBox> boundingBoxList = new ArrayList<>();
     private boolean insideHitbox;
 
@@ -58,6 +54,11 @@ public class CombatProcessor extends Processor {
     public void onPacket(PacketEvent event) {
 
         switch (event.getType()) {
+
+            case Packet.Server.RESPAWN: {
+                user.getActionProcessor().add(ActionProcessor.Actions.RESPAWN);
+                break;
+            }
 
             case Packet.Client.USE_ENTITY: {
                 WrappedInUseEntityPacket useEntityPacket = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
@@ -68,7 +69,10 @@ public class CombatProcessor extends Processor {
                     lastAttackedEntity = useEntityPacket.getEntity();
                     useEntityTimer.reset();
 
+                }
 
+                if (user.getMovementProcessor().isLastSprinting() ||
+                        useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
                     velocity.setX(velocity.getX() * 0.6F);
                     velocity.setZ(velocity.getZ() * 0.6F);
                 }
@@ -78,8 +82,19 @@ public class CombatProcessor extends Processor {
             case Packet.Client.LOOK:
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
+
                 velocityTicks++;
                 velocityNoTransTicks++;
+
+                if (user.getCombatProcessor().getLastAttackedEntity() != null) {
+                    user.getCombatProcessor().getHitboxLocations().addLocation(user.getCombatProcessor()
+                            .getLastAttackedEntity().getLocation());
+                }
+
+                location = new PlayerLocation(
+                        user.getCurrentLocation().getX(), user.getCurrentLocation().getY(),
+                        user.getCurrentLocation().getZ(), System.currentTimeMillis());
+
 
                 Location location = user.getCurrentLocation().clone()
                         .toBukkitLocation(user.getPlayer().getWorld());
@@ -126,6 +141,7 @@ public class CombatProcessor extends Processor {
 
                     this.preVelocityTimer.reset();
 
+                    user.getActionProcessor().add(ActionProcessor.Actions.VELOCITY);
 
                     velocity = new Vector(wrappedOutVelocityPacket.getX(), wrappedOutVelocityPacket.getY(),
                             wrappedOutVelocityPacket.getZ());
@@ -135,36 +151,9 @@ public class CombatProcessor extends Processor {
 
                     velocityNoTransTicks = 0;
 
-                    velocityID--;
-
                     velocityHNoTrans = Math.hypot(velocityNoTrans.getX(), velocityNoTrans.getZ());
 
-                    WrappedOutTransaction transaction = new WrappedOutTransaction(0, (short) velocityID, false);
-
-                    TinyProtocolHandler.sendPacket(user.getPlayer(), transaction.getObject());
-
-                    if (velocityID <= -1) {
-                        velocityID = 9000;
-                    }
-
                 }
-                break;
-            }
-
-            case Packet.Client.TRANSACTION: {
-                WrappedInTransactionPacket transaction = new WrappedInTransactionPacket(event.getPacket(),
-                        event.getUser().getPlayer());
-
-                short idVel = velocityID;
-
-                if (transaction.getAction() == idVel) {
-                    velocityH = Math.hypot(velocity.getX(), velocity.getZ());
-                    velocityV = velocity.getY();
-
-                    velocityTicks = 0;
-                }
-
-
                 break;
             }
         }

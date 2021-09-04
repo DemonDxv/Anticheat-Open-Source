@@ -25,6 +25,11 @@ public class ScaffoldH extends Check {
                 WrappedInBlockPlacePacket blockPlace =
                         new WrappedInBlockPlacePacket(event.getPacket(), user.getPlayer());
 
+                if (user.shouldCancel() || user.getTick() < 60) {
+                    threshold = 0;
+                    return;
+                }
+
                 double pitch = user.getCurrentLocation().getPitch();
 
                 if (user.getPlayer().getEyeLocation().add(0, -3, 0).getBlock().getType() == Material.AIR) {

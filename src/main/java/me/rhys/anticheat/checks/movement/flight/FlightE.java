@@ -42,8 +42,10 @@ public class FlightE extends Check {
                         || user.getBlockData().door
                         || user.getBlockData().underBlockTicks > 0
                         || user.getBlockData().collidesHorizontal
-                        || user.getCombatProcessor().getVelocityTicks() <= (10
+                        || !user.isChunkLoaded()
+                        || user.getActionProcessor().getVelocityTimer().hasNotPassed(10
                         + user.getConnectionProcessor().getClientTick())
+                        && user.getLastFallDamageTimer().passed(20)
                         || user.getBlockData().waterTicks > 0) {
                     threshold = 0;
                     return;
@@ -55,9 +57,12 @@ public class FlightE extends Check {
                         lastGround = user.getMovementProcessor().isLastGround();
 
                 if (!isGround && lastGround && deltaY > 0.0 && (deltaY < 0.42f || deltaY > maxJumpHeight)) {
-                    flag(user, "Invalid Jump Height", "dy: " + deltaY);
+                    if (++threshold > 1) {
+                        flag(user, "Invalid Jump Height", "dy: " + deltaY, "" + maxJumpHeight);
+                    }
+                } else {
+                    threshold -= Math.min(threshold, 0.001);
                 }
-
             }
         }
     }
