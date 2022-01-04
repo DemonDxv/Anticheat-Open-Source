@@ -1,7 +1,7 @@
 # Open Source Anticheat
 A free anticheat for the community that is open source.
 
-*Note: this projct has been discontinued*
+***Note: this project has been discontinued***
  
 Feel free to report any issues in the "Issues" tab
  
