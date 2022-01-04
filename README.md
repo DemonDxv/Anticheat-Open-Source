@@ -45,6 +45,8 @@ If your planning on forking / taking code to resell make sure to leave credits.
 
 * /ac gui - currently underdevelopment
 
+* /ac devalerts - shows development alerts
+
 
 **Credits:**
 Rhys (made the anticheat base, helped a shit ton, + lots of utils)
