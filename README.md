@@ -1,11 +1,13 @@
 # Open Source Anticheat
 A free anticheat for the community that is open source.
 
-***Note: this project has been discontinued***
+***Note: this project is being worked on very rarely***
  
 Feel free to report any issues in the "Issues" tab
  
-****Developers: demon & rhys****
+****Main Developer(s): demon****
+
+****Main Contributor(s): Rhys****
 
 **Spigot Page: https://www.spigotmc.org/resources/anticheat.93504/**
 
@@ -45,10 +47,8 @@ If your planning on forking / taking code to resell make sure to leave credits.
 
 
 **Credits:**
-
-darkandblue (Prediction/Key Processing)
-
-funkemunky & Rhys & Luke (bounding boxes, reflection, protocol from Atlas https://github.com/funkemunky/Atlas) 
+Rhys (made the anticheat base, helped a shit ton, + lots of utils)
+funkemunky & Luke (bounding boxes, reflection, protocol from Atlas https://github.com/funkemunky/Atlas) 
 (original code of Atlas is from Luke (firefly dev) but I still gotta give funke his credit lol)
 
 Sim0n (AutoClicker utilites from Baldr)
