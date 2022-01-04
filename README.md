@@ -1,7 +1,7 @@
 # Open Source Anticheat
 A free anticheat for the community that is open source.
 
-***Note: this project is being worked on very rarely***
+***Note: this project is being worked on very rarely and doesn't get update to often (EXPECT ISSUES/BUGS)***
  
 Feel free to report any issues in the "Issues" tab
  
