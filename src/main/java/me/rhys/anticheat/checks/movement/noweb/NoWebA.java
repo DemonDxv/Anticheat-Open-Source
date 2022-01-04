@@ -7,7 +7,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "NoWeb", canPunish = false, description = "Checks for invalid state in web")
+@CheckInformation(checkName = "NoWeb", description = "Checks for invalid state in web")
 public class NoWebA extends Check {
 
     private double threshold;

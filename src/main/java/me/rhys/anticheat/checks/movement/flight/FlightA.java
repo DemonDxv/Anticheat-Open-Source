@@ -25,19 +25,18 @@ public class FlightA extends Check {
                 //    Bukkit.broadcastMessage(""+user.getBlockData().nearWater);
 
                 if (user.shouldCancel()
-                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(5)
+                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getVehicleTicks() > 0
                         || EntityUtil.isOnBoat(user)
-                        || user.getLastBlockPlaceCancelTimer().hasNotPassed(20)
+                        || user.getLastBlockPlaceCancelTimer().hasNotPassed(3)
                         || user.getBlockData().webTicks > 0
                         || user.getBlockData().cakeTicks > 0
                         || user.getBlockData().climbableTicks > 0
                         || user.getBlockData().stairTicks > 0
                         || user.getBlockData().slabTicks > 0
-                        || user.getLastBlockPlaceTimer().hasNotPassed(10
-                        + user.getConnectionProcessor().getClientTick())
+                        || user.getLastBlockPlaceTimer().hasNotPassed(3)
                         || user.getBlockData().underBlockTicks > 0
                         || user.getBlockData().waterTicks > 0
                         || user.getBlockData().lavaTicks > 0
@@ -45,8 +44,7 @@ public class FlightA extends Check {
                         || !user.isChunkLoaded()
                         || user.getMovementProcessor().getDeltaXZ() < 0.2
                         && user.getPotionProcessor().getJumpTicks() > 0
-                        || user.getActionProcessor().getVelocityTimer().hasNotPassed(10
-                        + user.getConnectionProcessor().getClientTick())
+                        || user.getActionProcessor().getVelocityTimer().hasNotPassed(9)
                         && user.getLastFallDamageTimer().passed(20)
                         || user.getTick() < 60) {
                     threshold = 0;
@@ -75,11 +73,11 @@ public class FlightA extends Check {
                 if (!user.getMovementProcessor().isOnGround() && !user.getMovementProcessor().isLastGround()) {
                     if (totalUp > max && Math.abs(prediction) > max) {
 
-                        if (threshold++ > 1) {
-                            flag(user, "Invalid motion prediction");
+                        if (++threshold > 1) {
+                            flag(user, "Invalid motion prediction", "t="+totalUp + " y="+deltaY + " p="+prediction);
                         }
                     } else {
-                        threshold -= Math.min(threshold, 0.001f);
+                        threshold -= Math.min(threshold, 0.0000001f);
                     }
                 }
             }

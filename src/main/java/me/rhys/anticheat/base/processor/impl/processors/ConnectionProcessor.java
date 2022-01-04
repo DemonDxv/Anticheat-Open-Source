@@ -2,13 +2,16 @@ package me.rhys.anticheat.base.processor.impl.processors;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.processor.api.Processor;
 import me.rhys.anticheat.base.processor.api.ProcessorInformation;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
+import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInKeepAlivePacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInTransactionPacket;
+import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutTransaction;
 import me.rhys.anticheat.util.MathUtil;
 import me.rhys.anticheat.util.evicting.EvictingMap;
 import org.bukkit.Bukkit;
@@ -16,6 +19,7 @@ import org.bukkit.Bukkit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @ProcessorInformation(name = "Connection")
 @Getter @Setter
@@ -27,6 +31,7 @@ public class ConnectionProcessor extends Processor {
     private int clientTick, flyingTick;
     private boolean isLagging = false;
     private int dropTick, averageTransactionPing;
+    private short id = Short.MAX_VALUE;
 
     private List<Integer> pingList = new ArrayList<>();
 
@@ -53,8 +58,7 @@ public class ConnectionProcessor extends Processor {
     }
 
     void processT(User user, short time) {
-        if (this.user.getConnectionMap().containsKey(time)
-                && !user.getReachProcessor().reachTestMap.containsKey(time)) {
+        if (this.user.getConnectionMap().containsKey(time)) {
 
             this.lastTransPing = transPing;
             this.transPing = (int) (System.currentTimeMillis() - this.user.getConnectionMap()
@@ -73,12 +77,6 @@ public class ConnectionProcessor extends Processor {
                 pingList.clear();
             }
 
-            if (clientTick >= 18
-                    || dropTransTime > 300
-                    || transPing >= 830) {
-                isLagging = true;
-            }
-
             user.getConnectionMap().remove(time);
             user.getCheckManager().getCheckList().forEach(check -> check.onConnection(user));
         }
@@ -86,8 +84,10 @@ public class ConnectionProcessor extends Processor {
 
     void processK(User user, long time) {
         if (this.user.getConnectionMap2().containsKey(time)) {
+
             this.ping = (int) (System.currentTimeMillis() - this.user.getConnectionMap2()
                     .get(time));
+
             this.sentKeepAlives.put(time, System.currentTimeMillis());
            // this.clientTick = (int) Math.ceil(this.ping / 50.0);
 

@@ -39,6 +39,7 @@ public class User {
     private final ExecutorService executorService;
     private final BlockData blockData = new BlockData();
 
+    @Getter @Setter
     private GhostBlockProcessor ghostBlockProcessor;
     private ConnectionProcessor connectionProcessor;
     private PredictionProcessor predictionProcessor;
@@ -63,7 +64,7 @@ public class User {
 
     public PastLocation previousLocations = new PastLocation();
 
-    private boolean chunkLoaded = false, alerts = true, banned = false;
+    private boolean chunkLoaded = false, devAlerts = false, alerts = true, banned = false;
 
     private double enderPearlDistance, mouseDeltaY, mouseDeltaX, lastAimHDeltaPitch, lastAimHDeltaYaw;
 
@@ -72,6 +73,7 @@ public class User {
             false, System.currentTimeMillis());
     private Location enderPearlThrowLocation;
     private PlayerLocation lastLocation = currentLocation, lastLastLocation = lastLocation;
+
 
     private EventTimer lastEnderPearlTimer = new EventTimer(20, this),
             lastFlaggedFlightCTimer = new EventTimer(20, this),

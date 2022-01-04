@@ -11,12 +11,10 @@ import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInFlyingPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutVelocityPacket;
-import me.rhys.anticheat.util.EventTimer;
-import me.rhys.anticheat.util.MathUtil;
-import me.rhys.anticheat.util.PastLocation;
-import me.rhys.anticheat.util.PlayerLocation;
+import me.rhys.anticheat.util.*;
 import me.rhys.anticheat.util.block.RayTrace;
 import me.rhys.anticheat.util.box.BoundingBox;
+import me.rhys.anticheat.util.evicting.EvictingList;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -33,11 +31,15 @@ public class CombatProcessor extends Processor {
 
     private EventTimer preVelocityTimer, useEntityTimer;
 
-    private double velocityH, velocityV, velocityHNoTrans;
+    private double outlier, kurtosis, skewness, std, median, averageCps, currentCps, velocityH, velocityV, velocityHNoTrans;
+
+    private Tuple<List<Double>, List<Double>> outlierTuple;
+
+    private final List<Integer> movements = new ArrayList<>();
 
     private Vector velocity = new Vector(), velocityNoTrans = new Vector();
 
-    private int cancelTicks, velocityTicks, velocityNoTransTicks;
+    private int movementTicks, cancelTicks, velocityTicks, velocityNoTransTicks;
 
     private short velocityID;
 
@@ -83,6 +85,7 @@ public class CombatProcessor extends Processor {
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
 
+                movementTicks++;
                 velocityTicks++;
                 velocityNoTransTicks++;
 
@@ -154,6 +157,52 @@ public class CombatProcessor extends Processor {
                     velocityHNoTrans = Math.hypot(velocityNoTrans.getX(), velocityNoTrans.getZ());
 
                 }
+                break;
+            }
+
+            case Packet.Client.ARM_ANIMATION: {
+
+                if (movementTicks < 15) {
+
+                    if (user.getLastBlockPlaceCancelTimer().hasNotPassed(3)
+                            || user.getLastBlockBreakTimer().hasNotPassed(3)
+                            || user.getMovementProcessor().getLastBlockDigTimer().hasNotPassed(3)
+                            || user.getLastBlockPlaceTimer().hasNotPassed(3)) {
+                        movementTicks = 20;
+                        movements.clear();
+                    }
+
+                    movements.add(movementTicks);
+
+                    double average = MathUtil.getAverage(movements);
+                    double cps = MathUtil.getCPS(movements);
+                    double std = MathUtil.getStandardDeviation(movements);
+                    double median = MathUtil.getMedian(movements);
+                    double kurtosis = MathUtil.getKurtosis(movements);
+                    double skewness = MathUtil.getSkewness(movements);
+
+                    Tuple outlierTuple = MathUtil.getOutliers(movements);
+
+                    if (outlierTuple != null) {
+                        this.outlierTuple = outlierTuple;
+                        this.outlier = this.outlierTuple.one.size() + this.outlierTuple.two.size();
+                    }
+
+                    this.std = std;
+                    this.median = median;
+                    this.kurtosis = kurtosis;
+                    this.averageCps = average;
+                    this.currentCps = cps;
+                    this.skewness = skewness;
+
+                    if (movements.size() >= 100) {
+                        movements.clear();
+                    }
+
+                }
+
+
+                movementTicks = 0;
                 break;
             }
         }

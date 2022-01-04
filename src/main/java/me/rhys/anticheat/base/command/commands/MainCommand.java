@@ -24,6 +24,7 @@ public class MainCommand extends BukkitCommand {
     private final LogsCommand logsCommand = new LogsCommand();
     private final ReloadCommand reloadCommand = new ReloadCommand();
     private final LookupCommand lookupCommand = new LookupCommand();
+    private final DevAlertsCommand devAlertsCommand = new DevAlertsCommand();
 
 
     public MainCommand(String name) {
@@ -64,7 +65,9 @@ public class MainCommand extends BukkitCommand {
                     if (s.equalsIgnoreCase("alerts")) {
                         found = true;
                         alertsCommand.execute(args, s, commandSender);
-
+                    } else if (s.equalsIgnoreCase("devalerts")) {
+                        found = true;
+                        devAlertsCommand.execute(args, s, commandSender);
                     } else if (s.equalsIgnoreCase("check")) {
                         found = true;
                         checksCommand.execute(args, s, commandSender);

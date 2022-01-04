@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 public class KillauraN extends Check {
 
     private int interactTick, attackTick;
+    private double threshold;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -41,7 +42,11 @@ public class KillauraN extends Check {
                         double changeTick = Math.abs(attackTick - interactTick);
 
                         if (changeTick > 100) {
-                            flag(user, "No interact while blocking");
+                            if (++threshold > 1) {
+                                flag(user, "No interact while blocking");
+                            }
+                        } else {
+                            threshold = 0;
                         }
                     }
                 }

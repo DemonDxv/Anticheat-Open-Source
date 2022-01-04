@@ -42,41 +42,17 @@ public class SpeedA extends Check {
 
                 double lastDeltaXZ = user.getMovementProcessor().getLastDeltaXZ();
 
-                double prediction = lastDeltaXZ * 0.91F;
+                double prediction = lastDeltaXZ * 0.91F + 0.026F;
 
-                prediction += MathUtil.movingFlyingV3(user);
-
-                if (user.getActionProcessor().getVelocityTimer().hasNotPassed(10
-                        + user.getConnectionProcessor().getClientTick())) {
-                    prediction += user.getCombatProcessor().getVelocityH();
-                }
-
-                if (user.getLastBlockPlaceTimer().hasNotPassed(10 + user.getConnectionProcessor().getClientTick())) {
-                    prediction += 0.1f;
-                }
-
-                if (user.getBlockData().waterTicks > 0 && user.getBlockData().nearWater) {
-                    prediction += 0.1F;
-                }
-
-                double thresholdRemoval = 0.001;
-
-                if (user.getBlockData().collidesHorizontal) {
-                    thresholdRemoval = 0.02f;
-                }
-
-
-                double totalSpeed = deltaXZ - prediction;
+                double motionXZ = deltaXZ - prediction;
 
                 if (!user.getMovementProcessor().isOnGround() && !user.getMovementProcessor().isLastGround()) {
-
-                    if (totalSpeed > 0.001 && deltaXZ > 0.2) {
-
-                        if (threshold++ > 1) {
-                            flag(user, "Modifying air speed");
+                    if (motionXZ > 0.001 && deltaXZ > 0.2) {
+                        if (++threshold > 1) {
+                            flag(user, "Modifying air speed", "mxz="+motionXZ);
                         }
                     } else {
-                        threshold -= Math.min(threshold, thresholdRemoval);
+                        threshold -= Math.min(threshold, 0.00000001);
                     }
                 }
 

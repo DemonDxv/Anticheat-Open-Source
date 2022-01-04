@@ -36,38 +36,16 @@ public class VelocityC extends Check {
 
                 double velocityH = user.getCombatProcessor().getVelocityH();
 
-                velocityH -= MathUtil.movingFlyingV3(user);
+                velocityH -= MathUtil.movingFlyingV3(user, false);
 
                 double totalVelocity = deltaXZ / velocityH;
 
-                if (user.getCombatProcessor().getVelocityTicks() == 1) {
-
-                    if (totalVelocity <= 0.99 && totalVelocity >= 0.0
-                            && !user.getMovementProcessor().isOnGround()
-                            && user.getMovementProcessor().isLastGround()) {
-                        if (threshold++ > 1) {
-                            flag(user, "Horizontal Velocity: " + totalVelocity);
-                        }
-                    } else {
-                        threshold -= Math.min(threshold, 0.09f);
+                if (totalVelocity < 0.99 && user.getCombatProcessor().getVelocityTicks() == 1) {
+                    if (++threshold > 3) {
+                        flag(user, "v="+totalVelocity);
                     }
-                }
-
-                if (!user.getMovementProcessor().isOnGround() && !user.getMovementProcessor().isLastGround()
-                        && user.getMovementProcessor().getDeltaY() > .2) {
-
-                    if (user.getCombatProcessor().getVelocityTicks() <= 5) {
-                        if (totalVelocity < 0.3) {
-
-                            threshold += (threshold < 10 ? 0.95 : 0);
-
-                            if (threshold > 5) {
-                                flag(user, "Horizontal Velocity: "+totalVelocity, "(tick)");
-                            }
-                        } else {
-                            threshold -= Math.min(threshold, 0.75);
-                        }
-                    }
+                } else {
+                    threshold -= Math.min(threshold, 0.025);
                 }
 
                 break;

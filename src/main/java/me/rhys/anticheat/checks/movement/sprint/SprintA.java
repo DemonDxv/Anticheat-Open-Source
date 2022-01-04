@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-@CheckInformation(checkName = "Sprint", canPunish = false, description = "Omnisprint detection")
+@CheckInformation(checkName = "Sprint", canPunish = false, description = "OmniSprint detection")
 public class SprintA extends Check {
 
     private double threshold;
@@ -47,9 +47,11 @@ public class SprintA extends Check {
                 double deltaXZ = user.getMovementProcessor().getDeltaXZ();
 
                 if (user.getCurrentLocation() != null) {
-                    if (moveAngle > 90.0F && deltaXZ > 0.2F && user.getMovementProcessor().isLastSprinting()) {
+                    if (moveAngle > 90.0F && deltaXZ > MathUtil.getBaseSpeed_2(user.getPlayer())
+                            && user.getMovementProcessor().isSprinting()) {
                         if (++threshold > 9) {
-                            flag(user, "Omni-directional sprint");
+                            flag(user, "Omni-Sprint");
+                            user.getPlayer().setSprinting(false);
                         }
                     } else {
                         threshold = 0;

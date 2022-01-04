@@ -6,6 +6,7 @@ import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutKeepAlivePacket;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutTransaction;
+import me.rhys.anticheat.util.RunUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -16,23 +17,21 @@ public class TransactionHandler implements Runnable {
         this.start();
     }
 
-    private long time = 999L;
-    private short timeshort = 999;
+    private short time = 32000;
     private BukkitTask bukkitTask;
 
     public void start() {
         if (this.bukkitTask == null) {
-            this.bukkitTask = Bukkit.getScheduler().runTaskTimer(Anticheat.getInstance(),
+            this.bukkitTask = RunUtils.taskTimerAsync(
                     this, 0L, 0L);
         }
     }
 
     @Override
     public void run() {
-        timeshort = (short) time;
 
         if (this.time-- < 1) {
-            this.time = 999L;
+            this.time = 32000;
         }
 
         if (ProtocolVersion.getGameVersion().isAbove(ProtocolVersion.V1_9_4)) {
@@ -40,24 +39,23 @@ public class TransactionHandler implements Runnable {
             this.processTransaction();
         } else {
             this.processTransaction();
-            this.processKeepAlive();
         }
     }
 
-    void processKeepAlive() {
+   /* void processKeepAlive() {
         WrappedOutKeepAlivePacket wrappedOutKeepAlivePacket = new WrappedOutKeepAlivePacket(this.time);
         Anticheat.getInstance().getUserManager().getUserMap().forEach((uuid, user) -> {
             user.getConnectionMap2().put(this.time, System.currentTimeMillis());
             user.sendPacket(wrappedOutKeepAlivePacket.getObject());
         });
-    }
+    } */
 
     void processTransaction() {
-        WrappedOutTransaction wrappedOutTransaction = new WrappedOutTransaction(0, this.timeshort,
+        WrappedOutTransaction wrappedOutTransaction = new WrappedOutTransaction(0, this.time,
                 false);
 
         Anticheat.getInstance().getUserManager().getUserMap().forEach((uuid, user) -> {
-            user.getConnectionMap().put(this.timeshort, System.currentTimeMillis());
+            user.getConnectionMap().put(this.time, System.currentTimeMillis());
             user.sendPacket(wrappedOutTransaction.getObject());
         });
     }

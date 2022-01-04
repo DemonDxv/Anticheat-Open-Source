@@ -39,7 +39,7 @@ public class ScaffoldH extends Check {
 
                         if (faceInt >= 0 && faceInt <= 3) {
                             if (user.getMovementProcessor().isSprinting()) {
-                                if (threshold++ > 9) {
+                                if (threshold++ > 12) {
                                     flag(user, "Sprinting while scaffolding");
                                 }
                             } else {

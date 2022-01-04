@@ -4,6 +4,7 @@ import com.sun.istack.internal.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 
@@ -120,5 +121,10 @@ public class CustomLocation {
     public Vector toVector() {
         return new Vector(x, y, z);
     }
+
+    public Location toBukkitLocation(World world) {
+        return new Location(world, x, y, z, yaw, pitch);
+    }
+
 
 }

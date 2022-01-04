@@ -9,6 +9,9 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.database.api.InputData;
 import me.rhys.anticheat.discord.DiscordWebhook;
 import me.rhys.anticheat.util.TPSUtil;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -37,6 +40,33 @@ public class Check implements CallableEvent, Cloneable {
         }
     }
 
+    public void devFlag(User user, String... data) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (data.length > 0) {
+            for (String s : data) {
+                stringBuilder.append(s).append(", ");
+            }
+        }
+
+        String devAlert = Anticheat.getInstance().getConfigValues().getAlertsMessage()
+                        .replace("%MAX-VL%", String.valueOf(maxViolation))
+                        .replace("%PLAYER%", user.getPlayer().getName())
+                        .replace("%PREFIX%", ChatColor.RED + "[DEV] >")
+                        .replace("%CHECK%", checkName)
+                        .replace("%CHECKTYPE%", checkType)
+                        .replace("%VL%", String.valueOf(violation))
+                        .replace("%DEBUG%", (data.length > 0 ? ChatColor.GRAY + " ["
+                                + ChatColor.GRAY + stringBuilder.toString().trim() + ChatColor.GRAY + "]" : ""));
+
+        Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+            User staff = Anticheat.getInstance().getUserManager().getUser(player);
+            if (staff.isDevAlerts()) {
+                staff.getPlayer().sendMessage(devAlert);
+            }
+        });
+    }
     public void flag(User user, String... data) {
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -44,6 +74,10 @@ public class Check implements CallableEvent, Cloneable {
             for (String s : data) {
                 stringBuilder.append(s).append(", ");
             }
+        }
+
+        if (isCanPunish() && !user.isBanned()) {
+            ++violation;
         }
 
         if (TPSUtil.getTPS() <= 19.0
@@ -54,7 +88,7 @@ public class Check implements CallableEvent, Cloneable {
         }
 
         if (Anticheat.getInstance().getConfigValues().isPunish() && !user.isBanned()
-                && this.canPunish && this.violation > this.maxViolation) {
+                && this.canPunish && this.violation >= this.maxViolation) {
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -91,7 +125,7 @@ public class Check implements CallableEvent, Cloneable {
                 .replace("%CHECKTYPE%", checkType)
                 .replace("%VL%", String.valueOf(violation))
                 .replace("%DEBUG%", (data.length > 0 ? ChatColor.GRAY + " ["
-                        + ChatColor.GRAY + stringBuilder.toString().trim() + ChatColor.GRAY + "]" : ""));
+                        + ChatColor.GRAY + stringBuilder.toString().trim() + ChatColor.GRAY + "]" : ""));;
 
         String discordAlert = Anticheat.getInstance().getConfigValues().getDiscordAlerts()
                 .replace("%MAX-VL%", String.valueOf(maxViolation))
@@ -101,11 +135,13 @@ public class Check implements CallableEvent, Cloneable {
                 .replace("%CHECKTYPE%", checkType)
                 .replace("%VL%", String.valueOf(violation))
                 .replace("%DEBUG%", (data.length > 0 ? " ["
-                       + stringBuilder.toString().trim()  + "]" : ""));
+                        + stringBuilder.toString().trim()  + "]" : ""));
 
-        if (isCanPunish() && !user.isBanned()) {
-            violation++;
-        }
+
+        TextComponent textComponent = new TextComponent(alert);
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                new ComponentBuilder(ChatColor.GRAY + stringBuilder.toString()).create()));
+
 
 
         if (Anticheat.getInstance().getConfigValues().isConsoleAlerts()) {
@@ -118,10 +154,11 @@ public class Check implements CallableEvent, Cloneable {
             if (staff != null) {
                 if (staff.isAlerts() && (staff.getPlayer().hasPermission("anticheat.alerts")
                         || staff.getPlayer().isOp())) {
-                    staff.getPlayer().sendMessage(alert);
+                    staff.getPlayer().spigot().sendMessage(textComponent);
                 }
             }
         });
+
 
 
         if (Anticheat.getInstance().getConfigValues().isDiscord()) {

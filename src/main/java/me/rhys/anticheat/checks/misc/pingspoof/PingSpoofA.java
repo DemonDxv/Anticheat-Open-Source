@@ -9,6 +9,8 @@ import me.rhys.anticheat.tinyprotocol.api.Packet;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.concurrent.TimeUnit;
+
 @CheckInformation(checkName = "PingSpoof", lagBack = false, canPunish = false, description = "Blocks Ping Spoofing")
 public class PingSpoofA extends Check {
 
@@ -23,18 +25,19 @@ public class PingSpoofA extends Check {
                 User user = event.getUser();
 
                 if (user.shouldCancel()
-                        || user.getLastTeleportTimer().hasNotPassed(20
-                        + user.getConnectionProcessor().getClientTick())
+                        || user.getLastTeleportTimer().hasNotPassed(5)
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)) {
                     return;
                 }
 
-                boolean canKick = user.getTick() > 350;
+                boolean canKick = user.getTick() > 1000;
 
-                if (user.getConnectionMap().size() > (canKick ? 18 : 25)) {
+                if (user.getConnectionMap().size() > (canKick ? 19 : 45)
+                        && user.getConnectionProcessor().getDropTransTime() > TimeUnit.SECONDS.toMillis(7L)) {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
+                            devFlag(user, "Got disconnected due to abnormal lag");
                             user.getPlayer().kickPlayer("Disconnected.");
                         }
                     }.runTask(Anticheat.getInstance());

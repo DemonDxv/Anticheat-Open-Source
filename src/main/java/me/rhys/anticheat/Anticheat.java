@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.rhys.anticheat.banwave.BanWaveManager;
 import me.rhys.anticheat.base.check.impl.CachedCheckManager;
 import me.rhys.anticheat.base.command.CommandManager;
+import me.rhys.anticheat.base.connection.KeepAliveHandler;
 import me.rhys.anticheat.base.connection.TransactionHandler;
 import me.rhys.anticheat.base.listener.BukkitListener;
 import me.rhys.anticheat.base.user.UserManager;
@@ -50,6 +51,7 @@ public class Anticheat extends JavaPlugin {
     private final ScheduledExecutorService logService = Executors.newSingleThreadScheduledExecutor();
     private final ScheduledExecutorService timeService = Executors.newSingleThreadScheduledExecutor();
     private TransactionHandler transactionHandler;
+    private KeepAliveHandler keepAliveHandler;
     private TinyProtocolHandler tinyProtocolHandler;
     public String bukkitVersion;
     private final ConfigValues configValues = new ConfigValues();
@@ -74,9 +76,9 @@ public class Anticheat extends JavaPlugin {
         this.tinyProtocolHandler = new TinyProtocolHandler();
         this.checkManager.setup();
 
-        if (ProtocolVersion.getGameVersion().isAbove(ProtocolVersion.v1_16_5)) {
+        if (ProtocolVersion.getGameVersion().isAbove(ProtocolVersion.V1_12)) {
             getServer().getPluginManager().disablePlugin(this);
-            getLogger().warning("The anticheat is only compatible with 1.7.* to 1.16.5 spigot's " +
+            getLogger().warning("The anticheat is only compatible with 1.7.* to 1.12 spigot's " +
                     "(1.7.* - 1.8.* is highly recommended)");
             return;
         }
@@ -85,6 +87,7 @@ public class Anticheat extends JavaPlugin {
 
         this.bukkitVersion = Bukkit.getServer().getClass().getPackage().getName().substring(23);
         this.transactionHandler = new TransactionHandler();
+        this.keepAliveHandler = new KeepAliveHandler();
         this.logData = new LogData();
         this.userManager = new UserManager();
 
@@ -100,7 +103,7 @@ public class Anticheat extends JavaPlugin {
         //Resets violations after 1 minute
         this.executorService.scheduleAtFixedRate(() -> this.getUserManager().getUserMap().forEach((uuid, user) ->
                 user.getCheckManager().getCheckList().forEach(check -> check.setViolation(0))),
-                1L, 1L, TimeUnit.MINUTES);
+                1L, 3L, TimeUnit.MINUTES);
 
         Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new TPSUtil(), 100L, 1L);
 

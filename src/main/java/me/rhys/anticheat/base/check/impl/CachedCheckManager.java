@@ -25,14 +25,12 @@ import me.rhys.anticheat.checks.movement.speed.*;
 import me.rhys.anticheat.checks.movement.sprint.*;
 import me.rhys.anticheat.checks.movement.step.*;
 import me.rhys.anticheat.checks.movement.strafe.*;
-import me.rhys.anticheat.util.command.CommandUtils;
+import me.rhys.anticheat.checks.movement.wtap.*;
 import me.rhys.anticheat.util.file.ChecksFile;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Getter
 public class CachedCheckManager {
@@ -44,11 +42,6 @@ public class CachedCheckManager {
         this.checkList.add(new VelocityC());
         this.checkList.add(new VelocityD());
         this.checkList.add(new VelocityE());
-        this.checkList.add(new VelocityF());
-        this.checkList.add(new VelocityG());
-        this.checkList.add(new VelocityH());
-        this.checkList.add(new VelocityI());
-        this.checkList.add(new VelocityJ());
 
         this.checkList.add(new AutoClickerA());
         this.checkList.add(new AutoClickerB());
@@ -57,12 +50,20 @@ public class CachedCheckManager {
         this.checkList.add(new AutoClickerE());
         this.checkList.add(new AutoClickerF());
         this.checkList.add(new AutoClickerG());
+        this.checkList.add(new AutoClickerH());
+        this.checkList.add(new AutoClickerI());
+        this.checkList.add(new AutoClickerJ());
+        this.checkList.add(new AutoClickerK());
+        this.checkList.add(new AutoClickerL());
+        this.checkList.add(new AutoClickerM());
+        this.checkList.add(new AutoClickerN());
+
 
         this.checkList.add(new AimAssistA());
         this.checkList.add(new AimAssistB());
         this.checkList.add(new AimAssistC());
         this.checkList.add(new AimAssistD());
-        this.checkList.add(new AimAssistE());
+    //    this.checkList.add(new AimAssistE());
         this.checkList.add(new AimAssistF());
         this.checkList.add(new AimAssistG());
         this.checkList.add(new AimAssistH());
@@ -71,6 +72,8 @@ public class CachedCheckManager {
         this.checkList.add(new AimAssistK());
         this.checkList.add(new AimAssistL());
         this.checkList.add(new AimAssistM());
+        this.checkList.add(new AimAssistN());
+
 
         this.checkList.add(new KillauraA());
         this.checkList.add(new KillauraB());
@@ -87,6 +90,9 @@ public class CachedCheckManager {
         this.checkList.add(new KillauraM());
         this.checkList.add(new KillauraN());
         this.checkList.add(new KillauraO());
+        this.checkList.add(new KillauraP());
+        this.checkList.add(new KillauraQ());
+        this.checkList.add(new KillauraR());
 
         this.checkList.add(new ReachA());
         this.checkList.add(new ReachB());
@@ -95,14 +101,13 @@ public class CachedCheckManager {
         this.checkList.add(new HitboxB());
 
         this.checkList.add(new TimerA());
+        this.checkList.add(new TimerB());
 
         this.checkList.add(new FlightA());
         this.checkList.add(new FlightB());
         this.checkList.add(new FlightC());
         this.checkList.add(new FlightD());
         this.checkList.add(new FlightE());
-        this.checkList.add(new FlightF());
-        this.checkList.add(new FlightG());
 
         this.checkList.add(new SpeedA());
         this.checkList.add(new SpeedB());
@@ -116,7 +121,6 @@ public class CachedCheckManager {
         this.checkList.add(new Strafe());
 
         this.checkList.add(new StepA());
-     //   this.checkList.add(new StepB());
 
         this.checkList.add(new JesusA());
         this.checkList.add(new JesusB());
@@ -127,7 +131,6 @@ public class CachedCheckManager {
         this.checkList.add(new SneakD());
 
         this.checkList.add(new SprintA());
-        this.checkList.add(new SprintB());
 
         this.checkList.add(new ScaffoldA());
         this.checkList.add(new ScaffoldB());
@@ -153,6 +156,7 @@ public class CachedCheckManager {
         this.checkList.add(new BadPacketsH());
         this.checkList.add(new BadPacketsI());
         this.checkList.add(new BadPacketsJ());
+        this.checkList.add(new BadPacketsK());
 
         this.checkList.add(new InventoryA());
         this.checkList.add(new InventoryB());
@@ -165,6 +169,12 @@ public class CachedCheckManager {
         this.checkList.add(new PingSpoofA());
         this.checkList.add(new PingSpoofB());
         this.checkList.add(new PingSpoofC());
+        this.checkList.add(new PingSpoofD());
+
+
+        this.checkList.add(new WTapA());
+        this.checkList.add(new WTapB());
+        this.checkList.add(new WTapC());
 
         //
 

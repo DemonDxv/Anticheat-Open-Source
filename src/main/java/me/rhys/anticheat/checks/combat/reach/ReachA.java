@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CheckInformation(checkName = "Reach", lagBack = false, punishmentVL = 7, description = "Detects reach at 3.01 using the Average Reach")
+@CheckInformation(checkName = "Reach", lagBack = false, punishmentVL = 15, description = "Basic PastLocation 3.2 Reach Check.")
 public class ReachA extends Check {
 
     private PastLocation reachATargetLocations = new PastLocation();
@@ -60,7 +60,7 @@ public class ReachA extends Check {
 
                     for (PlayerLocation location : Arrays.asList(user.getCurrentLocation().clone(),
                             user.getLastLocation().clone())) {
-                        location.setY(location.getY() + 1.905f);
+                        location.setY(location.getY() + 1.64f);
 
 
                         RayCollision ray = new RayCollision(location.toVector(), MathUtil.getDirection(location));
@@ -88,26 +88,8 @@ public class ReachA extends Check {
                         }
                     }
 
-                  //  Bukkit.broadcastMessage(""+horzDistance + " "+distance + " "+collided);
-
-               //     Bukkit.broadcastMessage("t-" +threshold);
-
-                    if (distance >= 3.01 && distance <= 6.5) {
-                        if (collided == 1 || collided == 0) {
-                            threshold += 0.15;
-                        } else if (collided == 2) {
-                            threshold += 0.9;
-                        } else if (collided == 4 || collided == 3) {
-                            threshold += 1.25;
-                        } else if (collided > 4) {
-                            threshold += 2.5;
-                        }
-
-                        if (threshold >= 2.5) {
-                            flag(user, "Reaching", ""+distance + " : "+horzDistance);
-                        }
-                    } else {
-                        threshold -= Math.min(threshold, 0.03f);
+                    if (distance >= 3.2 && horzDistance >= 3.2 && collided >= 2) {
+                        flag(user, "r="+distance + " hr="+horzDistance + " c="+collided);
                     }
 
                     reachATargetLocations.addLocation(user.getReachProcessor().getReachData().getCustomLocation());

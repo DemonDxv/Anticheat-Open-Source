@@ -52,12 +52,6 @@ public class TimerA extends Check {
                 if (!user.shouldCancel() && user.getTick() > 120 && this.lastPacket > -1337L && user.isChunkLoaded()) {
                     this.balance += delta;
 
-                    if (user.getConnectionProcessor().getClientTick() < 18 && balance <= -900000000) {
-                        balance = -900000000;
-                    } else if (user.getConnectionProcessor().getClientTick() >= 18) {
-                        balance = -1000000000;
-                    }
-
                     if (this.balance > this.maxValue) {
                         if (threshold++ > 1) {
                             flag(user,

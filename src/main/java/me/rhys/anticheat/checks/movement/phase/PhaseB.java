@@ -33,8 +33,10 @@ public class PhaseB extends Check {
                 double deltaY = user.getMovementProcessor().getDeltaY();
                 double lastDeltaY = user.getMovementProcessor().getLastDeltaY();
 
+              //  double jumpHeight = 0.42F + (user.getPotionProcessor().getJumpAmplifier() * 0.1F);
+
                 if (user.getMovementProcessor().getAirTicks() <= 6 && !user.getMovementProcessor().isOnGround()) {
-                    if (deltaY < -1 && lastDeltaY < 0.42f || deltaY > 1 && lastDeltaY < 0.42f) {
+                    if (deltaY < -0.7 && lastDeltaY < 0.42f || deltaY > 0.7 && lastDeltaY < 0.42f) {
                         flag(user, "Possibly VClipping");
                     }
                 }

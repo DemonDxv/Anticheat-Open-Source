@@ -45,24 +45,24 @@ public class WrappedOutRelativePosition extends NMSObject {
 
     }
 
-    public <T> T getX() {
+    public double getX() {
         return fetch(fieldX);
     }
 
 
-    public <T> T getY() {
+    public double getY() {
         return fetch(fieldY);
     }
 
-    public <T> T getZ() {
+    public double getZ() {
         return fetch(fieldZ);
     }
 
-    public <T> T getYaw() {
+    public double getYaw() {
         return fetch(fieldYaw);
     }
 
-    public <T> T getPitch() {
+    public double getPitch() {
         return fetch(fieldPitch);
     }
 

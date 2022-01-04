@@ -13,7 +13,7 @@ import org.bukkit.Bukkit;
 public class AimAssistF extends Check {
 
     /**
-     * Patch for Stitch's Aura that snaps every couple ticks.
+     * Patch for tick auras (pitch).
      */
 
     private double threshold;

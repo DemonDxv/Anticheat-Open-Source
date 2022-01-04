@@ -40,7 +40,7 @@ public class AimAssistG extends Check {
                         if (deltaPitchList.size() > 125) {
                             double std = MathUtil.getStandardDeviation(deltaPitchList);
 
-                            if (std < 1.0) {
+                            if (std < 0.9) {
                                 flag(user, "Pitch consistency");
                             }
 

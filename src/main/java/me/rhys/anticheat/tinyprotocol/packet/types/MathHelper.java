@@ -31,6 +31,12 @@ public class MathHelper {
 
     }
 
+
+    public static float sqrt_float(float value) {
+        return (float) Math.sqrt((double) value);
+    }
+
+
     public static float sin(float var0) {
         return b[(int) (var0 * 10430.378F) & '\uffff'];
     }

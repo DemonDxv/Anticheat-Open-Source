@@ -7,7 +7,7 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "Velocity",  checkType = "E", canPunish = false, description = "99% Vertical Velocity [2 Tick]")
+@CheckInformation(checkName = "Velocity", punishmentVL = 10, checkType = "E", description = "Checks if the player spoofs on ground while taking kb")
 public class VelocityE extends Check {
 
     private double threshold;
@@ -36,21 +36,18 @@ public class VelocityE extends Check {
 
                 double velocity = user.getCombatProcessor().getVelocityV();
 
-                velocity -= 0.08D;
-
-                velocity *= 0.98F;
-
-                double ratio = deltaY / velocity;
-
-                if (deltaY < 0.42f && velocity < 2 && velocity > 0.2) {
-                    if (ratio <= 0.99 && user.getCombatProcessor().getVelocityTicks() == 2) {
-                        if ((threshold += 0.95) > 2) {
-                            flag(user, "Vertical Velocity: "+ratio);
+                if (user.getCombatProcessor().getVelocityTicks() == 1) {
+                    if (deltaY < 0.42f && velocity < 2 && velocity > 0.2) {
+                        if (user.getMovementProcessor().isOnGround() && user.getMovementProcessor().isLastGround()) {
+                            if (++threshold > 9.2f) {
+                                flag(user, "Spoof ground velocity");
+                            }
+                        } else {
+                            threshold -= Math.min(threshold, 0.75);
                         }
-                    } else {
-                        threshold -= Math.min(threshold, 0.001);
                     }
                 }
+
                 break;
             }
         }

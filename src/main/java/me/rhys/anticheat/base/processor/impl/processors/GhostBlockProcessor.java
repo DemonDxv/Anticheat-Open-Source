@@ -36,7 +36,7 @@ public class GhostBlockProcessor extends Processor {
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
                         || user.getLastTeleportTimer().hasNotPassed(10 + user.getConnectionProcessor().getClientTick())
                         || user.getMovementProcessor().isBouncedOnSlime()
-                        || user.getLastBlockPlaceTimer().hasNotPassed(20)
+                        || user.getLastBlockPlaceTimer().hasNotPassed(3 + user.getConnectionProcessor().getClientTick())
                         || user.getLastBlockPlaceCancelTimer().hasNotPassed(20)
                         || user.getLastFallDamageTimer().hasNotPassed(10 + user.getConnectionProcessor().getClientTick())
                         || user.getVehicleTicks() > 0
@@ -63,7 +63,7 @@ public class GhostBlockProcessor extends Processor {
                 boolean serverPositionGround = user.getMovementProcessor().isServerYGround()
                         || user.getMovementProcessor().isLastPositionYGround();
 
-                boolean serverGround = user.getBlockData().onGround;
+                boolean serverGround = user.getBlockData().onGround || user.getBlockData().lastOnGround;
 
                 if (ground && serverPositionGround
                         && !serverGround) {
@@ -72,7 +72,7 @@ public class GhostBlockProcessor extends Processor {
 
                     Location groundBelow = MathUtil.getGroundLocation(user);
 
-                    if (++flags > 2) {
+                    if (++flags > 1) {
                         if (lastGroundLocation != null) {
 
                             user.getPlayer().teleport(lastGroundLocation,

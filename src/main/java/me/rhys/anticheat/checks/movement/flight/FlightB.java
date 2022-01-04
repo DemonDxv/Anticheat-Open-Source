@@ -27,8 +27,8 @@ public class FlightB extends Check {
 
                 if (user.shouldCancel()
                         || !user.isChunkLoaded()
-                        || user.getLastBlockPlaceTimer().hasNotPassed(20 + user.getConnectionProcessor().getClientTick())
-                        || user.getLastBlockPlaceCancelTimer().hasNotPassed(20 + user.getConnectionProcessor().getClientTick())
+                        || user.getLastBlockPlaceTimer().hasNotPassed(20)
+                        || user.getLastBlockPlaceCancelTimer().hasNotPassed(20)
                         || user.getTick() < 60) {
                     return;
                 }

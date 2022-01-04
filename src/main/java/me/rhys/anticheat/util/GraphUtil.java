@@ -18,7 +18,6 @@ public final class GraphUtil {
         private final int positives, negatives;
     }
 
-
     public static GraphResult getGraph(List<Double> values) {
         StringBuilder graph = new StringBuilder();
 

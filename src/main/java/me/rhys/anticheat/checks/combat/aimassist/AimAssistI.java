@@ -34,7 +34,7 @@ public class AimAssistI extends Check {
 
                     double mouseY = user.getMouseDeltaY();
 
-                    if (mouseY > 10000 && deltaPitch < 4) {
+                    if (mouseY > 10000 && deltaPitch < 4 && deltaPitch > 0.2) {
                         if (threshold++ > 5) {
                             flag(user, "Invalid pitch changes");
                         }

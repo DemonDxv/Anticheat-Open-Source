@@ -46,7 +46,7 @@ public class ScaffoldD extends Check {
                             if (faceInt >= 0 && faceInt <= 3) {
                                 placeList.add(vecY);
 
-                                if (placeList.size() == 3) {
+                                if (placeList.size() == 12) {
                                     double std = MathUtil.getStandardDeviation(placeList);
 
                                     if (std < 0.03) {

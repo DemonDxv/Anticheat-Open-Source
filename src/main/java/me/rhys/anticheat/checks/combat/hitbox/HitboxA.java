@@ -47,9 +47,9 @@ public class HitboxA extends Check {
                     return;
                 }
 
-                if (user.getCombatProcessor().getUseEntityTimer().hasNotPassed(2)) {
+                if (user.getCombatProcessor().getUseEntityTimer().hasNotPassed(1)) {
                     if (!user.getCombatProcessor().isInsideHitbox()) {
-                        if (threshold++ > 9) {
+                        if (threshold++ > 7) {
                             flag(user, "Expanded Hitbox");
                         }
                     } else {

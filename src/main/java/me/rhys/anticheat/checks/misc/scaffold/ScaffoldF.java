@@ -44,7 +44,7 @@ public class ScaffoldF extends Check {
                             && user.getPlayer().getItemInHand() != null
                             && user.getPlayer().getItemInHand().getType().isBlock()) {
 
-                        if (threshold++ > 10) {
+                        if (threshold++ > 25) {
                             flag(user, "Never sneaking while placing blocks");
                         }
                     } else {

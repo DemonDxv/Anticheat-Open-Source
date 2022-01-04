@@ -25,12 +25,12 @@ public class FlightC extends Check {
 
                 if (user.shouldCancel()
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
-                        || user.getLastTeleportTimer().hasNotPassed(20)
+                        || user.getLastTeleportTimer().hasNotPassed(3)
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getVehicleTicks() > 0
                         || EntityUtil.isOnBoat(user)
-                        || user.getLastBlockPlaceTimer().hasNotPassed(20)
-                        || user.getLastBlockPlaceCancelTimer().hasNotPassed(20)
+                        || user.getLastBlockPlaceTimer().hasNotPassed(3)
+                        || user.getLastBlockPlaceCancelTimer().hasNotPassed(3)
                         || user.getBlockData().snowTicks > 0
                         || user.getBlockData().skullTicks > 0
                         || user.getBlockData().stairSlabTimer.hasNotPassed(20)
@@ -38,8 +38,7 @@ public class FlightC extends Check {
                         || user.getBlockData().cakeTicks > 0
                         || user.getBlockData().door
                         || !user.isChunkLoaded()
-                        || user.getActionProcessor().getVelocityTimer().hasNotPassed(10
-                        + user.getConnectionProcessor().getClientTick())
+                        || user.getActionProcessor().getVelocityTimer().hasNotPassed(10)
                         && user.getLastFallDamageTimer().passed(20)
                         || user.getBlockData().lavaTicks > 0
                         || user.getTick() < 60) {
@@ -53,12 +52,12 @@ public class FlightC extends Check {
                 if (!user.getMovementProcessor().isServerYGround()) {
                     if (isGround && (deltaY < 0 || deltaY >= 0.0)
                             && !user.getBlockData().onGround) {
-                        if (threshold++ > 2) {
-                            flag(user);
+                        if (threshold++ > 3) {
+                            flag(user, "Spoofing ground");
                             user.getLastFlaggedFlightCTimer().reset();
                         }
                     } else {
-                        threshold -= Math.min(threshold, 0.001);
+                        threshold -= Math.min(threshold, 0.00001);
                     }
                 }
             }

@@ -1,16 +1,13 @@
 package me.rhys.anticheat.checks.combat.velocity;
 
-import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.check.api.Check;
 import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
-import me.rhys.anticheat.util.MathUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitRunnable;
 
-@CheckInformation(checkName = "Velocity", checkType = "D", canPunish = false, enabled = false, description = "Checks for canceled velocity transactions")
+@CheckInformation(checkName = "Velocity",  checkType = "D", canPunish = false, description = "More Vertical Velocity")
 public class VelocityD extends Check {
 
     private double threshold;
@@ -24,29 +21,32 @@ public class VelocityD extends Check {
             case Packet.Client.POSITION: {
                 User user = event.getUser();
 
-                if (user.shouldCancel()
-                        || user.getTick() < 60
+                if (user.getLastFallDamageTimer().hasNotPassed(20)
                         || user.getVehicleTicks() > 0
-                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(20)
-                        || user.getLastTeleportTimer().hasNotPassed(20
-                        + user.getConnectionProcessor().getClientTick())
-                        || !user.isChunkLoaded()) {
+                        || user.getBlockData().underBlockTicks > 0
+                        || user.getLastFireTickTimer().hasNotPassed(20)
+                        || user.getBlockData().collidesHorizontal
+                        || user.getTick() < 60
+                        || user.shouldCancel()) {
+                    threshold = 0;
                     return;
                 }
 
-                int velocityTicks = user.getCombatProcessor().getVelocityTicks(),
-                        velocityNoTransTicks = user.getCombatProcessor().getVelocityNoTransTicks();
+                double deltaY = user.getMovementProcessor().getDeltaY();
 
-                int tickChange = Math.abs(velocityTicks - velocityNoTransTicks);
+                double velocity = user.getCombatProcessor().getVelocityV();
 
-                if (velocityTicks <= 20) {
-                    if (tickChange > 20) {
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                user.getPlayer().kickPlayer("Disconnected.");
+                double ratio = deltaY / velocity;
+
+                if (user.getCombatProcessor().getVelocityTicks() == 1) {
+                    if (deltaY < 0.42f && velocity < 2 && velocity > 0.2) {
+                        if (ratio > 1.00001) {
+                            if (threshold++ > 1) {
+                                flag(user, "Vertical velocity to high " + ratio);
                             }
-                        }.runTask(Anticheat.getInstance());
+                        } else {
+                            threshold -= Math.min(threshold, 0.001);
+                        }
                     }
                 }
 

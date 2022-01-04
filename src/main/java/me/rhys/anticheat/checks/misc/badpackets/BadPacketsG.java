@@ -25,7 +25,7 @@ public class BadPacketsG extends Check {
 
                 if (tag.equals("MC|Brand") || tag.equals("REGISTER")) {
                     threshold++;
-                    if (threshold > 4) {
+                    if (threshold > 7) {
                         flag(user, "Invalid CustomPayloads");
                     }
                 }

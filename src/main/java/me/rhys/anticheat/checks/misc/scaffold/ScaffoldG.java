@@ -22,7 +22,7 @@ public class ScaffoldG extends Check {
                 }
 
                 if (user.getMovementProcessor().isInInventory()) {
-                    flag(user, "Blocking/Placing blocks while in inventory");
+                    devFlag(user, "Blocking/Placing blocks while in inventory");
                 }
                 break;
             }

@@ -31,12 +31,13 @@ public class KillauraF extends Check {
 
                     if (user.getCombatProcessor().getCancelTicks() > 0) {
                         attacks = 0;
+                        swings = 0;
                         return;
                     }
 
                     double yawDiff = Math.abs(user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw());
                     if (yawDiff > 3.5f && yawDiff < 120 && user.getMovementProcessor().getDeltaXZ() > 0.1
-                            && user.getCombatProcessor().isInsideHitbox()) {
+                            && user.getCombatProcessor().isInsideHitbox() && user.getCombatProcessor().getCancelTicks() < 1) {
                         ++attacks;
                     }
 

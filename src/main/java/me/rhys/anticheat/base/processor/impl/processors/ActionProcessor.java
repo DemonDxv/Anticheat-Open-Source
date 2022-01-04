@@ -59,17 +59,6 @@ public class ActionProcessor extends Processor {
                         break;
                     }
 
-                    case REACH_POSITION: {
-                        for (Map.Entry<Short, ReachProcessor.ReachData> doubleShortEntry :
-                                user.getReachProcessor().reachTestMap.entrySet()) {
-
-                            user.getReachProcessor().setReachData(doubleShortEntry.getValue());
-
-                            user.getReachProcessor().reachTestMap.clear();
-                        }
-                        break;
-                    }
-
                 }
 
                 this.wrappedDataMap.remove(time);
@@ -86,7 +75,7 @@ public class ActionProcessor extends Processor {
 
     public void add(Actions action) {
         long time = Anticheat.getInstance().getTransactionHandler().getTime() - 1L;
-        Anticheat.getInstance().getTransactionHandler().setTime(time);
+        Anticheat.getInstance().getKeepAliveHandler().setTime(time);
         this.wrappedDataMap.put(time, new WrappedData(System.currentTimeMillis(), action));
 
         TinyProtocolHandler.sendPacket(user.getPlayer(), new WrappedOutKeepAlivePacket(time).getObject());

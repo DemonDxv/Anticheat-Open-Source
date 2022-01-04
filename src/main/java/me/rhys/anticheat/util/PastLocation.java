@@ -39,6 +39,14 @@ public class PastLocation {
                 .collect(Collectors.toList());
     }
 
+    public List<PlayerLocation> getEstimatedLocation(long time) {
+        return this.previousLocations
+                .stream()
+                .filter(loc -> time - loc.getTimeStamp() > 0 && time - loc.getTimeStamp() < 700)
+                .collect(Collectors.toList());
+    }
+
+
     public List<CustomLocation> getEstimatedCustomLocation(long time, long ping, long delta) {
         return this.previousLocations2
                 .stream()
@@ -63,6 +71,14 @@ public class PastLocation {
     }
 
     public void addLocation(PlayerLocation location) {
+        if (previousLocations.size() >= 20) {
+            previousLocations.remove(0);
+        }
+
+        previousLocations.add(location);
+    }
+
+    public void addLocationLow(PlayerLocation location) {
         if (previousLocations.size() >= 20) {
             previousLocations.remove(0);
         }

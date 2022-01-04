@@ -5,80 +5,59 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
+import me.rhys.anticheat.util.GraphUtil;
 
-@CheckInformation(checkName = "AutoClicker", checkType = "G", canPunish = false, description = "Experimental Vape AutoClicker Check")
+import java.util.ArrayList;
+import java.util.List;
+
+@CheckInformation(checkName = "AutoClicker", checkType = "G", lagBack = false, description = "Graph Clicker Check")
 public class AutoClickerG extends Check {
 
-    private int flying, clickTicks, outliers, lastOutliers;
-    private double threshold, trustFactor;
-    private long lastUpdate;
+    private int movements;
+    private List<Integer> delays = new ArrayList<>();
+    private List<Double> outlierList = new ArrayList<>();
+    private double threshold;
 
     @Override
     public void onPacket(PacketEvent event) {
         User user = event.getUser();
+
         switch (event.getType()) {
             case Packet.Client.FLYING:
             case Packet.Client.LOOK:
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
 
-                flying++;
-
-                double yawDiff = Math.abs(user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw());
-                double pitchDiff = Math.abs(user.getCurrentLocation().getPitch() - user.getLastLocation().getPitch());
-
-                if (yawDiff > 0.0 || pitchDiff > 0.0) {
-                    clickTicks++;
-                } else {
-                    clickTicks = 0;
+                if (user.shouldCancel()
+                        || user.getTick() < 60
+                        || user.getLastBlockPlaceTimer().hasNotPassed(20)
+                        || user.getMovementProcessor().getLastBlockDigTimer().hasNotPassed(20)
+                        || user.getLastBlockPlaceCancelTimer().hasNotPassed(20)) {
+                    movements = 20;
+                    return;
                 }
 
-                if (clickTicks > 7) {
-                    lastUpdate = System.currentTimeMillis();
-                }
+                movements++;
 
                 break;
             }
 
             case Packet.Client.ARM_ANIMATION: {
+                if (movements < 10) {
+                    delays.add(movements);
+                    int distinct = (int) delays.stream().distinct().count();
 
-                if (user.shouldCancel()
-                        || user.getMovementProcessor().getLastBlockDigTimer().hasNotPassed(20)
-                        || user.getTick() < 60) {
-                    return;
-                }
+                    int duplicates = delays.size() - distinct;
 
-
-                if (flying > 3 && flying < 6) {
-                    outliers++;
-                }
-
-                int currentOutliers = outliers;
-                int diff = Math.abs(currentOutliers - lastOutliers);
-
-
-                if (currentOutliers == 0 && diff == currentOutliers) {
-
-                    if (clickTicks > 4 &&
-                            trustFactor > 28
-                            && (System.currentTimeMillis() - lastUpdate) < 1200L) {
-
-                        if (threshold++ >= 45) {
-                            flag(user, "Outliers");
-                        }
+                    if (duplicates > 40 && user.getCombatProcessor().getAverageCps() > 7.0) {
+                        flag(user);
                     }
 
-                    trustFactor += 0.10f;
-                } else {
-                    trustFactor = 0.0f;
+                    delays.clear();
                 }
-
-                lastOutliers = currentOutliers;
-                flying = outliers = 0;
-
-
-                break;
             }
+            movements = 0;
+            break;
         }
     }
 }

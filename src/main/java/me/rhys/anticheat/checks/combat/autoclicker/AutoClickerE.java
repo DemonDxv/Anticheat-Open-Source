@@ -53,7 +53,7 @@ public class AutoClickerE extends Check {
                                 .count();
 
                         if (outliers < 7) {
-                            if (threshold++ > 3) {
+                            if (++threshold > 1) {
                                 flag(user, "Outliers");
                             }
                         } else {

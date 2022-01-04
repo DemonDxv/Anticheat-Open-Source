@@ -17,6 +17,7 @@ public class AimAssistD extends Check {
     private float lastPitchDifference;
     private float lastYawDifference;
 
+    private final double offset = Math.pow(2.0, 24.0);
     @Override
     public void onPacket(PacketEvent event) {
         User user = event.getUser();
@@ -35,18 +36,25 @@ public class AimAssistD extends Check {
                 float yawAccel = Math.abs(pitchDifference - lastPitchDifference);
                 float pitchAccel = Math.abs(yawDifference - lastYawDifference);
 
-                long gcd = MathUtil.gcd((long) pitchDifference, (long) lastPitchDifference);
+                long gcd = MathUtil.gcd((long) (pitchDifference * offset), (long) (lastPitchDifference * offset));
 
-                if (yawDifference > 2.0 && yawAccel > 2.0F && pitchAccel > 2.0F && pitchDifference > 0.009f) {
-                    if (gcd < 131072L && gcd > 25) {
-                        if (threshold++ > 4) {
-                            flag(user, "GCD");
+
+                if (user.getCombatProcessor().getCancelTicks() > 0) {
+                    threshold = 0;
+                    return;
+                }
+
+                if (yawDifference > 2.0F && yawAccel > 1.0F && pitchAccel > 0.0F && pitchDifference > 0.009f) {
+
+                    if (gcd < 131072L && pitchAccel < 6.5) {
+                        threshold += 0.89;
+
+                        if (threshold > 12.5) {
+                            flag(user);
                         }
                     } else {
-                        threshold -= Math.min(threshold, 0.6);
+                        threshold -= Math.min(threshold, 0.25);
                     }
-                } else {
-                    threshold -= Math.min(threshold, 0.25);
                 }
 
                 lastYawDifference = yawDifference;

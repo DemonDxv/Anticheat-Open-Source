@@ -20,6 +20,8 @@ import me.rhys.anticheat.util.block.BlockChecker;
 import me.rhys.anticheat.util.box.BoundingBox;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -28,15 +30,16 @@ import org.bukkit.util.Vector;
 @ProcessorInformation(name = "Movement")
 @Getter @Setter
 public class MovementProcessor extends Processor {
-    private EventTimer lastGroundTimer, lastBlockPlacePacketTimer, lastBlockDigTimer;
+    private EventTimer lastBlockJumpTimer, lastGroundTimer, lastBlockPlacePacketTimer, lastBlockDigTimer;
 
     private boolean lastServerYGround, sneaking, inInventory, lastLastGround, wasFlying, onGround = false, lastGround = false, positionYGround, lastPositionYGround, bouncedOnSlime, dead, sprinting,
             lastSprinting, serverYGround, isDigging;
     private int groundTicks, airTicks, lagBackTicks, serverAirTicks, serverGroundTicks, ignoreServerPositionTicks;
-    private double deltaY, lastDeltaY, deltaXZ, lastDeltaXZ, deltaX, deltaZ, serverPositionSpeed, serverPositionDeltaY;
+    private double lastDeltaX, lastDeltaZ, lastBlockLevelY, deltaY, lastDeltaY, deltaXZ, lastDeltaXZ, deltaX, deltaZ, serverPositionSpeed, serverPositionDeltaY;
     private PlayerLocation lastSlimeLocation, serverPositionLocation;
-    private Location lastGroundLocation, lastOutOfBlockLocation;
+    private Location lastClientGroundLocation, lastGroundLocation, lastOutOfBlockLocation;
     private Vector inventoryVector;
+    private Block serverBlockBelow;
 
     private String clientBrand = "NULL";
 
@@ -53,6 +56,10 @@ public class MovementProcessor extends Processor {
 
         switch (event.getType()) {
 
+            case Packet.Server.REL_LOOK:
+            case Packet.Server.REL_POSITION: {
+
+            }
             case Packet.Server.POSITION: {
                 if (this.ignoreServerPositionTicks < 1) {
                     // user.getActionProcessor().add(ActionProcessor.Actions.SERVER_POSITION);
@@ -200,6 +207,9 @@ public class MovementProcessor extends Processor {
                 float pitch = wrappedInFlyingPacket.getPitch();
                 boolean ground = wrappedInFlyingPacket.isGround();
 
+                this.setServerBlockBelow(BlockUtil.getBlock(getCurrentLocation().toBukkitLocation(user.getPlayer()
+                        .getWorld()).clone().add(0, -1f, 0)));
+
                 if (user.getPlayer().getAllowFlight()) {
                     user.getLastFlightToggleTimer().reset();
                 }
@@ -208,18 +218,26 @@ public class MovementProcessor extends Processor {
                     lastOutOfBlockLocation = user.getPlayer().getLocation();
                 }
 
-                if (lastGroundLocation != null) {
-                    double yChange = (y - lastGroundLocation.getY());
+                if (ground) {
+                    lastClientGroundLocation = user.getPlayer().getLocation();
+                }
 
-                    if (yChange < -24.0 && yChange != lastGroundLocation.getY() && yChange != y) {
-                        if (user.getLastFlaggedFlightCTimer().hasNotPassed(9)) {
-                            if (user.getBlockData().onGround && !user.getPlayer().isDead()
-                                    && user.getPlayer().getHealth() > 0) {
-                                user.getPlayer().setHealth(0);
-                            }
+                double difference = user.getPlayer().getLocation().getY() - lastClientGroundLocation.getY();
+
+                if (onGround && serverBlockBelow != null) {
+
+                    if (serverBlockBelow.getType() != Material.AIR) {
+
+                        boolean jump = serverBlockBelow.getY() > lastBlockLevelY;
+
+                        if (jump) {
+                            lastBlockJumpTimer.reset();
                         }
                     }
+
+                    lastBlockLevelY = serverBlockBelow.getY();
                 }
+
 
                 if (currentLocation != null) {
                     lastLocation = currentLocation.clone();
@@ -265,6 +283,7 @@ public class MovementProcessor extends Processor {
 
                 if (wrappedInFlyingPacket.isPos()) {
 
+
                     if (user.getLastLocation() != null) {
                         user.setLastLastLocation(user.getLastLocation().clone());
                     }
@@ -287,6 +306,18 @@ public class MovementProcessor extends Processor {
 
                   //   this.lastGround = this.onGround;
                   ////  this.onGround = ground;
+
+                    this.lastDeltaX = deltaX;
+
+                    this.lastDeltaZ = deltaZ;
+
+                    this.deltaX = user.getCurrentLocation().getX()
+                            - user.getLastLocation().getX();
+                    this.deltaZ = user.getCurrentLocation().getZ()
+                            - user.getLastLocation().getZ();
+
+                    this.lastDeltaXZ = this.deltaXZ;
+                    this.deltaXZ = Math.hypot(this.deltaX, this.deltaZ);
                 }
 
 
@@ -306,14 +337,6 @@ public class MovementProcessor extends Processor {
 
                 this.lastDeltaY = this.deltaY;
                 this.deltaY = (user.getCurrentLocation().getY() - user.getLastLocation().getY());
-
-                this.deltaX = Math.abs(Math.abs(user.getCurrentLocation().getX())
-                        - Math.abs(user.getLastLocation().getX()));
-                this.deltaZ = Math.abs(Math.abs(user.getCurrentLocation().getZ())
-                        - Math.abs(user.getLastLocation().getZ()));
-
-                this.lastDeltaXZ = this.deltaXZ;
-                this.deltaXZ = Math.hypot(this.deltaX, this.deltaZ);
 
                 this.processBlocks();
                 this.user.setTick(this.user.getTick() + 1);
@@ -585,6 +608,7 @@ public class MovementProcessor extends Processor {
     @Override
     public void setupTimers(User user) {
         this.lastGroundTimer = new EventTimer(20, user);
+        this.lastBlockJumpTimer = new EventTimer(20, user);
         this.lastBlockPlacePacketTimer = new EventTimer(20, user);
         this.lastBlockDigTimer = new EventTimer(20, user);
         this.lastSlimeLocation = new PlayerLocation(user.getPlayer().getWorld(), 0, 0, 0, 0,

@@ -1,13 +1,15 @@
 package me.rhys.anticheat.checks.misc.pingspoof;
 
+import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.check.api.Check;
 import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitRunnable;
 
-@CheckInformation(checkName = "PingSpoof", checkType = "C", lagBack = false, canPunish = false, enabled = false, description = "Detects Ping Spoofing")
+@CheckInformation(checkName = "PingSpoof", checkType = "C", lagBack = false, description = "Detects Ping Spoofing")
 public class PingSpoofC extends Check {
 
     private double threshold;
@@ -29,16 +31,17 @@ public class PingSpoofC extends Check {
                     return;
                 }
 
-                int pingK = user.getConnectionProcessor().getPing(),
-                        pingT = user.getConnectionProcessor().getTransPing() + 250;
+                int keepSize = user.getConnectionMap2().size();
+                int transSize = user.getConnectionMap().size();
 
-
-                if (pingK > pingT) {
-                    if (threshold++ > 20) {
-                        flag(user, "Ping Spoofing "+pingK + " "+pingT);
-                    }
-                } else {
-                    threshold -= Math.min(threshold, 0.25);
+                if (keepSize > transSize + 5) {
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            devFlag(user, "Got disconnected due to game slowing down.");
+                            user.getPlayer().kickPlayer("Disconnected.");
+                        }
+                    }.runTask(Anticheat.getInstance());
                 }
 
                 break;

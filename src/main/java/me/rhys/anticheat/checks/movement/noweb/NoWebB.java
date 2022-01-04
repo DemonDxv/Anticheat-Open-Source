@@ -6,7 +6,7 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 
-@CheckInformation(checkName = "NoWeb", checkType = "B", canPunish = false, description = "Checks for invalid state in web")
+@CheckInformation(checkName = "NoWeb", checkType = "B", description = "Checks for invalid state in web")
 public class NoWebB extends Check {
 
     private double threshold;

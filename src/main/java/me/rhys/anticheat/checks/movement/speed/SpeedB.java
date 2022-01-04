@@ -65,20 +65,19 @@ public class SpeedB extends Check {
                     prediction += 0.5;
                 }
 
-                prediction += MathUtil.movingFlyingV3(user);
+                prediction += MathUtil.movingFlyingV3(user, false);
 
                 double totalSpeed = deltaXZ - prediction;
-
 
                 if (user.getMovementProcessor().isOnGround() || user.getMovementProcessor().isLastGround()) {
 
                     if (totalSpeed > 0.005 && deltaXZ > 0.2) {
 
-                        if (threshold++ > 1) {
-                            flag(user, "Modifying ground speed");
+                        if (++threshold > 1) {
+                            flag(user, "Modifying ground speed", "mxz="+totalSpeed);
                         }
                     } else {
-                        threshold -= Math.min(threshold, 0.001);
+                        threshold -= Math.min(threshold, 0.00000001);
                     }
                 }
 

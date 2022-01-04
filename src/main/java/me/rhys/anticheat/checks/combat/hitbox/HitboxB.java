@@ -46,7 +46,7 @@ public class HitboxB extends Check {
 
                     if (user.shouldCancel()
                             || user.getTick() < 60
-                            || user.getConnectionProcessor().isLagging()
+                            || user.getConnectionProcessor().getClientTick() > 18
                             || user.getCombatProcessor().getCancelTicks() > 0) {
                         threshold = 0;
                         return;
@@ -57,11 +57,11 @@ public class HitboxB extends Check {
                             && user.getMovementProcessor().getDeltaXZ() > 0.1;
 
                     if (outsideHitbox && canFlag) {
-                        if (++threshold > 4) {
+                        if (++threshold > 7) {
                             flag(user, "Attacking outside hitbox");
                         }
                     } else {
-                        threshold -= Math.min(threshold, 1.5);
+                        threshold -= Math.min(threshold, 2.5);
                     }
 
                 }
@@ -84,7 +84,13 @@ public class HitboxB extends Check {
                 LivingEntity livingEntity = (LivingEntity) user.getCombatProcessor().getLastAttackedEntity();
 
                 List<PlayerLocation> pastLocation = hitboxLocations.getEstimatedLocation(event.getTimestamp(),
-                        user.getConnectionProcessor().getTransPing(), 200);
+                        user.getConnectionProcessor().getTransPing(),
+                        user.getConnectionProcessor().getDropTransTime() + 150L);
+
+                if (user.getCombatProcessor().getCancelTicks() > 0) {
+                    threshold = 0;
+                    return;
+                }
 
                 if (pastLocation.size() > 0) {
 

@@ -9,13 +9,15 @@ import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.util.MathUtil;
 import org.bukkit.Bukkit;
 
-@CheckInformation(checkName = "AimAssist", checkType = "E", lagBack = false, punishmentVL = 25, canPunish = false)
+@CheckInformation(checkName = "AimAssist", checkType = "E", canPunish = false, lagBack = false, punishmentVL = 35)
 public class AimAssistE extends Check {
 
     private double threshold;
 
     private float lastPitchDifference;
     private float lastYawDifference;
+
+    private final double offset = Math.pow(2.0, 24.0);
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -35,18 +37,27 @@ public class AimAssistE extends Check {
                 float yawAccel = Math.abs(pitchDifference - lastPitchDifference);
                 float pitchAccel = Math.abs(yawDifference - lastYawDifference);
 
-                long gcd = MathUtil.gcd((long) pitchDifference, (long) lastPitchDifference);
+                long gcd = MathUtil.gcd((long) (yawDifference * offset), (long) (lastYawDifference * offset));
 
-                if (yawDifference > 2.0 && yawAccel > 2.0F && pitchAccel > 0.0F && pitchDifference > 0.009f) {
-                    if (gcd < 131072L && gcd > 0.0 && pitchAccel < 7) {
-                        if (threshold++ > 8) {
-                            flag(user, "GCD [2]");
+
+
+
+                if (user.getCombatProcessor().getCancelTicks() > 0) {
+                    threshold = 0;
+                    return;
+                }
+
+                if (yawDifference > 2.0F && yawAccel > 1.0F && pitchAccel > 0.0F && pitchDifference > 0.009f) {
+
+                    if (gcd < 131072L && yawDifference < 7.5) {
+                        threshold += 0.92;
+
+                        if (threshold > 8.5) {
+                            flag(user);
                         }
                     } else {
-                        threshold -= Math.min(threshold, 1.5);
+                        threshold -= Math.min(threshold, 0.8799f);
                     }
-                } else {
-                    threshold -= Math.min(threshold, 2);
                 }
 
                 lastYawDifference = yawDifference;
