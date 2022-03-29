@@ -51,7 +51,7 @@ public class AutoClickerB extends Check {
 
                         if (std < 0.45) {
                             if (threshold++ > 2) {
-                                flag(user, "Clicking to consistent");
+                                flag(user, "Clicking to consistent, std="+std);
                             }
                         } else {
                             threshold -= Math.min(threshold, 0.125);

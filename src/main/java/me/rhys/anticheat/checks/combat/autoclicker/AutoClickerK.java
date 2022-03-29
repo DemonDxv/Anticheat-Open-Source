@@ -68,7 +68,7 @@ public class AutoClickerK extends Check {
                                     threshold++;
 
                                     if (threshold > 6) {
-                                        flag(user);
+                                        flag(user, "newD="+newDelta, "k="+kurtosis, "o="+outlier, "ld="+lastDelta);
                                     }
                                 } else {
                                     threshold -= Math.min(threshold, .1);

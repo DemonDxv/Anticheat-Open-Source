@@ -24,7 +24,7 @@ public class AimAssistA extends Check {
                 double pitch = Math.abs(user.getCurrentLocation().getPitch() - user.getLastLocation().getPitch());
 
                 if (pitch % 0.5 == 0.0 && pitch % 1.5f != 0.0) {
-                    if (threshold++ > 3) {
+                    if (threshold++ > 7) {
                         flag(user, "Rounding Rotations");
                     }
                 } else {

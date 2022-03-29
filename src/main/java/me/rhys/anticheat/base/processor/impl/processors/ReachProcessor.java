@@ -31,17 +31,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Setter
 public class ReachProcessor extends Processor {
 
-  //  private final Map<Integer, TrackedEntity> trackedEntityMap = new ConcurrentHashMap<>();
-    private LinkedList<CustomLocation> customLocations = new EvictingList<>(20);
-
-    private Deque<CustomLocation> locationsQueue = new LinkedList<>();
-
-    private PlayerLocation currentLocation, lastLocation;
-    private short reachID = 10000;
     public HashMap<Short, ReachData> reachTestMap = new HashMap();
+
     private ReachData reachData;
-    private double serverPosX, serverPosY, serverPosZ;
-    private double posX, posY, posZ;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -54,9 +46,9 @@ public class ReachProcessor extends Processor {
                     new WrappedOutRelativePosition(event.getPacket(), user.getPlayer());
 
 
-            double x = (double) relativePosition.getX() / 32D;
-            double y = (double) relativePosition.getY() / 32D;
-            double z = (double) relativePosition.getZ() / 32D;
+            double x = relativePosition.getX() / 32D;
+            double y = relativePosition.getY() / 32D;
+            double z = relativePosition.getZ() / 32D;
 
             float f = relativePosition.isLook() ? (float) (relativePosition.getYaw() * 360) / 256.0F :
                     relativePosition.getPlayer().getLocation().getYaw();
@@ -64,27 +56,8 @@ public class ReachProcessor extends Processor {
             float f1 = relativePosition.isLook() ? (float) (relativePosition.getPitch() * 360) / 256.0F :
                     relativePosition.getPlayer().getLocation().getPitch();
 
-            serverPosX = x;
-            serverPosY = y;
-            serverPosZ = z;
-
             queueTransaction(new ReachData(user, System.currentTimeMillis(),
                     new PlayerLocation(x,y,z, f, f1, System.currentTimeMillis())));
-
-        }
-
-        if (event.getType().equalsIgnoreCase(Packet.Client.FLYING)
-                || event.getType().equalsIgnoreCase(Packet.Client.POSITION_LOOK)
-                || event.getType().equalsIgnoreCase(Packet.Client.LOOK)
-                || event.getType().equalsIgnoreCase(Packet.Client.POSITION)) {
-
-            WrappedInFlyingPacket flyingPacket =
-                    new WrappedInFlyingPacket(event.getPacket(), user.getPlayer());
-
-
-            double x = flyingPacket.getX();
-            double y = flyingPacket.getY();
-            double z = flyingPacket.getZ();
 
         }
 
@@ -96,13 +69,6 @@ public class ReachProcessor extends Processor {
 
             float f = (float) (wrappedOutEntityTeleport.getYaw() * 360) / 256.0F;
             float f1 = (float) (wrappedOutEntityTeleport.getPitch() * 360) / 256.0F;
-
-
-            serverPosX = x;
-            serverPosY = y;
-            serverPosZ = z;
-
-
 
             queueTransaction(new ReachData(user, System.currentTimeMillis(),
                     new PlayerLocation(x,y,z, f, f1, System.currentTimeMillis())));
@@ -120,10 +86,6 @@ public class ReachProcessor extends Processor {
 
             float f = (float) (entitySpawn.yaw * 360) / 256.0F;
             float f1 = (float) (entitySpawn.pitch * 360) / 256.0F;
-
-            serverPosX = x;
-            serverPosY = y;
-            serverPosZ = z;
 
             queueTransaction(new ReachData(user, System.currentTimeMillis(),
                     new PlayerLocation(x,y,z, f, f1, System.currentTimeMillis())));
@@ -146,7 +108,7 @@ public class ReachProcessor extends Processor {
 
 
     private static void queueTransaction(ReachData reachData) {
-        short random = (short) (Anticheat.getInstance().getTransactionHandler().getTime() - 2);
+        short random = (short) (Anticheat.getInstance().getTransactionHandler().getTime() - 3);
 
         reachData.user.getReachProcessor().reachTestMap.put(random, reachData);
 

@@ -47,7 +47,7 @@ public class AutoClickerM extends Check {
 
                             if (std < 0.1) {
                                 if (++threshold > 2) {
-                                    flag(user);
+                                    flag(user, "stdK="+std, "k="+kurtosis, "cps="+currentCps);
                                 }
                             } else {
                                 threshold -= Math.min(threshold, 0.15);

@@ -62,7 +62,7 @@ public class AutoClickerF extends Check {
 
                             if (positives == 0 && negatives > 2) {
                                 if (++threshold > 5) {
-                                    flag(user, "Abnormal Click Drops");
+                         //           flag(user, "Abnormal Click Drops");
                                 }
                             } else {
                                 threshold -= Math.min(threshold, 1.5);

@@ -24,8 +24,10 @@ public class FlightA extends Check {
             case Packet.Client.POSITION: {
                 //    Bukkit.broadcastMessage(""+user.getBlockData().nearWater);
 
+                double deltaY = user.getMovementProcessor().getDeltaY();
+
                 if (user.shouldCancel()
-                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(3)
+                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(5)
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getVehicleTicks() > 0
@@ -35,6 +37,7 @@ public class FlightA extends Check {
                         || user.getBlockData().cakeTicks > 0
                         || user.getBlockData().climbableTicks > 0
                         || user.getBlockData().stairTicks > 0
+                        || deltaY < 0 && deltaY >= -1.493E-13
                         || user.getBlockData().slabTicks > 0
                         || user.getLastBlockPlaceTimer().hasNotPassed(3)
                         || user.getBlockData().underBlockTicks > 0
@@ -44,17 +47,14 @@ public class FlightA extends Check {
                         || !user.isChunkLoaded()
                         || user.getMovementProcessor().getDeltaXZ() < 0.2
                         && user.getPotionProcessor().getJumpTicks() > 0
-                        || user.getActionProcessor().getVelocityTimer().hasNotPassed(9)
+                        || user.getActionProcessor().getVelocityTimer().hasNotPassed(20)
                         && user.getLastFallDamageTimer().passed(20)
                         || user.getTick() < 60) {
                     threshold = 0;
                     return;
                 }
 
-                double deltaY = user.getMovementProcessor().getDeltaY();
-
                 double lastDeltaY = user.getMovementProcessor().getLastDeltaY();
-
 
                 double gravity = 0.9800000190734863D;
                 double fallMotion = 0.08D;

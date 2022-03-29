@@ -58,7 +58,7 @@ public class AutoClickerH extends Check {
 
                         if (stdDiffDiff < 0.001 && cpsDiff > 0.01) {
                             if (++threshold > 3) {
-                                flag(user, "Invalid Click Consistency");
+                                flag(user, "Invalid Click Consistency, stdDD="+stdDiffDiff + " cpsD="+cpsDiff);
                             }
                         } else {
                             threshold -= Math.min(threshold, 0.125);

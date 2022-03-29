@@ -39,7 +39,7 @@ public class VelocityE extends Check {
                 if (user.getCombatProcessor().getVelocityTicks() == 1) {
                     if (deltaY < 0.42f && velocity < 2 && velocity > 0.2) {
                         if (user.getMovementProcessor().isOnGround() && user.getMovementProcessor().isLastGround()) {
-                            if (++threshold > 9.2f) {
+                            if (++threshold > 12.6) {
                                 flag(user, "Spoof ground velocity");
                             }
                         } else {

@@ -40,8 +40,6 @@ public class AimAssistE extends Check {
                 long gcd = MathUtil.gcd((long) (yawDifference * offset), (long) (lastYawDifference * offset));
 
 
-
-
                 if (user.getCombatProcessor().getCancelTicks() > 0) {
                     threshold = 0;
                     return;

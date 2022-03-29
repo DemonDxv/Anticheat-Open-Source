@@ -1,5 +1,6 @@
 package me.rhys.anticheat.util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -35,7 +36,7 @@ public class PastLocation {
     public List<PlayerLocation> getEstimatedLocation(long time, long ping, long delta) {
         return this.previousLocations
                 .stream()
-                .filter(loc -> time - loc.getTimeStamp() > 0 && time - loc.getTimeStamp() < ping + delta)
+                .filter(loc -> time - loc.getTimeStamp() < ping + delta)
                 .collect(Collectors.toList());
     }
 

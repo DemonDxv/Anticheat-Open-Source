@@ -58,7 +58,7 @@ public class AutoClickerA extends Check {
 
                     if (delays.size() > 30) {
 
-                        if (cps > 20) {
+                        if (cps > 21) {
                             flag(user, "Clicking Fast", "CPS: "+cps);
                         }
 

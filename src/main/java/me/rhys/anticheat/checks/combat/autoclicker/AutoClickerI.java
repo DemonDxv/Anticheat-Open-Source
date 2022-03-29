@@ -60,7 +60,7 @@ public class AutoClickerI extends Check {
                             threshold += 0.8;
 
                             if (threshold > 125) {
-                                flag(user);
+                                flag(user, "Special Outliers");
                             }
                         }
 

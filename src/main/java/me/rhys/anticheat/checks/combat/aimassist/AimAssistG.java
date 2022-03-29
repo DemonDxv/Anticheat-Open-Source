@@ -32,16 +32,14 @@ public class AimAssistG extends Check {
                     double deltaPitch = Math.abs(user.getCurrentLocation().getPitch()
                             - user.getLastLocation().getPitch());
 
-                    //Bukkit.broadcastMessage(""+deltaPitch);
-
                     if (deltaPitch > 0.8) {
                         deltaPitchList.add(deltaPitch);
 
                         if (deltaPitchList.size() > 125) {
                             double std = MathUtil.getStandardDeviation(deltaPitchList);
 
-                            if (std < 0.9) {
-                                flag(user, "Pitch consistency");
+                            if (std < 0.6) {
+                                flag(user, "Pitch consistency, "+std);
                             }
 
                             deltaPitchList.clear();

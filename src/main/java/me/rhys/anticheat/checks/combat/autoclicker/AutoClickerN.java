@@ -44,7 +44,7 @@ public class AutoClickerN extends Check {
 
                             if (average < -2) {
                                 if (++threshold > 3) {
-                                    flag(user);
+                                    flag(user, "avgS="+average + " s="+skewness + " cps="+currentCps);
                                 }
                             } else {
                                 threshold -= Math.min(threshold, 0.25);

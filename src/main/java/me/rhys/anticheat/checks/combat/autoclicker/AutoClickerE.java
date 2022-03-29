@@ -54,7 +54,7 @@ public class AutoClickerE extends Check {
 
                         if (outliers < 7) {
                             if (++threshold > 1) {
-                                flag(user, "Outliers");
+                                flag(user, "Outliers", "t="+threshold, "o="+outliers);
                             }
                         } else {
                             threshold -= Math.min(threshold, 1.5);

@@ -48,7 +48,7 @@ public class SpeedB extends Check {
 
                 if (!user.getMovementProcessor().isOnGround()
                         && user.getMovementProcessor().isLastGround()
-                        && deltaY > 0) {
+                        && deltaY > 0.0) {
                     prediction += 0.2F;
                 }
 
@@ -71,13 +71,13 @@ public class SpeedB extends Check {
 
                 if (user.getMovementProcessor().isOnGround() || user.getMovementProcessor().isLastGround()) {
 
-                    if (totalSpeed > 0.005 && deltaXZ > 0.2) {
+                    if (totalSpeed > 0.005 && deltaXZ > 0.22) {
 
-                        if (++threshold > 1) {
+                        if (++threshold > 3) {
                             flag(user, "Modifying ground speed", "mxz="+totalSpeed);
                         }
                     } else {
-                        threshold -= Math.min(threshold, 0.00000001);
+                        threshold -= Math.min(threshold, 0.0009);
                     }
                 }
 

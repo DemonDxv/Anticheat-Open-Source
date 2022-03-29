@@ -25,7 +25,7 @@ public class AimAssistB extends Check {
                 double yaw = Math.abs(user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw());
 
                 if (pitch < 0.0001D && yaw > 3.0F) {
-                    if (threshold++ > 12) {
+                    if (threshold++ > 14) {
                         flag(user, "Low Pitch Change");
                     }
                 } else {

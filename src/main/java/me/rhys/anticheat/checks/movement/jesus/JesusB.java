@@ -35,12 +35,11 @@ public class JesusB extends Check {
 
                     double maxXZ = 0.36;
 
-                    if (user.getActionProcessor().getVelocityTimer().hasNotPassed(9
-                            + user.getConnectionProcessor().getClientTick())) {
+                    if (user.getActionProcessor().getVelocityTimer().hasNotPassed(20)) {
                         maxXZ += user.getCombatProcessor().getVelocityH();
                     }
 
-                    if (deltaXZ > 0.36) {
+                    if (deltaXZ > maxXZ) {
                         if (threshold++ > 4) {
                             flag(user, "Speeding in water");
                         }

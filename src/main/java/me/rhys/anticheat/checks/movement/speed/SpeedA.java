@@ -26,7 +26,7 @@ public class SpeedA extends Check {
                 if (user.getTick() < 60
                         || user.getVehicleTicks() > 0
                         || user.shouldCancel()
-                        || user.getLastTeleportTimer().hasNotPassed(5 + user.getConnectionProcessor().getClientTick())
+                        || user.getLastTeleportTimer().hasNotPassed(9)
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getActionProcessor().getRespawnTimer().hasNotPassed(20)
                         || user.getPlayer().isDead()
@@ -44,15 +44,19 @@ public class SpeedA extends Check {
 
                 double prediction = lastDeltaXZ * 0.91F + 0.026F;
 
+                if (user.getActionProcessor().getVelocityTimer().hasNotPassed(20)) {
+                    prediction += user.getCombatProcessor().getVelocityH();
+                }
+
                 double motionXZ = deltaXZ - prediction;
 
                 if (!user.getMovementProcessor().isOnGround() && !user.getMovementProcessor().isLastGround()) {
-                    if (motionXZ > 0.001 && deltaXZ > 0.2) {
-                        if (++threshold > 1) {
+                    if (motionXZ > 0.001 && deltaXZ > 0.22) {
+                        if (++threshold > 3) {
                             flag(user, "Modifying air speed", "mxz="+motionXZ);
                         }
                     } else {
-                        threshold -= Math.min(threshold, 0.00000001);
+                        threshold -= Math.min(threshold, 0.0009);
                     }
                 }
 

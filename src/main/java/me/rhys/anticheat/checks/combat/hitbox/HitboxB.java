@@ -19,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,16 +53,15 @@ public class HitboxB extends Check {
                         return;
                     }
 
-                    boolean canFlag = user.getMovementProcessor().getYawDeltaClamped() > 0.1
-                            && user.getMovementProcessor().getYawDeltaClamped() < 20
+                    boolean canFlag = user.getMovementProcessor().getYawDeltaClamped() < 20
                             && user.getMovementProcessor().getDeltaXZ() > 0.1;
 
                     if (outsideHitbox && canFlag) {
-                        if (++threshold > 7) {
+                        if (++threshold > 15) {
                             flag(user, "Attacking outside hitbox");
                         }
                     } else {
-                        threshold -= Math.min(threshold, 2.5);
+                        threshold -= Math.min(threshold, 1.75);
                     }
 
                 }
@@ -85,30 +85,31 @@ public class HitboxB extends Check {
 
                 List<PlayerLocation> pastLocation = hitboxLocations.getEstimatedLocation(event.getTimestamp(),
                         user.getConnectionProcessor().getTransPing(),
-                        user.getConnectionProcessor().getDropTransTime() + 150L);
+                        user.getConnectionProcessor().getDropTransTime() + 250L);
 
                 if (user.getCombatProcessor().getCancelTicks() > 0) {
                     threshold = 0;
                     return;
                 }
 
-                if (pastLocation.size() > 0) {
+                if (pastLocation.size() > 1) {
 
                     if (livingEntity != null && location != null) {
 
-                        if (user.getCombatProcessor().getUseEntityTimer().hasNotPassed(5)) {
+                        if (user.getCombatProcessor().getUseEntityTimer().hasNotPassed(1)) {
+
                             pastLocation.forEach(loc1 ->
                                     boundingBoxList.add(MathUtil.getHitboxV2(livingEntity, loc1, user)));
 
-                            location.setY(location.getY() + (user.getPlayer().isSneaking() ? 1.53 - 0.4f
-                                    : user.getPlayer().getEyeHeight() - .4f));
+                            location.setY(location.getY() + (user.getPlayer().isSneaking() ? 1.53
+                                    : user.getPlayer().getEyeHeight()));
 
                             RayTrace trace = new RayTrace(location.toVector(),
                                     user.getPlayer().getEyeLocation().getDirection());
 
                             boolean outsideHitbox = boundingBoxList.stream().noneMatch(box ->
                                     trace.intersects(box, box.getMinimum().distance(location.toVector())
-                                            + 1.0, .4f));
+                                            + 1.0, 0.2f));
 
                             this.outsideHitbox = outsideHitbox;
 

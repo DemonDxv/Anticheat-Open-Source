@@ -35,11 +35,11 @@ public class AimAssistJ extends Check {
                     double difference = Math.abs(yaw - lastDeltaYaw);
 
                     if (difference == 0 && yaw > 2.0 && lastDeltaYaw > 2.0) {
-                        if (threshold++ > 6) {
+                        if (threshold++ > 9) {
                             flag(user, "Invalid yaw speed");
                         }
                     } else {
-                        threshold -= Math.min(threshold, 0.25);
+                        threshold -= Math.min(threshold, 1.25);
                     }
 
 

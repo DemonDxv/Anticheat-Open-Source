@@ -39,7 +39,7 @@ public class AutoClickerL extends Check {
                 if (median < 2.5 && skewness < 0.1 && outlier < 3 && currentCps > 7.6 && kurtosis < 0) {
 
                     if (++threshold > 4 && threshold < 50) {
-                        flag(user);
+                        flag(user, "s="+skewness, "median="+median, "o="+outlier, "cps="+currentCps, "k="+kurtosis);
                     }
 
                 } else {

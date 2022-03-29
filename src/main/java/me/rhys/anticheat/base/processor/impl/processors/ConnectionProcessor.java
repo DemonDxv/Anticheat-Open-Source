@@ -29,6 +29,7 @@ public class ConnectionProcessor extends Processor {
     private final Map<Short, Long> sentTransactions = new EvictingMap<>(100);
     private int ping, transPing, lastTransPing, dropTransTime;
     private int clientTick, flyingTick;
+    private int lastFlyingReceived;
     private boolean isLagging = false;
     private int dropTick, averageTransactionPing;
     private short id = Short.MAX_VALUE;
@@ -70,6 +71,8 @@ public class ConnectionProcessor extends Processor {
             this.flyingTick = 0;
             this.dropTick++;
 
+            this.lastFlyingReceived++;
+
             pingList.add(transPing);
 
             if (pingList.size() > 250) {
@@ -90,6 +93,8 @@ public class ConnectionProcessor extends Processor {
 
             this.sentKeepAlives.put(time, System.currentTimeMillis());
            // this.clientTick = (int) Math.ceil(this.ping / 50.0);
+
+            this.lastFlyingReceived++;
 
             user.getConnectionMap2().remove(time);
             user.getCheckManager().getCheckList().forEach(check -> check.onConnection(user));

@@ -86,7 +86,7 @@ public class ReachB extends Check {
                         }
                     }
 
-                    if (horzDistance > 3.01 && horzDistance <= 6.5) {
+                    if (horzDistance >= 3.3 && horzDistance <= 6.5 && distance >= 3.3 && distance <= 6.5) {
                         threshold++;
                         averageReachThreshold.add(threshold);
                     } else if (horzDistance > 0.0 && horzDistance <= 3.0) {
@@ -99,7 +99,7 @@ public class ReachB extends Check {
 
                         double averageThreshold = MathUtil.getAverage(averageReachThreshold);
 
-                        if (averageThreshold > 4.39) {
+                        if (averageThreshold > 2.9) {
                             flag(user, "Possibly using low reach settings");
                         }
 

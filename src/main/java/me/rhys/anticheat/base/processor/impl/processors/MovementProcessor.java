@@ -34,7 +34,7 @@ public class MovementProcessor extends Processor {
 
     private boolean lastServerYGround, sneaking, inInventory, lastLastGround, wasFlying, onGround = false, lastGround = false, positionYGround, lastPositionYGround, bouncedOnSlime, dead, sprinting,
             lastSprinting, serverYGround, isDigging;
-    private int groundTicks, airTicks, lagBackTicks, serverAirTicks, serverGroundTicks, ignoreServerPositionTicks;
+    private int groundTestTicks, groundTicks, airTicks, lagBackTicks, serverAirTicks, serverGroundTicks, ignoreServerPositionTicks;
     private double lastDeltaX, lastDeltaZ, lastBlockLevelY, deltaY, lastDeltaY, deltaXZ, lastDeltaXZ, deltaX, deltaZ, serverPositionSpeed, serverPositionDeltaY;
     private PlayerLocation lastSlimeLocation, serverPositionLocation;
     private Location lastClientGroundLocation, lastGroundLocation, lastOutOfBlockLocation;
@@ -49,7 +49,7 @@ public class MovementProcessor extends Processor {
             false, System.currentTimeMillis());
     private PlayerLocation lastLocation = currentLocation;
 
-    private short respawnID = -69;
+    private short groundID = 2469;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -192,13 +192,43 @@ public class MovementProcessor extends Processor {
                 break;
             }
 
+            case Packet.Client.TRANSACTION: {
+                WrappedInTransactionPacket wrappedInTransactionPacket =
+                        new WrappedInTransactionPacket(event.getPacket(), user.getPlayer());
+
+                if (wrappedInTransactionPacket.getAction() == this.groundID) {
+                    groundTestTicks = 0;
+                } else {
+                    groundTestTicks++;
+                }
+            }
 
             case Packet.Client.FLYING:
             case Packet.Client.LOOK:
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
+
                 WrappedInFlyingPacket wrappedInFlyingPacket = new WrappedInFlyingPacket(event.getPacket(),
                         this.user.getPlayer());
+
+                user.getConnectionProcessor().setLastFlyingReceived(0);
+
+                if (!wrappedInFlyingPacket.isPos() && !wrappedInFlyingPacket.isLook()
+                        && wrappedInFlyingPacket.isGround()) {
+
+                    TinyProtocolHandler.sendPacket(user.getPlayer(),
+                            new WrappedOutTransaction(0, groundID, false).getObject());
+
+                    if (this.groundTestTicks > 100) {
+                        if (deltaY < 0 && deltaY > -1.493E-13) {
+                            user.setTick(0);
+                        }
+                    }
+
+                    if (++groundID >= 3000) {
+                        groundID = 2469;
+                    }
+                }
 
                 double x = wrappedInFlyingPacket.getX();
                 double y = wrappedInFlyingPacket.getY();

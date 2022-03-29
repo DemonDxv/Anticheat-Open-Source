@@ -50,7 +50,7 @@ public class AutoClickerG extends Check {
                     int duplicates = delays.size() - distinct;
 
                     if (duplicates > 40 && user.getCombatProcessor().getAverageCps() > 7.0) {
-                        flag(user);
+                        flag(user, "d="+duplicates, "cps="+user.getCombatProcessor().getAverageCps());
                     }
 
                     delays.clear();

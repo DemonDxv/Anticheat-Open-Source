@@ -34,7 +34,7 @@ public class AutoClickerJ extends Check {
 
                             if (average > 10) {
                               if (++threshold > 5) {
-                                  flag(user);
+                                  flag(user, "avg="+average, " cps="+cps, "mean="+mean);
                               }
                             } else {
                                 threshold -= Math.min(threshold, 0.2);

@@ -36,7 +36,7 @@ public class VelocityC extends Check {
 
                 double velocityH = user.getCombatProcessor().getVelocityH();
 
-                velocityH -= MathUtil.movingFlyingV3(user, false);
+                velocityH -= MathUtil.movingFlyingV3(user, true);
 
                 double totalVelocity = deltaXZ / velocityH;
 
