@@ -7,7 +7,7 @@ https://github.com/DemonDxv/Open-Source-Anticheat-V2
 
 if you run the latest commit of this anticheat (not 1.1.4 that is released) you can disable the anticheat.
 
-Cancel the transaction ID's between 2469 and 3000 for 100 ticks and then move between deltaY < 0 && deltaY > -1.493E-13 and the anticheat checks will all disable
+Cancel the transaction ID's between 2469 and 3000 for 100 ticks (5 seconds) and then move between deltaY < 0 && deltaY > -1.493E-13 and the anticheat checks will all disable when doing this.
 
 If you run version 1.1.4, you can collision fly (spoof ground fly) and take velocity/fall damage you can fly in the air for about 5 - 10 seconds before lagging back
 (delay transactions)
