@@ -3,7 +3,7 @@ I am making a new version which has better code and will be on spigot check it o
 
 https://github.com/DemonDxv/Open-Source-Anticheat-V2
 
-# Disabler
+# Disabler / Bypasses
 
 if you run the latest commit of this anticheat (not 1.1.4 that is released) you can disable the anticheat.
 
