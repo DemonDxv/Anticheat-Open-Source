@@ -1,5 +1,5 @@
 # Version 2?
-I am making a new version which has better code and will be on spigot check it out on my github, its currently in developmental stages (not released yet)
+I am making a new version which has better code and will be on spigot soon check it out on my github, its currently in developmental stages (not released yet)
 
 https://github.com/DemonDxv/Open-Source-Anticheat-V2
 
