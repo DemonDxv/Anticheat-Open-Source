@@ -12,6 +12,8 @@ Cancel the transaction ID's between 2469 and 3000 for 100 ticks (5 seconds) and 
 If you run version 1.1.4, you can spoof ground fly (collision/always on ground) if you take velocity/fall damage it will allow you to fly in the air for about 5 - 10 seconds before lagging back
 (delay transactions)
 
+Also abusing teleports while delaying transactions can also allow you to bypass.
+
 # Open Source Anticheat
 A free anticheat for the community that is open source.
 
