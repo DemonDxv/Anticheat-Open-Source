@@ -23,7 +23,7 @@ public class BadPacketsF extends Check {
                 WrappedInCustomPayloadPacket packet
                         = new WrappedInCustomPayloadPacket(event.getPacket());
 
-                if (packet.getDecodedData().equals("Vanilla") && !packet.getDecodedData().equals("vanilla")) {
+                if (packet.getDecodedData().equals("Vanilla")) {
                     flag(user, "Modded Client");
                 }
 
