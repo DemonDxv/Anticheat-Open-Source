@@ -213,22 +213,6 @@ public class MovementProcessor extends Processor {
 
                 user.getConnectionProcessor().setLastFlyingReceived(0);
 
-                if (!wrappedInFlyingPacket.isPos() && !wrappedInFlyingPacket.isLook()
-                        && wrappedInFlyingPacket.isGround()) {
-
-                    TinyProtocolHandler.sendPacket(user.getPlayer(),
-                            new WrappedOutTransaction(0, groundID, false).getObject());
-
-                    if (this.groundTestTicks > 100) {
-                        if (deltaY < 0 && deltaY > -1.493E-13) {
-                            user.setTick(0);
-                        }
-                    }
-
-                    if (++groundID >= 3000) {
-                        groundID = 2469;
-                    }
-                }
 
                 double x = wrappedInFlyingPacket.getX();
                 double y = wrappedInFlyingPacket.getY();

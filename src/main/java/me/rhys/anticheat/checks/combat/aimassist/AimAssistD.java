@@ -50,7 +50,7 @@ public class AimAssistD extends Check {
                         threshold += 0.89;
 
                         if (threshold > 12.5) {
-                            flag(user);
+                            flag(user, "gcd=" + gcd, "accel=" + pitchAccel);
                         }
                     } else {
                         threshold -= Math.min(threshold, 0.25);
