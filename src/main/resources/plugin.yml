@@ -1,5 +1,5 @@
 name: Anticheat
-version: 1.1.4
+version: 1.1.5
 main: me.rhys.anticheat.Anticheat
 description: A free open source anticheat for the community to prevent cheating
 authors:
@@ -7,3 +7,4 @@ authors:
   - demon
   - funkemunky
   - sim0n
+  - PhoenixHaven

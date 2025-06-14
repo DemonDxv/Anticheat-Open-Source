@@ -1,6 +1,5 @@
 package me.rhys.anticheat.util;
 
-import com.sun.istack.internal.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -107,11 +106,11 @@ public class PlayerLocation {
         return new PlayerLocation(this.world, this.x, this.y, this.z, this.yaw, this.pitch, this.clientGround, this.timeStamp);
     }
 
-    public double distance(@NotNull PlayerLocation o) {
+    public double distance(PlayerLocation o) {
         return Math.sqrt(this.distanceSquared(o));
     }
 
-    public double distanceSquared(@NotNull PlayerLocation o) {
+    public double distanceSquared(PlayerLocation o) {
         if (o.getWorld() != null && getWorld() != null && o.getWorld() == getWorld()) {
             return NumberConversions.square(this.getX() - o.getX())
                     + NumberConversions.square(this.getY() - o.getY())
@@ -127,7 +126,7 @@ public class PlayerLocation {
         return Math.sqrt(Math.pow(dx, 2.0) + Math.pow(dz, 2.0));
     }
 
-    public double distanceSquaredXZ(@NotNull PlayerLocation o) {
+    public double distanceSquaredXZ(PlayerLocation o) {
         if (o.getWorld() != null && getWorld() != null && o.getWorld() == getWorld()) {
             return NumberConversions.square(this.getX() - o.getX())
                     + NumberConversions.square(this.getZ() - o.getZ());

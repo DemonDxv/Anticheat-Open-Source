@@ -58,6 +58,11 @@ public class MathUtil {
         return (a * b) / GCF(a, b);
     }
 
+
+    public static double clampDouble(double number, double min, double max) {
+        return number < min ? min : Math.min(number, max);
+    }
+
     public static float getAttributeSpeed(User data, boolean sprinting) {
         // Speed is multiplied by 2 for some reason. Thanks CraftBukkit. Fuck you.
         float attributeSpeed = data.getPlayer().getWalkSpeed() / 2.F;

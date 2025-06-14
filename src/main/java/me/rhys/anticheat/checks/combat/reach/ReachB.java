@@ -106,7 +106,7 @@ public class ReachB extends Check {
                         averageReachThreshold.clear();
                     }
 
-                    reachBTargetLocations.addLocation(user.getReachProcessor().getReachData().getCustomLocation());
+                    reachBTargetLocations.addLocation(user.getCombatProcessor().getLastAttackedEntity().getLocation());
                 }
 
                 break;

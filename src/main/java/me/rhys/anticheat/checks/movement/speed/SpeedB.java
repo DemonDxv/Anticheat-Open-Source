@@ -31,6 +31,7 @@ public class SpeedB extends Check {
                         || user.getActionProcessor().getRespawnTimer().hasNotPassed(20)
                         || user.getPlayer().isDead()
                         || !user.isChunkLoaded()
+                        || user.getBlockData().waterTicks > 0
                         || user.getPlayer().getWalkSpeed() != 0.2F
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(5)
                         || user.getElytraProcessor().isUsingElytra()) {

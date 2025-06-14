@@ -309,23 +309,22 @@ public class MovementProcessor extends Processor {
                     if (this.airTicks < 20) this.airTicks++;
                 }
 
+
                 user.getCurrentLocation().setClientGround(ground);
 
+                if (user.getLastLocation() != null) {
+                    user.setLastLastLocation(user.getLastLocation().clone());
+                }
+
+                if (user.getCurrentLocation() != null) {
+                    user.setLastLocation(user.getCurrentLocation().clone());
+                }
+
+                if (user.getPlayer().getWorld() != null) {
+                    user.getCurrentLocation().setWorld(user.getPlayer().getWorld());
+                }
+
                 if (wrappedInFlyingPacket.isPos()) {
-
-
-                    if (user.getLastLocation() != null) {
-                        user.setLastLastLocation(user.getLastLocation().clone());
-                    }
-
-                    if (user.getCurrentLocation() != null) {
-                        user.setLastLocation(user.getCurrentLocation().clone());
-                    }
-
-                    if (user.getPlayer().getWorld() != null) {
-                        user.getCurrentLocation().setWorld(user.getPlayer().getWorld());
-                    }
-
                     user.getCurrentLocation().setX(x);
                     user.getCurrentLocation().setY(y);
                     user.getCurrentLocation().setZ(z);
@@ -340,15 +339,18 @@ public class MovementProcessor extends Processor {
                     this.lastDeltaX = deltaX;
 
                     this.lastDeltaZ = deltaZ;
-
-                    this.deltaX = user.getCurrentLocation().getX()
-                            - user.getLastLocation().getX();
-                    this.deltaZ = user.getCurrentLocation().getZ()
-                            - user.getLastLocation().getZ();
-
-                    this.lastDeltaXZ = this.deltaXZ;
-                    this.deltaXZ = Math.hypot(this.deltaX, this.deltaZ);
                 }
+
+                this.lastDeltaY = this.deltaY;
+                this.deltaY = (user.getCurrentLocation().getY() - user.getLastLocation().getY());
+
+                this.deltaX = user.getCurrentLocation().getX()
+                        - user.getLastLocation().getX();
+                this.deltaZ = user.getCurrentLocation().getZ()
+                        - user.getLastLocation().getZ();
+
+                this.lastDeltaXZ = this.deltaXZ;
+                this.deltaXZ = Math.hypot(this.deltaX, this.deltaZ);
 
 
                 if (wrappedInFlyingPacket.isLook()) {
@@ -364,9 +366,6 @@ public class MovementProcessor extends Processor {
                 this.yawDelta = yawDelta;
                 this.pitchDelta = pitchDelta;
                 yawDeltaClamped = MathUtil.wrapAngleTo180_float(yawDelta);
-
-                this.lastDeltaY = this.deltaY;
-                this.deltaY = (user.getCurrentLocation().getY() - user.getLastLocation().getY());
 
                 this.processBlocks();
                 this.user.setTick(this.user.getTick() + 1);

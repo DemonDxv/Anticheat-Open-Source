@@ -43,6 +43,7 @@ public class ReachA extends Check {
                     if (user.shouldCancel()
                             || user.getConnectionProcessor().isLagging()
                             || user.getTick() < 60
+                            || user.getCombatProcessor().getLastAttackedEntity() == null
                             || user.getCombatProcessor().getCancelTicks() > 0) {
                         threshold = 0;
                         return;
@@ -124,7 +125,7 @@ public class ReachA extends Check {
                         }
                     }
 
-                    reachATargetLocations.addLocation(user.getReachProcessor().getReachData().getCustomLocation());
+                    reachATargetLocations.addLocation(user.getCombatProcessor().getLastAttackedEntity().getLocation());
                 }
 
                 break;

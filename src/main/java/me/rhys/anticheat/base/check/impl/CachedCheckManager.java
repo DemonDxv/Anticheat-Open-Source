@@ -22,9 +22,7 @@ import me.rhys.anticheat.checks.movement.noweb.*;
 import me.rhys.anticheat.checks.movement.phase.*;
 import me.rhys.anticheat.checks.movement.sneak.*;
 import me.rhys.anticheat.checks.movement.speed.*;
-import me.rhys.anticheat.checks.movement.sprint.*;
 import me.rhys.anticheat.checks.movement.step.*;
-import me.rhys.anticheat.checks.movement.strafe.*;
 import me.rhys.anticheat.checks.movement.wtap.*;
 import me.rhys.anticheat.util.file.ChecksFile;
 
@@ -51,7 +49,7 @@ public class CachedCheckManager {
         this.checkList.add(new AutoClickerF());
         this.checkList.add(new AutoClickerG());
         this.checkList.add(new AutoClickerH());
-        this.checkList.add(new AutoClickerI());
+       // this.checkList.add(new AutoClickerI());
         this.checkList.add(new AutoClickerJ());
         this.checkList.add(new AutoClickerK());
         this.checkList.add(new AutoClickerL());
@@ -99,6 +97,7 @@ public class CachedCheckManager {
 
         this.checkList.add(new HitboxA());
         this.checkList.add(new HitboxB());
+        this.checkList.add(new HitboxC());
 
         this.checkList.add(new TimerA());
         this.checkList.add(new TimerB());
@@ -111,14 +110,13 @@ public class CachedCheckManager {
 
         this.checkList.add(new SpeedA());
         this.checkList.add(new SpeedB());
+        this.checkList.add(new SpeedC());
 
         this.checkList.add(new PhaseA());
         this.checkList.add(new PhaseB());
 
         this.checkList.add(new NoWebA());
         this.checkList.add(new NoWebB());
-
-        this.checkList.add(new Strafe());
 
         this.checkList.add(new StepA());
 
@@ -130,10 +128,9 @@ public class CachedCheckManager {
         this.checkList.add(new SneakC());
         this.checkList.add(new SneakD());
 
-        this.checkList.add(new SprintA());
 
         this.checkList.add(new ScaffoldA());
-        this.checkList.add(new ScaffoldB());
+      //  this.checkList.add(new ScaffoldB());
         this.checkList.add(new ScaffoldC());
         this.checkList.add(new ScaffoldD());
         this.checkList.add(new ScaffoldE());
@@ -169,7 +166,6 @@ public class CachedCheckManager {
         this.checkList.add(new PingSpoofA());
         this.checkList.add(new PingSpoofB());
         this.checkList.add(new PingSpoofC());
-        this.checkList.add(new PingSpoofD());
 
 
         this.checkList.add(new WTapA());

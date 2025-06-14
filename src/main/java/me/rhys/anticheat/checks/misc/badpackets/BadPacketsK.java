@@ -55,7 +55,7 @@ public class BadPacketsK extends Check {
                 int placeDelta = ticks - placeTick;
                 int digDelta = ticks - digTick;
 
-                if (placeDelta == digDelta && placeDelta < 5 && digDelta < 5) {
+                if (placeDelta == digDelta && placeDelta < 5) {
 
                     if (++threshold > 6) {
                         flag(user, "Spamming place/dig packets");

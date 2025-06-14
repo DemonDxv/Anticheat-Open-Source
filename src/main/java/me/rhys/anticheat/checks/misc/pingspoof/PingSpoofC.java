@@ -35,10 +35,11 @@ public class PingSpoofC extends Check {
                 int transSize = user.getConnectionMap().size();
 
                 if (keepSize > transSize + 5) {
+                    devFlag(user, "Got disconnected due to game slowing down.");
+
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            devFlag(user, "Got disconnected due to game slowing down.");
                             user.getPlayer().kickPlayer("Disconnected.");
                         }
                     }.runTask(Anticheat.getInstance());

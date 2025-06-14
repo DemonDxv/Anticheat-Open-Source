@@ -30,6 +30,7 @@ public class SpeedA extends Check {
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getActionProcessor().getRespawnTimer().hasNotPassed(20)
                         || user.getPlayer().isDead()
+                        || user.getBlockData().waterTicks > 0
                         || user.getPlayer().getWalkSpeed() != 0.2F
                         || user.getActionProcessor().getServerPositionTimer().hasNotPassed(5)
                         || !user.isChunkLoaded()
@@ -44,8 +45,8 @@ public class SpeedA extends Check {
 
                 double prediction = lastDeltaXZ * 0.91F + 0.026F;
 
-                if (user.getActionProcessor().getVelocityTimer().hasNotPassed(20)) {
-                    prediction += user.getCombatProcessor().getVelocityH();
+                if (user.getActionProcessor().getVelocityTimer().hasNotPassed(40)) {
+                    prediction += (user.getCombatProcessor().getVelocityH() + 0.5);
                 }
 
                 double motionXZ = deltaXZ - prediction;

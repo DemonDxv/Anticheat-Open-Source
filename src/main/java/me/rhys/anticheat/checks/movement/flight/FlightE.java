@@ -55,7 +55,11 @@ public class FlightE extends Check {
                 boolean isGround = user.getMovementProcessor().isOnGround(),
                         lastGround = user.getMovementProcessor().isLastGround();
 
-                if (!isGround && lastGround && deltaY > 0.0 && (deltaY < 0.42f || deltaY > maxJumpHeight)) {
+                boolean zeroThree = user.getMovementProcessor().getAirTicks() == 1 && deltaY > 0.402 && deltaY < 0.407
+                        && user.getLastBlockPlaceTimer().hasNotPassed(20);
+
+                if (!isGround && lastGround && deltaY > 0.0 && (deltaY < 0.42f || deltaY > maxJumpHeight)
+                        && !zeroThree) {
                     if (++threshold > 1) {
                         flag(user, "Invalid Jump Height", "dy=" + deltaY, "my=" + maxJumpHeight);
                     }

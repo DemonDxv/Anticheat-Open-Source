@@ -12,22 +12,19 @@ import org.bukkit.Bukkit;
 public class FlightA extends Check {
 
     private double threshold;
+    private boolean lastZeroThree = false;
 
     @Override
     public void onPacket(PacketEvent event) {
         User user = event.getUser();
 
         switch (event.getType()) {
-            case Packet.Client.FLYING:
-            case Packet.Client.LOOK:
             case Packet.Client.POSITION_LOOK:
             case Packet.Client.POSITION: {
-                //    Bukkit.broadcastMessage(""+user.getBlockData().nearWater);
-
                 double deltaY = user.getMovementProcessor().getDeltaY();
 
                 if (user.shouldCancel()
-                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(5)
+                        || user.getActionProcessor().getServerPositionTimer().hasNotPassed(40)
                         || user.getLastTeleportTimer().hasNotPassed(20)
                         || user.getMovementProcessor().isBouncedOnSlime()
                         || user.getVehicleTicks() > 0
@@ -37,7 +34,6 @@ public class FlightA extends Check {
                         || user.getBlockData().cakeTicks > 0
                         || user.getBlockData().climbableTicks > 0
                         || user.getBlockData().stairTicks > 0
-                        || deltaY < 0 && deltaY >= -1.493E-13
                         || user.getBlockData().slabTicks > 0
                         || user.getLastBlockPlaceTimer().hasNotPassed(3)
                         || user.getBlockData().underBlockTicks > 0
@@ -48,36 +44,36 @@ public class FlightA extends Check {
                         || user.getMovementProcessor().getDeltaXZ() < 0.2
                         && user.getPotionProcessor().getJumpTicks() > 0
                         || user.getActionProcessor().getVelocityTimer().hasNotPassed(20)
-                        && user.getLastFallDamageTimer().passed(20)
+                        || user.getLastFallDamageTimer().hasNotPassedNoPing(20)
                         || user.getTick() < 60) {
-                    threshold = 0;
+                    this.threshold -= Math.min(this.threshold, 0.025);
                     return;
                 }
 
+                double jumpHeight = 0.42F + (user.getPotionProcessor().getJumpAmplifier() * 0.1F);
+
                 double lastDeltaY = user.getMovementProcessor().getLastDeltaY();
+                double prediction = ((this.lastZeroThree ? jumpHeight : lastDeltaY) - 0.08D) * 0.9800000190734863D;
 
-                double gravity = 0.9800000190734863D;
-                double fallMotion = 0.08D;
-
-                double prediction = (lastDeltaY - fallMotion) * gravity;
-
-                if (!user.getMovementProcessor().isOnGround()
-                        && user.getMovementProcessor().isLastGround() && deltaY > 0.0) {
-                    prediction = 0.42F + (user.getPotionProcessor().getJumpAmplifier() * 0.1F);
+                if (user.getMovementProcessor().getAirTicks() == 1 && deltaY > 0.402 && deltaY < 0.407) {
+                    this.lastZeroThree = true;
+                } else {
+                    this.lastZeroThree = false;
                 }
 
-                double totalUp = Math.abs(deltaY - prediction);
+                if (Math.abs(prediction) < 0.005D) {
+                    prediction = 0.0D;
+                }
 
-                double max = 0.005;
+                double offset = Math.abs(deltaY - prediction);
 
                 if (!user.getMovementProcessor().isOnGround() && !user.getMovementProcessor().isLastGround()) {
-                    if (totalUp > max && Math.abs(prediction) > max) {
-
-                        if (++threshold > 1) {
-                            flag(user, "Invalid motion prediction", "t="+totalUp + " y="+deltaY + " p="+prediction);
+                    if (offset > 1E-9) {
+                        if (++this.threshold > 6) {
+                            flag(user, "Invalid motion prediction", "t="+offset + " y="+deltaY + " p="+prediction);
                         }
                     } else {
-                        threshold -= Math.min(threshold, 0.0000001f);
+                        this.threshold -= Math.min(this.threshold, 0.025);
                     }
                 }
             }

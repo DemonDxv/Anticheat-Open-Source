@@ -1,11 +1,9 @@
 package me.rhys.anticheat.util;
 
-import com.sun.istack.internal.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 
 @Data

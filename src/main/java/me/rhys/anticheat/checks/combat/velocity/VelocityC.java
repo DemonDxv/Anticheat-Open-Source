@@ -40,9 +40,12 @@ public class VelocityC extends Check {
 
                 double totalVelocity = deltaXZ / velocityH;
 
-                if (totalVelocity < 0.99 && user.getCombatProcessor().getVelocityTicks() == 1) {
+                double offset = deltaXZ - velocityH;
+
+                if (totalVelocity < 0.99 && user.getCombatProcessor().getVelocityTicks() == 1 && offset > 0.0) {
                     if (++threshold > 3) {
-                        flag(user, "v="+totalVelocity);
+                        flag(user, "v="+totalVelocity,
+                                "offset=" + offset);
                     }
                 } else {
                     threshold -= Math.min(threshold, 0.025);

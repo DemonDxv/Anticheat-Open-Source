@@ -34,10 +34,11 @@ public class PingSpoofA extends Check {
 
                 if (user.getConnectionMap().size() > (canKick ? 19 : 45)
                         && user.getConnectionProcessor().getDropTransTime() > TimeUnit.SECONDS.toMillis(7L)) {
+                    devFlag(user, "Got disconnected due to abnormal lag");
+
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            devFlag(user, "Got disconnected due to abnormal lag");
                             user.getPlayer().kickPlayer("Disconnected.");
                         }
                     }.runTask(Anticheat.getInstance());

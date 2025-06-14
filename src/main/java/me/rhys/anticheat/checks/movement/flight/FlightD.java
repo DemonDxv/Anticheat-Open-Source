@@ -11,7 +11,7 @@ import org.bukkit.Bukkit;
 @CheckInformation(checkName = "Flight", checkType = "D", punishmentVL = 15, description = "Invalid deltay movements")
 public class FlightD extends Check {
 
-    private double threshold, lastLocationY;
+    private double threshold;
 
     @Override
     public void onPacket(PacketEvent event) {
@@ -47,22 +47,18 @@ public class FlightD extends Check {
                     return;
                 }
 
-                double locationY = user.getPlayer().getLocation().getY();
-
                 double deltaY = user.getMovementProcessor().getDeltaY();
-                double locationDeltaY = locationY - this.lastLocationY;
+                double lastDeltaY = user.getMovementProcessor().getLastDeltaY();
 
-                if (deltaY > 0.0 && locationDeltaY < 0.0) {
-                    if (++threshold > 3) {
+                if (deltaY > 0.0 && lastDeltaY <= 0.0) {
+                    if (++threshold > 3.5) {
                         flag(user, "Invalid MotionY movements");
-                        threshold = 3;
+                        threshold = 3.5;
                     }
                 } else {
                     threshold -= Math.min(threshold, 0.125);
                 }
 
-
-                this.lastLocationY = locationY;
                 break;
             }
         }
