@@ -57,7 +57,8 @@ If your planning on forking / taking code to resell make sure to leave credits.
 
 **Credits:**
 * Rhys - (made the anticheat base, helped a shit ton, + lots of utils)
-* funkemunky & Luke - (bounding boxes, reflection, protocol from Atlas https://github.com/funkemunky/Atlas) 
+* funkemunky & Luke (firefly dev) - (bounding boxes, reflection, protocol from Atlas https://github.com/funkemunky/Atlas)
+* darkandblue - old movement "prediction" system
 * PhoenixHaven - Contributor & Speed Maker, and Le Bypasser
 * Sim0n - (AutoClicker utilites from Baldr)
 
