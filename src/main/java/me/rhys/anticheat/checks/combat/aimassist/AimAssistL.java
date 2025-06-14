@@ -14,7 +14,7 @@ import java.util.List;
 public class AimAssistL extends Check {
 
     private double threshold, lastSTD;
-    private List<Double> deltaYawList = new ArrayList<>();
+    private final List<Double> deltaYawList = new ArrayList<>();
 
     @Override
     public void onPacket(PacketEvent event) {

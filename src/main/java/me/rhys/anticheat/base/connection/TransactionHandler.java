@@ -4,10 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
-import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutKeepAlivePacket;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutTransaction;
 import me.rhys.anticheat.util.RunUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
 @Getter

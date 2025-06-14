@@ -21,10 +21,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class MathUtil {
-
-
     public static Map<EntityType, Vector> entityDimensions;
-
 
     public MathUtil() {
         entityDimensions = new HashMap<>();

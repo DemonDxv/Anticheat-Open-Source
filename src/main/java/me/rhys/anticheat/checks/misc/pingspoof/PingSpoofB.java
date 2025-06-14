@@ -6,10 +6,7 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
-import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.concurrent.TimeUnit;
 
 @CheckInformation(checkName = "PingSpoof", checkType = "B", lagBack = false, description = "Detects Ping Spoofing")
 public class PingSpoofB extends Check {

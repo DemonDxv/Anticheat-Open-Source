@@ -5,7 +5,6 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
-import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 
 @CheckInformation(checkName = "Killaura", checkType = "B", canPunish = false, punishmentVL = 250, description = "Post Swing Check")
 public class KillauraB extends Check {
@@ -38,10 +37,6 @@ public class KillauraB extends Check {
 
                     threshold = 0;
                     return;
-                }
-
-                if (user.getConnectionProcessor().getFlyingTick() > 3) {
-                    threshold = 0;
                 }
 
                 if ((System.currentTimeMillis() - lastFlyingPacket) <= 5L) {

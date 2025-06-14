@@ -13,7 +13,6 @@ import me.rhys.anticheat.util.world.CollisionBox;
 import me.rhys.anticheat.util.world.EntityData;
 import me.rhys.anticheat.util.world.types.RayCollision;
 import me.rhys.anticheat.util.world.types.SimpleCollisionBox;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 @CheckInformation(checkName = "Reach", lagBack = false, punishmentVL = 15, description = "Basic PastLocation 3.5 Reach Check.")
 public class ReachA extends Check {
 
-    private PastLocation reachATargetLocations = new PastLocation();
+    private final PastLocation reachATargetLocations = new PastLocation();
 
     private double threshold;
 
@@ -33,102 +32,97 @@ public class ReachA extends Check {
     public void onPacket(PacketEvent event) {
         User user = event.getUser();
 
-        switch (event.getType()) {
+        if (event.getType().equals(Packet.Client.USE_ENTITY)) {
+            WrappedInUseEntityPacket useEntityPacket = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
 
-            case Packet.Client.USE_ENTITY: {
-                WrappedInUseEntityPacket useEntityPacket = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
+            if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
 
-                if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
-
-                    if (user.shouldCancel()
-                            || user.getConnectionProcessor().isLagging()
-                            || user.getTick() < 60
-                            || user.getCombatProcessor().getLastAttackedEntity() == null
-                            || user.getCombatProcessor().getCancelTicks() > 0) {
-                        threshold = 0;
-                        return;
-                    }
-
-                    List<SimpleCollisionBox> simpleBoxes = new ArrayList<>();
-
-                    reachATargetLocations.getEstimatedLocation(event.getTimestamp(),
-                            user.getConnectionProcessor().getTransPing(), 500L)
-                            .stream()
-                            .map(loc -> getHitbox(user.getCombatProcessor().getLastAttackedEntity(), loc))
-                            .collect(Collectors.toList())
-                            .forEach(box -> box.downCast(simpleBoxes));
-
-                    double distance = 69, horzDistance = 69, rayDistance = 69;
-                    int a = 0, collided = 0;
-
-                    for (PlayerLocation location : Arrays.asList(user.getCurrentLocation().clone())) {
-
-                        location.setY(location.getY() + 1.64f);
-
-
-                        RayCollision ray = new RayCollision(location.toVector(), MathUtil.getDirection(location));
-
-
-                        for (SimpleCollisionBox collisionBox : simpleBoxes) {
-
-                            SimpleCollisionBox simpleCollisionBox = collisionBox.copy();
-
-                            simpleCollisionBox.expand(0.1);
-                            double hitBoxExpand = RayCollision.distance(ray, simpleCollisionBox);
-
-                            Vector vectorRay = ray.collisionPoint(collisionBox);
-
-                            if (vectorRay != null) {
-                                rayDistance = Math.min(rayDistance, vectorRay.distanceSquared(location.toVector()));
-                            }
-
-
-                            horzDistance = Math.min(horzDistance, simpleCollisionBox.max()
-                                    .midpoint(simpleCollisionBox.min())
-                                    .setY(0).distance(location.toVector().setY(0)) - .4);
-
-                            if (hitBoxExpand == -1) {
-                                a++;
-                                continue;
-                            } else {
-                                collided++;
-                            }
-
-                            distance = Math.min(distance, hitBoxExpand);
-
-                        }
-                    }
-
-                    if (user.getMovementProcessor().isOnGround() && user.getMovementProcessor().isLastGround()) {
-                        distance -= user.getMovementProcessor().getDeltaXZ();
-                    }
-
-                    if (user.getCombatProcessor().getLastAttackedEntity() != null
-                            && user.getCombatProcessor().getLastAttackedEntity().getVelocity() != null) {
-
-                        double velocityX = user.getCombatProcessor().getLastAttackedEntity().getVelocity().getX();
-                        double velocityZ = user.getCombatProcessor().getLastAttackedEntity().getVelocity().getZ();
-
-                        double total = Math.hypot(velocityX, velocityZ);
-
-                        distance -= total;
-                    }
-
-
-                    if (distance >= 3.5 && distance <= 6.5) {
-                        if (++threshold > 4.5) {
-                            flag(user, "r=" + distance + " hr=" + horzDistance + " c=" + collided);
-                        }
-                    } else {
-                        if (distance != 69) {
-                            threshold -= Math.min(threshold, 0.123);
-                        }
-                    }
-
-                    reachATargetLocations.addLocation(user.getCombatProcessor().getLastAttackedEntity().getLocation());
+                if (user.shouldCancel()
+                    || user.getConnectionProcessor().isLagging()
+                    || user.getTick() < 60
+                    || user.getCombatProcessor().getLastAttackedEntity() == null
+                    || user.getCombatProcessor().getCancelTicks() > 0) {
+                    threshold = 0;
+                    return;
                 }
 
-                break;
+                List<SimpleCollisionBox> simpleBoxes = new ArrayList<>();
+
+                reachATargetLocations.getEstimatedLocation(event.getTimestamp(),
+                        user.getConnectionProcessor().getTransPing(), 500L)
+                    .stream()
+                    .map(loc -> getHitbox(user.getCombatProcessor().getLastAttackedEntity(), loc))
+                    .collect(Collectors.toList())
+                    .forEach(box -> box.downCast(simpleBoxes));
+
+                double distance = 69, horzDistance = 69, rayDistance = 69;
+                int a = 0, collided = 0;
+
+                for (PlayerLocation location : Arrays.asList(user.getCurrentLocation().clone())) {
+
+                    location.setY(location.getY() + 1.64f);
+
+
+                    RayCollision ray = new RayCollision(location.toVector(), MathUtil.getDirection(location));
+
+
+                    for (SimpleCollisionBox collisionBox : simpleBoxes) {
+
+                        SimpleCollisionBox simpleCollisionBox = collisionBox.copy();
+
+                        simpleCollisionBox.expand(0.1);
+                        double hitBoxExpand = RayCollision.distance(ray, simpleCollisionBox);
+
+                        Vector vectorRay = ray.collisionPoint(collisionBox);
+
+                        if (vectorRay != null) {
+                            rayDistance = Math.min(rayDistance, vectorRay.distanceSquared(location.toVector()));
+                        }
+
+
+                        horzDistance = Math.min(horzDistance, simpleCollisionBox.max()
+                            .midpoint(simpleCollisionBox.min())
+                            .setY(0).distance(location.toVector().setY(0)) - .4);
+
+                        if (hitBoxExpand == -1) {
+                            a++;
+                            continue;
+                        } else {
+                            collided++;
+                        }
+
+                        distance = Math.min(distance, hitBoxExpand);
+
+                    }
+                }
+
+                if (user.getMovementProcessor().isOnGround() && user.getMovementProcessor().isLastGround()) {
+                    distance -= user.getMovementProcessor().getDeltaXZ();
+                }
+
+                if (user.getCombatProcessor().getLastAttackedEntity() != null
+                    && user.getCombatProcessor().getLastAttackedEntity().getVelocity() != null) {
+
+                    double velocityX = user.getCombatProcessor().getLastAttackedEntity().getVelocity().getX();
+                    double velocityZ = user.getCombatProcessor().getLastAttackedEntity().getVelocity().getZ();
+
+                    double total = Math.hypot(velocityX, velocityZ);
+
+                    distance -= total;
+                }
+
+
+                if (distance >= 3.5 && distance <= 6.5) {
+                    if (++threshold > 4.5) {
+                        flag(user, "r=" + distance + " hr=" + horzDistance + " c=" + collided);
+                    }
+                } else {
+                    if (distance != 69) {
+                        threshold -= Math.min(threshold, 0.123);
+                    }
+                }
+
+                reachATargetLocations.addLocation(user.getCombatProcessor().getLastAttackedEntity().getLocation());
             }
         }
     }

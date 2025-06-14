@@ -9,12 +9,9 @@ import me.rhys.anticheat.base.event.EventManager;
 import me.rhys.anticheat.base.processor.impl.ProcessorManager;
 import me.rhys.anticheat.base.processor.impl.processors.*;
 import me.rhys.anticheat.base.user.objects.BlockData;
-import me.rhys.anticheat.base.user.objects.LogData;
 import me.rhys.anticheat.base.user.objects.LogObject;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
-import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutTransaction;
 import me.rhys.anticheat.util.*;
-import me.rhys.anticheat.util.evicting.EvictingList;
 import me.rhys.anticheat.util.evicting.EvictingMap;
 import me.rhys.anticheat.util.box.BoundingBox;
 import me.rhys.anticheat.util.math.TrigHandler;
@@ -26,7 +23,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

@@ -13,18 +13,13 @@ public class ScaffoldG extends Check {
     public void onPacket(PacketEvent event) {
         User user = event.getUser();
 
-        switch (event.getType()) {
+        if (event.getType().equals(Packet.Client.BLOCK_PLACE)) {
+            if (user.shouldCancel() || user.getTick() < 60) {
+                return;
+            }
 
-            case Packet.Client.BLOCK_PLACE: {
-
-                if (user.shouldCancel() || user.getTick() < 60) {
-                    return;
-                }
-
-                if (user.getMovementProcessor().isInInventory()) {
-                    devFlag(user, "Blocking/Placing blocks while in inventory");
-                }
-                break;
+            if (user.getMovementProcessor().isInInventory()) {
+                devFlag(user, "Blocking/Placing blocks while in inventory");
             }
         }
     }

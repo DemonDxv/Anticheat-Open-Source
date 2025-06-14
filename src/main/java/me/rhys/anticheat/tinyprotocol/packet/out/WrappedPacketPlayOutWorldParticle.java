@@ -11,20 +11,20 @@ import me.rhys.anticheat.tinyprotocol.packet.types.WrappedEnumParticle;
 @Getter
 public class WrappedPacketPlayOutWorldParticle extends NMSObject {
 
-    private WrappedEnumParticle type;
+    private final WrappedEnumParticle type;
     private static WrappedClass craftParticle, particle;
     private static WrappedMethod toNMS;
-    private static String packetPlayOutWorldParticle = Packet.Server.WORLD_PARTICLE;
-    private boolean j;
-    private float x;
-    private float y;
-    private float z;
-    private float xOffset;
-    private float yOffset;
-    private float zOffset;
-    private float speed;
-    private int amount;
-    private int[] data;
+    private static final String packetPlayOutWorldParticle = Packet.Server.WORLD_PARTICLE;
+    private final boolean j;
+    private final float x;
+    private final float y;
+    private final float z;
+    private final float xOffset;
+    private final float yOffset;
+    private final float zOffset;
+    private final float speed;
+    private final int amount;
+    private final int[] data;
 
     public WrappedPacketPlayOutWorldParticle(WrappedEnumParticle type, boolean var2, float x, float y, float z, float xOffset, float yOffset, float zOffset, float speed, int amount, int... data) {
         this.type = type;

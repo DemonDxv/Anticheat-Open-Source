@@ -6,11 +6,6 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInEntityActionPacket;
-import me.rhys.anticheat.util.MathUtil;
-import org.bukkit.Bukkit;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @CheckInformation(checkName = "Sneak", checkType = "D", description = "Checks if lots of sneak packets are sent at once")
 public class SneakD extends Check {

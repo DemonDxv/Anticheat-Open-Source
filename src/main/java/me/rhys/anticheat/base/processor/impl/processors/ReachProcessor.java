@@ -10,21 +10,11 @@ import me.rhys.anticheat.base.processor.api.ProcessorInformation;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
-import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInFlyingPacket;
-import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInKeepAlivePacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInTransactionPacket;
 import me.rhys.anticheat.tinyprotocol.packet.out.*;
-import me.rhys.anticheat.util.CustomLocation;
-import me.rhys.anticheat.util.PastLocation;
 import me.rhys.anticheat.util.PlayerLocation;
-import me.rhys.anticheat.util.evicting.EvictingList;
-import org.bukkit.Bukkit;
 
-import java.util.Deque;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @ProcessorInformation(name = "Reach")
 @Getter

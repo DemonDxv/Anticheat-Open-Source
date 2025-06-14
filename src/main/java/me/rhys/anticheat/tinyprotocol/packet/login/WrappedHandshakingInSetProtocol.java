@@ -7,7 +7,6 @@ import me.rhys.anticheat.tinyprotocol.api.packets.reflections.Reflections;
 import me.rhys.anticheat.tinyprotocol.api.packets.reflections.types.WrappedClass;
 import me.rhys.anticheat.tinyprotocol.api.packets.reflections.types.WrappedField;
 import me.rhys.anticheat.tinyprotocol.packet.types.enums.WrappedEnumProtocol;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class WrappedHandshakingInSetProtocol extends NMSObject {

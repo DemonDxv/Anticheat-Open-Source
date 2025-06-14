@@ -1,23 +1,14 @@
 package me.rhys.anticheat.util.box.boxes;
 
-import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.util.BlockUtil;
-import me.rhys.anticheat.util.MathUtil;
 import me.rhys.anticheat.util.box.BlockBox;
-import me.rhys.anticheat.util.box.BoundingBox;
 
 import net.minecraft.server.v1_8_R2.*;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class BlockBox1_8_R2 implements BlockBox {
 

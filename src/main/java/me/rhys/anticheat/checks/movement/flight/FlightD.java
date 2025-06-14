@@ -6,7 +6,6 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.EntityUtil;
-import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "Flight", checkType = "D", punishmentVL = 15, description = "Invalid deltay movements")
 public class FlightD extends Check {

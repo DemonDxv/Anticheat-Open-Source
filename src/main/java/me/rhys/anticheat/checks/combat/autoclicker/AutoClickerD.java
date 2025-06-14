@@ -6,7 +6,6 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.MathUtil;
-import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
 public class AutoClickerD extends Check {
 
     private int movements;
-    private List<Integer> delays = new ArrayList<>();
+    private final List<Integer> delays = new ArrayList<>();
     private double threshold, lastStd;
 
     @Override
@@ -51,7 +50,7 @@ public class AutoClickerD extends Check {
 
                         if (Math.abs(std - lastStd) < 0.02) {
                             if (threshold++ > 2) {
-                                flag(user, "Clicking to consistent [S-LS], std=" + std
+                                flag(user, "Clicking too consistent [S-LS], std=" + std
                                         + " dstd=" + Math.abs(std - lastStd));
                             }
                         } else {

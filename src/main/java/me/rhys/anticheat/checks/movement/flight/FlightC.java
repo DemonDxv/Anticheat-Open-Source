@@ -6,12 +6,11 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.EntityUtil;
-import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "Flight", checkType = "C", punishmentVL = 120, description = "Checks if the player is on ground when its not possible")
 public class FlightC extends Check {
 
-    private int threshold;
+    private double threshold;
 
     @Override
     public void onPacket(PacketEvent event) {

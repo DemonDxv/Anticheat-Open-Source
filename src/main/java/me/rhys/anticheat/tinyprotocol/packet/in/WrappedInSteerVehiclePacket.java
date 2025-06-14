@@ -17,10 +17,10 @@ public class WrappedInSteerVehiclePacket extends NMSObject {
     private boolean jump, unmount;
 
     // Decoded data
-    private static WrappedField sidewaysField = packetClass.getFieldByType(float.class, 0),
-            forwardField = packetClass.getFieldByType(float.class, 0);
-    private static WrappedField jumpField = packetClass.getFieldByType(boolean.class, 0),
-            unmountField = packetClass.getFieldByType(boolean.class, 1);
+    private static final WrappedField sidewaysField = packetClass.getFieldByType(float.class, 0);
+    private static final WrappedField forwardField = packetClass.getFieldByType(float.class, 0);
+    private static final WrappedField jumpField = packetClass.getFieldByType(boolean.class, 0);
+    private static final WrappedField unmountField = packetClass.getFieldByType(boolean.class, 1);
 
 
     public WrappedInSteerVehiclePacket(Object packet, Player player) {

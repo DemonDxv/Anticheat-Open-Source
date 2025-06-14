@@ -6,7 +6,6 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
-import me.rhys.anticheat.util.MathUtil;
 
 @CheckInformation(checkName = "Inventory", checkType = "F", lagBack = false, punishmentVL = 10)
 public class InventoryF extends Check {

@@ -6,7 +6,6 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.EntityUtil;
-import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "Flight", punishmentVL = 12, description = "Checks if the players predicted y delta")
 public class FlightA extends Check {
@@ -55,11 +54,7 @@ public class FlightA extends Check {
                 double lastDeltaY = user.getMovementProcessor().getLastDeltaY();
                 double prediction = ((this.lastZeroThree ? jumpHeight : lastDeltaY) - 0.08D) * 0.9800000190734863D;
 
-                if (user.getMovementProcessor().getAirTicks() == 1 && deltaY > 0.402 && deltaY < 0.407) {
-                    this.lastZeroThree = true;
-                } else {
-                    this.lastZeroThree = false;
-                }
+                this.lastZeroThree = user.getMovementProcessor().getAirTicks() == 1 && deltaY > 0.402 && deltaY < 0.407;
 
                 if (Math.abs(prediction) < 0.005D) {
                     prediction = 0.0D;

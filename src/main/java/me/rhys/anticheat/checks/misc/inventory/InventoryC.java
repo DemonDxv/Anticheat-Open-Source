@@ -17,7 +17,7 @@ public class InventoryC extends Check {
 
     private int shiftClickTicks;
     private Long lastClickWindow;
-    private List<Long> delays = new ArrayList<>();
+    private final List<Long> delays = new ArrayList<>();
     private double lastStd, threshold;
 
     @Override
@@ -56,7 +56,7 @@ public class InventoryC extends Check {
 
                             if (changeStd < 0.7) {
                                 if (++threshold > 2) {
-                                    flag(user, "Possibily using ChestStealer or Refill");
+                                    flag(user, "Possibly using ChestStealer or Refill");
                                 }
                             } else {
                                 threshold -= Math.min(threshold, 0.5);

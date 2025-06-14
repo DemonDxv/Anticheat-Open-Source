@@ -1,7 +1,6 @@
 package me.rhys.anticheat.base.command.commands.sub;
 
 import me.rhys.anticheat.Anticheat;
-import me.rhys.anticheat.base.check.api.Check;
 import me.rhys.anticheat.base.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,7 +19,7 @@ public class PingCommand {
                 if (args.length >= 2) {
                     String targetName = args[1];
 
-                    if (targetName.length() > 0) {
+                    if (!targetName.isEmpty()) {
                         User target = Anticheat.getInstance().getUserManager().getUser(Bukkit.getPlayer(args[1]));
                         if (target != null) {
 
@@ -36,7 +35,7 @@ public class PingCommand {
                             commandSender.sendMessage("Average Ping: " + ChatColor.GREEN + avgPing);
                             commandSender.sendMessage(line + "\n");
                         } else {
-                            commandSender.sendMessage("[ERROR] Player your trying to ban is NULL, try another name.");
+                            commandSender.sendMessage("[ERROR] Player you're trying to ban is NULL, try another name.");
                         }
                     } else {
                         commandSender.sendMessage("Please enter a valid username.");

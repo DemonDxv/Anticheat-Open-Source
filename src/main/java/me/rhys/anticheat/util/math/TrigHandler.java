@@ -1,10 +1,9 @@
 package me.rhys.anticheat.util.math;
 
 import me.rhys.anticheat.base.user.User;
-import org.bukkit.Bukkit;
 
 public class TrigHandler {
-    private User player;
+    private final User player;
     private double buffer = 0;
     private boolean isVanillaMath = true;
 

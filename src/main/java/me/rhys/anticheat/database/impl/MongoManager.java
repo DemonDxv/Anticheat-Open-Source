@@ -13,7 +13,6 @@ import me.rhys.anticheat.database.api.DatabaseInterface;
 import me.rhys.anticheat.database.api.InputData;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;

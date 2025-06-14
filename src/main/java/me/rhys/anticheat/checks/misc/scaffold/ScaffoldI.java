@@ -19,52 +19,46 @@ public class ScaffoldI extends Check {
     public void onPacket(PacketEvent event) {
         User user = event.getUser();
 
-        switch (event.getType()) {
+        if (event.getType().equals(Packet.Client.BLOCK_PLACE)) {
+            WrappedInBlockPlacePacket blockPlace =
+                new WrappedInBlockPlacePacket(event.getPacket(), user.getPlayer());
 
-            case Packet.Client.BLOCK_PLACE: {
+            if (user.shouldCancel() || user.getTick() < 60) {
+                threshold = 0;
+                return;
+            }
 
-                WrappedInBlockPlacePacket blockPlace =
-                        new WrappedInBlockPlacePacket(event.getPacket(), user.getPlayer());
+            double pitch = user.getMovementProcessor().getPitchDelta();
+            double yaw = user.getMovementProcessor().getYawDeltaClamped();
 
-                if (user.shouldCancel() || user.getTick() < 60) {
-                    threshold = 0;
-                    return;
-                }
+            double yawChange = Math.abs(yaw - lastYaw);
+            double pitchChange = Math.abs(pitch - lastPitch);
 
-                double pitch = user.getMovementProcessor().getPitchDelta();
-                double yaw = user.getMovementProcessor().getYawDeltaClamped();
+            double compare = Double.compare(yawChange, pitchChange);
 
-                double yawChange = Math.abs(yaw - lastYaw);
-                double pitchChange = Math.abs(pitch - lastPitch);
+            if ((System.currentTimeMillis() - lastCompare) > 550L) {
+                threshold = 0;
+            }
 
-                double compare = Double.compare(yawChange, pitchChange);
+            if (user.getLastBlockPlaceTimer().hasNotPassed(2)) {
 
-                if ((System.currentTimeMillis() - lastCompare) > 550L) {
-                    threshold = 0;
-                }
+                if (user.getPlayer().getEyeLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
 
-                if (user.getLastBlockPlaceTimer().hasNotPassed(2)) {
+                    int faceInt = blockPlace.getFace().b();
 
-                    if (user.getPlayer().getEyeLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
-
-                        int faceInt = blockPlace.getFace().b();
-
-                        if (faceInt >= 0 && faceInt <= 3) {
-                            if (compare < 0.0) {
-                                lastCompare = System.currentTimeMillis();
-                                if (threshold++ > 15) {
-                                    flag(user, "l=" + TimeUtils.elapsed(lastCompare), "t=" + threshold);
-                                }
+                    if (faceInt >= 0 && faceInt <= 3) {
+                        if (compare < 0.0) {
+                            lastCompare = System.currentTimeMillis();
+                            if (threshold++ > 15) {
+                                flag(user, "l=" + TimeUtils.elapsed(lastCompare), "t=" + threshold);
                             }
                         }
                     }
                 }
-
-                this.lastYaw = yaw;
-                this.lastPitch = pitch;
-
-                break;
             }
+
+            this.lastYaw = yaw;
+            this.lastPitch = pitch;
         }
     }
 }

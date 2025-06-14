@@ -912,8 +912,8 @@ public enum XMaterial {
         return mat != null;
     }
 
-    private static Map<String, XMaterial> cachedSearch = new HashMap<>();
-    private static Map<XMaterial, Material> cachedParse = new HashMap<>();
+    private static final Map<String, XMaterial> cachedSearch = new HashMap<>();
+    private static final Map<XMaterial, Material> cachedParse = new HashMap<>();
 
     public static XMaterial requestXMaterial(String name, byte data){
         if(cachedSearch.containsKey(name.toUpperCase()+","+data)){

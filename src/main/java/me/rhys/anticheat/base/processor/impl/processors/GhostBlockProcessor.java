@@ -10,8 +10,6 @@ import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.EntityUtil;
 import me.rhys.anticheat.util.EventTimer;
 import me.rhys.anticheat.util.MathUtil;
-import me.rhys.anticheat.util.PlayerLocation;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.player.PlayerTeleportEvent;
 

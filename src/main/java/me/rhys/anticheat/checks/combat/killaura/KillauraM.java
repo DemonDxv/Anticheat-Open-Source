@@ -5,25 +5,12 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
-import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
-import me.rhys.anticheat.util.MathUtil;
-import me.rhys.anticheat.util.PastLocation;
-import me.rhys.anticheat.util.PlayerLocation;
-import me.rhys.anticheat.util.block.RayTrace;
-import me.rhys.anticheat.util.box.BoundingBox;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
-import org.bukkit.util.Vector;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 @CheckInformation(checkName = "Killlaura", checkType = "M", lagBack = false, punishmentVL = 25, canPunish = false)
 public class KillauraM extends Check {

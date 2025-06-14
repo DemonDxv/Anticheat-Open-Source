@@ -25,7 +25,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -37,12 +36,12 @@ public class Anticheat extends JavaPlugin {
     @Getter private static Anticheat instance;
 
     private UserManager userManager;
-    private List<LogObject> logObjectList;
+    private final List<LogObject> logObjectList;
     public LogData logData;
 
     private CommandManager commandManager;
 
-    private String longLine =
+    private final String longLine =
             "-----------------------------------------------------------------------------------------------";
 
     private DiscordWebhook discordWebhook;
@@ -117,7 +116,7 @@ public class Anticheat extends JavaPlugin {
                         "[v"+getDescription().getVersion()+"]\n\n");
             } else {
                 getServer().getConsoleSender().sendMessage("\n\n" + ChatColor.DARK_RED
-                        + "Your current update is outdated!" + ChatColor.RESET
+                        + "Your current version is outdated!" + ChatColor.RESET
                         + " Version: [v" + getDescription().getVersion() + "]," + " Latest: [v" + version + "]\n\n"
                         + longLine + "\n"
                         + "| Please download the latest update here: https://www.spigotmc.org/resources/anticheat.93504/ |"

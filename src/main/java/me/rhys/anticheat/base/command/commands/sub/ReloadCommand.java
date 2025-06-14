@@ -2,11 +2,8 @@ package me.rhys.anticheat.base.command.commands.sub;
 
 
 import me.rhys.anticheat.Anticheat;
-import me.rhys.anticheat.base.check.impl.CachedCheckManager;
-import me.rhys.anticheat.base.user.User;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 
 public class ReloadCommand {

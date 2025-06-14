@@ -5,8 +5,6 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
-import me.rhys.anticheat.util.TimeUtils;
-import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "Sneak", punishmentVL = 15, description = "Checks if sneaking is sent rapidly")
 public class SneakA extends Check {

@@ -8,7 +8,6 @@ import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInWindowClickPacket;
 import me.rhys.anticheat.util.MathUtil;
 import me.rhys.anticheat.util.TimeUtils;
-import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,7 @@ public class InventoryE extends Check {
 
     private int shiftClickTicks;
     private Long lastClickWindow;
-    private List<Long> delays = new ArrayList<>();
+    private final List<Long> delays = new ArrayList<>();
     private double lastStd, threshold;
 
     @Override

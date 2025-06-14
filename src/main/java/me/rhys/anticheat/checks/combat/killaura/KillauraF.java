@@ -7,13 +7,12 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.util.Verbose;
-import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "Killaura", checkType = "F", lagBack = false, description = "Hiss miss ratio", punishmentVL = 25)
 public class KillauraF extends Check {
 
     private double swings, attacks;
-    private Verbose threshold = new Verbose();
+    private final Verbose threshold = new Verbose();
 
     /**
      * Hit miss ratio detection, currently trying to find a better way of detecting this.
@@ -37,7 +36,7 @@ public class KillauraF extends Check {
 
                     double yawDiff = Math.abs(user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw());
                     if (yawDiff > 3.5f && yawDiff < 120 && user.getMovementProcessor().getDeltaXZ() > 0.1
-                            && user.getCombatProcessor().isInsideHitbox() && user.getCombatProcessor().getCancelTicks() < 1) {
+                            && user.getCombatProcessor().isInsideHitbox()) {
                         ++attacks;
                     }
 

@@ -8,7 +8,6 @@ import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInEntityActionPacket;
 import me.rhys.anticheat.util.MathUtil;
-import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ public class WTapC extends Check {
     private double threshold;
     private boolean releasePacket;
     private int flying;
-    private List<Integer> wtapDelays = new ArrayList<>();
+    private final List<Integer> wtapDelays = new ArrayList<>();
 
     @Override
     public void onPacket(PacketEvent event) {
