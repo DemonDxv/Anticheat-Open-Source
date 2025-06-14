@@ -6,12 +6,7 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockPlacePacket;
-import me.rhys.anticheat.util.MathUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @CheckInformation(checkName = "Scaffold", checkType = "F", lagBack = false, punishmentVL = 50, canPunish = false)
 public class ScaffoldF extends Check {

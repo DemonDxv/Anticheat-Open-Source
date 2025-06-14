@@ -13,25 +13,19 @@ import me.rhys.anticheat.util.block.RayTrace;
 import me.rhys.anticheat.util.box.BoundingBox;
 import me.rhys.anticheat.util.world.CollisionBox;
 import me.rhys.anticheat.util.world.EntityData;
-import me.rhys.anticheat.util.world.types.RayCollision;
-import me.rhys.anticheat.util.world.types.SimpleCollisionBox;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @CheckInformation(checkName = "Hitbox", checkType = "B", canPunish = false, punishmentVL = 15)
 public class HitboxB extends Check {
 
     private double threshold;
-    private PastLocation hitboxLocations = new PastLocation();
-    private List<BoundingBox> boundingBoxList = new ArrayList<>();
+    private final PastLocation hitboxLocations = new PastLocation();
+    private final List<BoundingBox> boundingBoxList = new ArrayList<>();
     private boolean outsideHitbox;
 
     @Override

@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ComplexCollisionBox implements CollisionBox {
-    private List<CollisionBox> boxes = new ArrayList<>();
+    private final List<CollisionBox> boxes = new ArrayList<>();
 
     public ComplexCollisionBox(CollisionBox... boxes) {
         Collections.addAll(this.boxes, boxes);

@@ -6,7 +6,6 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.MathUtil;
-import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,7 @@ import java.util.List;
 @CheckInformation(checkName = "Killaura", checkType = "J", lagBack = false, description = "Autoblock Delay Check", punishmentVL = 3)
 public class KillauraJ extends Check {
 
-    private List<Integer> delays = new ArrayList<>();
+    private final List<Integer> delays = new ArrayList<>();
     private int movements;
     private double threshold;
 
@@ -43,7 +42,7 @@ public class KillauraJ extends Check {
 
                             if (std < 0.34) {
                                 if (threshold++ > 1) {
-                                    flag(user, "Blocking to consistent");
+                                    flag(user, "Blocking too consistent");
                                 }
                             } else {
                                 threshold -= Math.min(threshold, 0.5);

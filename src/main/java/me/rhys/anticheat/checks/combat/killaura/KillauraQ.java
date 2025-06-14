@@ -6,9 +6,7 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
-import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockPlacePacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
-import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "Killaura", checkType = "Q", lagBack = false, description = "Dig Synced With Attack")
 public class KillauraQ extends Check {

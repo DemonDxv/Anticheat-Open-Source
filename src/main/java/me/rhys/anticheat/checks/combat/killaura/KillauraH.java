@@ -5,9 +5,7 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
-import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
-import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "Killaura", checkType = "H", lagBack = false, description = "No Interact Autoblock", punishmentVL = 3)
 public class KillauraH extends Check {

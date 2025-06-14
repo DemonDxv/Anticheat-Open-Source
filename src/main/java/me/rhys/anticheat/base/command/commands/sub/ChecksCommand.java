@@ -2,7 +2,6 @@ package me.rhys.anticheat.base.command.commands.sub;
 
 import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.check.api.Check;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -12,7 +11,7 @@ public class ChecksCommand {
         if (args.length >= 2) {
             String checkName = args[1];
 
-            if (checkName.length() > 0) {
+            if (!checkName.isEmpty()) {
                 Check foundCheck = Anticheat.getInstance().getCheckManager().getCheckList().stream().filter(check ->
                         checkName.equalsIgnoreCase(check.getFriendlyName())).findAny().orElse(null);
 

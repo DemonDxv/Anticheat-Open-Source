@@ -6,7 +6,6 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.MathUtil;
-import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "Velocity",  checkType = "C", canPunish = false, description = "99% Horizontal Velocity Detection")
 public class VelocityC extends Check {

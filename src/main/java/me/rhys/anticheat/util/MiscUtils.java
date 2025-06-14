@@ -13,7 +13,7 @@ import java.util.Collection;
 
 public class MiscUtils {
 
-    private static WrappedClass materialClass = new WrappedClass(Material.class);
+    private static final WrappedClass materialClass = new WrappedClass(Material.class);
     public static Material match(String material) {
         if(ProtocolVersion.getGameVersion().isOrAbove(ProtocolVersion.V1_13)) {
             return materialClass

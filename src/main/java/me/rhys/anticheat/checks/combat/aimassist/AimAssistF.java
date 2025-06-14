@@ -5,9 +5,6 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
-import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
-import me.rhys.anticheat.util.MathUtil;
-import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "AimAssist", checkType = "F", lagBack = false, punishmentVL = 25, canPunish = false)
 public class AimAssistF extends Check {

@@ -6,7 +6,6 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.MathUtil;
-import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
 public class AimAssistG extends Check {
 
     private double threshold;
-    private List<Double> deltaPitchList = new ArrayList<>();
+    private final List<Double> deltaPitchList = new ArrayList<>();
 
     @Override
     public void onPacket(PacketEvent event) {

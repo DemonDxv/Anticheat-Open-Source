@@ -27,7 +27,7 @@ public class LogsCommand {
                     List<InputData> logs = Anticheat.getInstance().getDatabaseManager().getDatabase()
                             .getLogs(playerName);
 
-                    if (logs.size() > 0) {
+                    if (!logs.isEmpty()) {
                         commandSender.sendMessage(ChatColor.GREEN + "All violations for "
                                 + ChatColor.GRAY + playerName + ChatColor.GRAY + " (" +
                                 ChatColor.RED + logs.size() + ChatColor.GRAY + ")");

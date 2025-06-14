@@ -6,7 +6,6 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.MathUtil;
-import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,7 @@ public class AimAssistM extends Check {
 
     private double threshold, lastSTD;
     private double lastDeltaYaw;
-    private List<Double> deltaYawList = new ArrayList<>();
+    private final List<Double> deltaYawList = new ArrayList<>();
 
     @Override
     public void onPacket(PacketEvent event) {

@@ -5,11 +5,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-
 /*
    The whole purpose of this class is just to save disk space and make development more efficient
    with the use of lambdas and with less verbose conventions. This does not affect performance.

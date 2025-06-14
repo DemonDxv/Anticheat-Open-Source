@@ -1,8 +1,6 @@
 package me.rhys.anticheat.base.command.commands.sub;
 
 import me.rhys.anticheat.Anticheat;
-import me.rhys.anticheat.base.check.api.Check;
-import me.rhys.anticheat.base.check.impl.CheckManager;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.util.ui.UiUtil;
 import org.bukkit.Bukkit;

@@ -5,10 +5,6 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
-import me.rhys.anticheat.util.EntityUtil;
-import me.rhys.anticheat.util.MathUtil;
-import org.bukkit.Location;
-import org.bukkit.event.player.PlayerTeleportEvent;
 
 @CheckInformation(checkName = "Flight", checkType = "B", canPunish = false, description = "Checks if the player is spoofing ground while 1/64")
 public class FlightB extends Check {

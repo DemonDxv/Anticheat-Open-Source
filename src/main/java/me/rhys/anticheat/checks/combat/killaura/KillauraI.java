@@ -14,24 +14,19 @@ public class KillauraI extends Check {
     public void onPacket(PacketEvent event) {
         User user = event.getUser();
 
-        switch (event.getType()) {
-            case Packet.Client.USE_ENTITY: {
+        if (event.getType().equals(Packet.Client.USE_ENTITY)) {
+            WrappedInUseEntityPacket useEntityPacket =
+                new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
 
-                WrappedInUseEntityPacket useEntityPacket =
-                        new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
-
-                switch (useEntityPacket.getAction()) {
-                    case ATTACK:
-                    case INTERACT:
-                    case INTERACT_AT: {
-                        if (user.getMovementProcessor().isInInventory()) {
-                            flag(user, "Attacking / Interacting while in inventory");
-                        }
-                        break;
+            switch (useEntityPacket.getAction()) {
+                case ATTACK:
+                case INTERACT:
+                case INTERACT_AT: {
+                    if (user.getMovementProcessor().isInInventory()) {
+                        flag(user, "Attacking / Interacting while in inventory");
                     }
+                    break;
                 }
-
-                break;
             }
         }
     }

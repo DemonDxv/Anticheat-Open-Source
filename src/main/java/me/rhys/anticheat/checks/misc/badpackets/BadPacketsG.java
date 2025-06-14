@@ -14,23 +14,19 @@ public class BadPacketsG extends Check {
 
     @Override
     public void onPacket(PacketEvent event) {
-        switch (event.getType()) {
-            case Packet.Client.CUSTOM_PAYLOAD: {
-                User user = event.getUser();
+        if (event.getType().equals(Packet.Client.CUSTOM_PAYLOAD)) {
+            User user = event.getUser();
 
-                WrappedInCustomPayloadPacket packet
-                        = new WrappedInCustomPayloadPacket(event.getPacket());
+            WrappedInCustomPayloadPacket packet
+                = new WrappedInCustomPayloadPacket(event.getPacket());
 
-                String tag = packet.getTag();
+            String tag = packet.getTag();
 
-                if (tag.equals("MC|Brand") || tag.equals("REGISTER")) {
-                    threshold++;
-                    if (threshold > 7) {
-                        flag(user, "Invalid CustomPayloads");
-                    }
+            if (tag.equals("MC|Brand") || tag.equals("REGISTER")) {
+                threshold++;
+                if (threshold > 7) {
+                    flag(user, "Invalid CustomPayloads");
                 }
-
-                break;
             }
         }
     }

@@ -423,7 +423,7 @@ public enum BlockData {
 
     private CollisionBox box;
     private CollisionFactory dynamic;
-    private Material[] materials;
+    private final Material[] materials;
 
     BlockData(CollisionBox box, Material... materials) {
         this.box = box;
@@ -448,7 +448,7 @@ public enum BlockData {
         return new DynamicCollisionBox(dynamic, block, version).offset(block.getX(), block.getY(), block.getZ());
     }
 
-    private static BlockData[] lookup = new BlockData[Material.values().length];
+    private static final BlockData[] lookup = new BlockData[Material.values().length];
 
     static {
         for (BlockData data : values()) {

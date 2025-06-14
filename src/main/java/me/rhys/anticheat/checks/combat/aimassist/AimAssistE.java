@@ -7,7 +7,6 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.util.MathUtil;
-import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "AimAssist", checkType = "E", canPunish = false, lagBack = false, punishmentVL = 35)
 public class AimAssistE extends Check {

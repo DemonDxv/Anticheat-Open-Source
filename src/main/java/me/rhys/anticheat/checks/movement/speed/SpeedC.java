@@ -189,12 +189,6 @@ public class SpeedC extends Check {
         return applyPotionModifiers(user, baseSpeed);
     }
 
-    public double getGroundSpeedBridging(User user) {
-        double baseSpeed = 0.1604f + ((user.getPlayer().getWalkSpeed() > 0.2 ? user.getPlayer().getWalkSpeed() +
-                ((user.getPlayer().getWalkSpeed() * 10) * 0.03) : user.getPlayer().getWalkSpeed()) - 0.2);
-        return applyPotionModifiers(user, baseSpeed);
-    }
-
     public double applyPotionModifiers(User user, double baseSpeed) {
         if (user.getPotionProcessor().isHasSpeed()) {
             double amplifier = user.getPotionProcessor().getSpeedAmplifier();

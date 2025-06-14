@@ -5,10 +5,8 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
-import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.util.MathUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 @CheckInformation(checkName = "Killaura", checkType = "D", lagBack = false, description = "Keep sprint while attacking")

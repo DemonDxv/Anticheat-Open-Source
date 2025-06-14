@@ -5,7 +5,6 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
-import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
 import me.rhys.anticheat.util.MathUtil;
 
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.List;
 public class AutoClickerB extends Check {
 
     private int movements;
-    private List<Integer> delays = new ArrayList<>();
+    private final List<Integer> delays = new ArrayList<>();
     private double threshold;
 
     @Override
@@ -51,7 +50,7 @@ public class AutoClickerB extends Check {
 
                         if (std < 0.45) {
                             if (threshold++ > 2) {
-                                flag(user, "Clicking to consistent, std="+std);
+                                flag(user, "Clicking too consistent, std="+std);
                             }
                         } else {
                             threshold -= Math.min(threshold, 0.125);

@@ -14,8 +14,14 @@ import java.util.List;
 public class WrappedOutRelativePosition extends NMSObject {
     private static final String packet = Server.ENTITY;
 
-    private static WrappedClass packetClass = Reflections.getNMSClass(packet);
-    private static WrappedField fieldId, fieldX, fieldY, fieldZ, fieldYaw, fieldPitch, fieldGround;
+    private static final WrappedClass packetClass = Reflections.getNMSClass(packet);
+    private static final WrappedField fieldId;
+    private static final WrappedField fieldX;
+    private static final WrappedField fieldY;
+    private static final WrappedField fieldZ;
+    private static final WrappedField fieldYaw;
+    private static final WrappedField fieldPitch;
+    private static final WrappedField fieldGround;
 
     // Decoded data
     private int id;

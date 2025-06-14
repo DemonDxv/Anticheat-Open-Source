@@ -18,58 +18,52 @@ public class ScaffoldM extends Check {
 
     private long time, lastTime;
     private double lastSTD;
-    private List<Long> placeTimes = new ArrayList<>();
+    private final List<Long> placeTimes = new ArrayList<>();
 
     @Override
     public void onPacket(PacketEvent event) {
         User user = event.getUser();
 
-        switch (event.getType()) {
+        if (event.getType().equals(Packet.Client.BLOCK_PLACE)) {
+            WrappedInBlockPlacePacket blockPlace =
+                new WrappedInBlockPlacePacket(event.getPacket(), user.getPlayer());
 
-            case Packet.Client.BLOCK_PLACE: {
-
-                WrappedInBlockPlacePacket blockPlace =
-                        new WrappedInBlockPlacePacket(event.getPacket(), user.getPlayer());
-
-                if (user.shouldCancel() || user.getTick() < 60) {
-                    return;
-                }
+            if (user.shouldCancel() || user.getTick() < 60) {
+                return;
+            }
 
 
-                if (blockPlace.getItemStack().getType().isBlock()) {
-                    if (user.getPlayer().getEyeLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
+            if (blockPlace.getItemStack().getType().isBlock()) {
+                if (user.getPlayer().getEyeLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
 
-                        int faceInt = blockPlace.getFace().b();
+                    int faceInt = blockPlace.getFace().b();
 
-                        if (faceInt >= 0 && faceInt <= 3) {
+                    if (faceInt >= 0 && faceInt <= 3) {
 
-                            time = System.currentTimeMillis();
+                        time = System.currentTimeMillis();
 
-                            long currentTime = TimeUtils.elapsed(time - lastTime);
+                        long currentTime = TimeUtils.elapsed(time - lastTime);
 
-                            placeTimes.add(currentTime);
+                        placeTimes.add(currentTime);
 
-                            if (placeTimes.size() > 9) {
+                        if (placeTimes.size() > 9) {
 
-                                double std = MathUtil.getStandardDeviation(placeTimes);
+                            double std = MathUtil.getStandardDeviation(placeTimes);
 
-                                if (Math.abs(std - lastSTD) < 0.01) {
-                                    flag(user, "Consistent Time Between Packets Sent");
-                                }
-
-                                lastSTD = std;
-                                placeTimes.clear();
+                            if (Math.abs(std - lastSTD) < 0.01) {
+                                flag(user, "Consistent Time Between Packets Sent");
                             }
 
-                            lastTime = time;
-                        } else {
-                            lastSTD = Double.MIN_VALUE;
+                            lastSTD = std;
                             placeTimes.clear();
                         }
+
+                        lastTime = time;
+                    } else {
+                        lastSTD = Double.MIN_VALUE;
+                        placeTimes.clear();
                     }
                 }
-
-                break;
             }
         }
     }

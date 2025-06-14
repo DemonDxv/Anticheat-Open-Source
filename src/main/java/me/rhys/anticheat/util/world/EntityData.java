@@ -19,10 +19,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EntityData {
-    private static Map<EntityType, CollisionBox> entityBounds = new HashMap<>();
+    private static final Map<EntityType, CollisionBox> entityBounds = new HashMap<>();
 
-    private static WrappedClass entity = Reflections.getNMSClass("Entity"), entitySize;
-    private static WrappedField fieldWidth, fieldLength, fieldSize;
+    private static final WrappedClass entity = Reflections.getNMSClass("Entity");
+    private static WrappedClass entitySize;
+    private static final WrappedField fieldWidth;
+    private static final WrappedField fieldLength;
+    private static WrappedField fieldSize;
 
     public static CollisionBox bounds(Entity entity) {
         return entityBounds.computeIfAbsent(entity.getType(), type -> {

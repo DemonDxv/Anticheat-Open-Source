@@ -6,7 +6,6 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
-import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockPlacePacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 
 @CheckInformation(checkName = "Killaura", checkType = "C", lagBack = false, description = "AutoBlock Check", punishmentVL = 5)

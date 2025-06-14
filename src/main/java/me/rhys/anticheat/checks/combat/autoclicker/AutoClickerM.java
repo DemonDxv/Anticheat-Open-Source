@@ -6,7 +6,6 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.MathUtil;
-import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,50 +14,45 @@ import java.util.List;
 public class AutoClickerM extends Check {
 
     private int movements;
-    private List<Double> delays = new ArrayList<>();
+    private final List<Double> delays = new ArrayList<>();
     private double threshold;
 
     @Override
     public void onPacket(PacketEvent event) {
         User user = event.getUser();
 
-        switch (event.getType()) {
-            case Packet.Client.ARM_ANIMATION: {
+        if (event.getType().equals(Packet.Client.ARM_ANIMATION)) {
+            if (user.shouldCancel() || user.getTick() < 60) {
+                return;
+            }
 
-                if (user.shouldCancel() || user.getTick() < 60) {
-                    return;
-                }
+            double skewness = user.getCombatProcessor().getSkewness();
+            double outlier = user.getCombatProcessor().getOutlier();
+            double currentCps = user.getCombatProcessor().getCurrentCps();
+            double kurtosis = user.getCombatProcessor().getKurtosis();
+            double median = user.getCombatProcessor().getMedian();
 
-                double skewness = user.getCombatProcessor().getSkewness();
-                double outlier = user.getCombatProcessor().getOutlier();
-                double currentCps = user.getCombatProcessor().getCurrentCps();
-                double kurtosis = user.getCombatProcessor().getKurtosis();
-                double median = user.getCombatProcessor().getMedian();
+            if (median < 2.5 && user.getCombatProcessor().getMovements().size() >= 20) {
 
-                if (median < 2.5 && user.getCombatProcessor().getMovements().size() >= 20) {
+                if (currentCps > 8) {
+                    delays.add(kurtosis);
 
-                    if (currentCps > 8) {
-                        delays.add(kurtosis);
-
-                        if (delays.size() == 25) {
+                    if (delays.size() == 25) {
 
 
-                            double std = MathUtil.getStandardDeviation(delays);
+                        double std = MathUtil.getStandardDeviation(delays);
 
-                            if (std < 0.1) {
-                                if (++threshold > 2) {
-                                    flag(user, "stdK="+std, "k="+kurtosis, "cps="+currentCps);
-                                }
-                            } else {
-                                threshold -= Math.min(threshold, 0.15);
+                        if (std < 0.1) {
+                            if (++threshold > 2) {
+                                flag(user, "stdK=" + std, "k=" + kurtosis, "cps=" + currentCps);
                             }
-
-                            delays.clear();
+                        } else {
+                            threshold -= Math.min(threshold, 0.15);
                         }
+
+                        delays.clear();
                     }
                 }
-
-                break;
             }
         }
     }

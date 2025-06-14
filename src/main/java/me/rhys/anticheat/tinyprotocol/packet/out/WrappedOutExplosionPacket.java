@@ -4,7 +4,6 @@ package me.rhys.anticheat.tinyprotocol.packet.out;
 import lombok.Getter;
 import lombok.Setter;
 import me.rhys.anticheat.tinyprotocol.api.NMSObject;
-import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.api.ProtocolVersion;
 import me.rhys.anticheat.tinyprotocol.packet.types.BaseBlockPosition;
 import me.rhys.anticheat.tinyprotocol.reflection.FieldAccessor;

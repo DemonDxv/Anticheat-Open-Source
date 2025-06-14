@@ -5,7 +5,6 @@ import me.rhys.anticheat.base.check.api.CheckInformation;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
-import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "Velocity",  checkType = "D", canPunish = false, description = "More Vertical Velocity")
 public class VelocityD extends Check {

@@ -7,7 +7,6 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockDigPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
-import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "Killaura", checkType = "N", lagBack = false, description = "No Interact Check")
 public class KillauraN extends Check {

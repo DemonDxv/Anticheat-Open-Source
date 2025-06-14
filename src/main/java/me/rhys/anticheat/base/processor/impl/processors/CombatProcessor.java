@@ -1,6 +1,5 @@
 package me.rhys.anticheat.base.processor.impl.processors;
 
-import com.google.common.collect.EvictingQueue;
 import lombok.Getter;
 import lombok.Setter;
 import me.rhys.anticheat.base.event.PacketEvent;
@@ -8,13 +7,11 @@ import me.rhys.anticheat.base.processor.api.Processor;
 import me.rhys.anticheat.base.processor.api.ProcessorInformation;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
-import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInFlyingPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutVelocityPacket;
 import me.rhys.anticheat.util.*;
 import me.rhys.anticheat.util.block.RayTrace;
 import me.rhys.anticheat.util.box.BoundingBox;
-import me.rhys.anticheat.util.evicting.EvictingList;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -22,7 +19,6 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 
 @ProcessorInformation(name = "Combat")
 @Getter

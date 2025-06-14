@@ -6,7 +6,6 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.EntityUtil;
-import org.bukkit.Bukkit;
 
 @CheckInformation(checkName = "Step", description = "Checks if player goes up blocks higher than legit", canPunish = false)
 public class StepA extends Check {

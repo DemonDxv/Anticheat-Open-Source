@@ -3,7 +3,6 @@ package me.rhys.anticheat.base.command.commands.sub;
 
 import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.user.User;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -28,7 +27,7 @@ public class BanWaveCommand {
                     Anticheat.getInstance().getBanWaveManager().commenceBanWave(commandSender);
                 } else if (args[1].equalsIgnoreCase("stop")
                         && Anticheat.getInstance().getConfigValues().isJudgementDay()) {
-                    commandSender.sendMessage("Banwave Should Have Stopped!");
+                    commandSender.sendMessage("Banwave has been stopped!");
                     Anticheat.getInstance().getBanWaveManager().stopBanwave();
                 }
             }

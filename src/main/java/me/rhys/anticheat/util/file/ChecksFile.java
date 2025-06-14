@@ -3,7 +3,6 @@ package me.rhys.anticheat.util.file;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
 
 import java.io.File;
 import java.io.IOException;

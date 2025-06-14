@@ -8,7 +8,7 @@ import java.util.Date;
  * Created by FlyCode on 30/04/2018 Package cc.flycode.Supreme.util
  */
 public class TimeUtils {
-    private static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
     public static long CurrentMS() {
         return System.currentTimeMillis();
     }

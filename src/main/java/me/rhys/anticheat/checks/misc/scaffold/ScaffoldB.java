@@ -15,54 +15,51 @@ import java.util.List;
 @CheckInformation(checkName = "Scaffold", checkType = "B", lagBack = false, punishmentVL = 10)
 public class ScaffoldB extends Check {
 
-    private List<Float> placeList = new ArrayList<>();
+    private final List<Float> placeList = new ArrayList<>();
     private double threshold;
 
     @Override
     public void onPacket(PacketEvent event) {
-        switch (event.getType()) {
-            case Packet.Client.BLOCK_PLACE: {
-                User user = event.getUser();
+        if (event.getType().equals(Packet.Client.BLOCK_PLACE)) {
+            User user = event.getUser();
 
-                WrappedInBlockPlacePacket blockPlace =
-                        new WrappedInBlockPlacePacket(event.getPacket(), user.getPlayer());
-
-
-                if (user.shouldCancel() || user.getTick() < 60) {
-                    threshold = 0;
-                    placeList.clear();
-                    return;
-                }
+            WrappedInBlockPlacePacket blockPlace =
+                new WrappedInBlockPlacePacket(event.getPacket(), user.getPlayer());
 
 
-                float vecY = blockPlace.getVecY();
+            if (user.shouldCancel() || user.getTick() < 60) {
+                threshold = 0;
+                placeList.clear();
+                return;
+            }
 
-                int faceInt = blockPlace.getFace().b();
 
-                double yaw = Math.abs(user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw());
+            float vecY = blockPlace.getVecY();
 
-                if (yaw > 0) {
-                    if (user.getBlockPlaced().getLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
-                        if (faceInt >= 0 && faceInt <= 3) {
-                            placeList.add(vecY);
+            int faceInt = blockPlace.getFace().b();
 
-                            if (placeList.size() == 10) {
-                                double std = MathUtil.getStandardDeviation(placeList);
+            double yaw = Math.abs(user.getCurrentLocation().getYaw() - user.getLastLocation().getYaw());
 
-                                if (std < 0.06) {
-                                    if (++threshold > 2) {
-                                        flag(user, "HitVec Consistency");
-                                    }
-                                } else {
-                                    threshold -= Math.min(threshold, 0.25);
+            if (yaw > 0) {
+                if (user.getBlockPlaced().getLocation().add(0, -1, 0).getBlock().getType() == Material.AIR) {
+                    if (faceInt >= 0 && faceInt <= 3) {
+                        placeList.add(vecY);
+
+                        if (placeList.size() == 10) {
+                            double std = MathUtil.getStandardDeviation(placeList);
+
+                            if (std < 0.06) {
+                                if (++threshold > 2) {
+                                    flag(user, "HitVec Consistency");
                                 }
-
-                                placeList.clear();
+                            } else {
+                                threshold -= Math.min(threshold, 0.25);
                             }
+
+                            placeList.clear();
                         }
                     }
                 }
-                break;
             }
         }
     }

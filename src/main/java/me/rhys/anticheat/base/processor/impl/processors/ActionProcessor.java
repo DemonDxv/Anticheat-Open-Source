@@ -11,7 +11,6 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.api.TinyProtocolHandler;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInKeepAlivePacket;
-import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInTransactionPacket;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutKeepAlivePacket;
 import me.rhys.anticheat.util.EventTimer;
 

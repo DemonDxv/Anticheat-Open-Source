@@ -22,7 +22,7 @@ public class LookupCommand {
             if (args.length >= 2) {
                 String targetName = args[1];
 
-                if (targetName.length() > 0) {
+                if (!targetName.isEmpty()) {
                     User target = Anticheat.getInstance().getUserManager().getUser(Bukkit.getPlayer(args[1]));
                     if (target != null) {
 

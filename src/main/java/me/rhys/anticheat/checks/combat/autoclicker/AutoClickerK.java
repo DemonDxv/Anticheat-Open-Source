@@ -6,8 +6,6 @@ import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.util.MathUtil;
-import me.rhys.anticheat.util.Tuple;
-import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +14,8 @@ import java.util.List;
 public class AutoClickerK extends Check {
 
     private int movements;
-    private List<Integer> delays = new ArrayList<>();
-    private List<Double> stdDelays = new ArrayList<>();
+    private final List<Integer> delays = new ArrayList<>();
+    private final List<Double> stdDelays = new ArrayList<>();
     private double threshold, lastAverage, lastDelta;
 
     @Override

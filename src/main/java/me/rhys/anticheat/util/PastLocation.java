@@ -1,8 +1,6 @@
 package me.rhys.anticheat.util;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -16,8 +14,8 @@ import java.util.stream.Collectors;
  *
  */
 public class PastLocation {
-    private List<PlayerLocation> previousLocations = new CopyOnWriteArrayList<>();
-    private List<CustomLocation> previousLocations2 = new CopyOnWriteArrayList<>();
+    private final List<PlayerLocation> previousLocations = new CopyOnWriteArrayList<>();
+    private final List<CustomLocation> previousLocations2 = new CopyOnWriteArrayList<>();
 
     public PlayerLocation getPreviousLocation(long time) {
         return previousLocations.stream().min(Comparator.comparingLong(loc -> Math.abs(loc.getTimeStamp() - (System.currentTimeMillis() - time)))).orElse(previousLocations.get(previousLocations.size() - 1));

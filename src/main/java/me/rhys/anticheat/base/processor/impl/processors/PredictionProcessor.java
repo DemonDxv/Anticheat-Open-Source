@@ -2,7 +2,6 @@ package me.rhys.anticheat.base.processor.impl.processors;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.rhys.anticheat.Anticheat;
 import me.rhys.anticheat.base.event.PacketEvent;
 import me.rhys.anticheat.base.processor.api.Processor;
 import me.rhys.anticheat.base.processor.api.ProcessorInformation;
@@ -13,16 +12,7 @@ import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInBlockPlacePacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInFlyingPacket;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInUseEntityPacket;
 import me.rhys.anticheat.tinyprotocol.packet.out.WrappedOutExplosionPacket;
-import me.rhys.anticheat.tinyprotocol.packet.types.MathHelper;
 import me.rhys.anticheat.util.EventTimer;
-import me.rhys.anticheat.util.MathUtil;
-import me.rhys.anticheat.util.PlayerLocation;
-import org.bukkit.Bukkit;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.potion.PotionEffectType;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 @ProcessorInformation(name = "Prediction")
 @Getter

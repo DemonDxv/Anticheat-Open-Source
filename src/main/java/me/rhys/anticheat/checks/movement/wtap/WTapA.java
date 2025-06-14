@@ -7,10 +7,6 @@ import me.rhys.anticheat.base.user.User;
 import me.rhys.anticheat.tinyprotocol.api.Packet;
 import me.rhys.anticheat.tinyprotocol.packet.in.WrappedInEntityActionPacket;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 @CheckInformation(checkName = "WTap",  description = "Post sprinting")
 public class WTapA extends Check {
 

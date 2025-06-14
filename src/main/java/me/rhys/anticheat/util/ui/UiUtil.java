@@ -1,6 +1,5 @@
 package me.rhys.anticheat.util.ui;
 
-import me.rhys.anticheat.util.MathUtil;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;

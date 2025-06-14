@@ -14,7 +14,7 @@ import java.util.List;
 @CheckInformation(checkName = "Killaura", checkType = "K", lagBack = false, description = "Autoblock Delay Check", punishmentVL = 3)
 public class KillauraK extends Check {
 
-    private List<Integer> delays = new ArrayList<>();
+    private final List<Integer> delays = new ArrayList<>();
     private int movements;
     private double threshold;
 
@@ -45,7 +45,7 @@ public class KillauraK extends Check {
 
                             if (std < 0.34) {
                                 if (threshold++ > 1) {
-                                    flag(user, "Blocking to consistent");
+                                    flag(user, "Blocking too consistent");
                                 }
                             } else {
                                 threshold -= Math.min(threshold, .5);

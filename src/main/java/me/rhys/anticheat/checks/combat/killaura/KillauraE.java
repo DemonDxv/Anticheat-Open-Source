@@ -16,30 +16,27 @@ public class KillauraE extends Check {
     public void onPacket(PacketEvent event) {
         User user = event.getUser();
 
-        switch (event.getType()) {
-            case Packet.Client.USE_ENTITY: {
-                WrappedInUseEntityPacket useEntityPacket = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
+        if (event.getType().equals(Packet.Client.USE_ENTITY)) {
+            WrappedInUseEntityPacket useEntityPacket = new WrappedInUseEntityPacket(event.getPacket(), user.getPlayer());
 
-                if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
+            if (useEntityPacket.getAction() == WrappedInUseEntityPacket.EnumEntityUseAction.ATTACK) {
 
-                    if (user.shouldCancel()
-                            || user.getConnectionProcessor().isLagging()
-                            || user.getTick() < 60) {
+                if (user.shouldCancel()
+                    || user.getConnectionProcessor().isLagging()
+                    || user.getTick() < 60) {
 
-                        threshold = 0;
-                        return;
-                    }
-
-                    if (user.getPlayer().isDead()) {
-                        if (threshold++ > 4) {
-                            flag(user, "Attacked while dead?");
-                        }
-                    } else {
-                        threshold = 0;
-                    }
-
+                    threshold = 0;
+                    return;
                 }
-                break;
+
+                if (user.getPlayer().isDead()) {
+                    if (threshold++ > 4) {
+                        flag(user, "Attacked while dead?");
+                    }
+                } else {
+                    threshold = 0;
+                }
+
             }
         }
     }
