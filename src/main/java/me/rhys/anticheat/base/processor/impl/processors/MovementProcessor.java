@@ -49,8 +49,6 @@ public class MovementProcessor extends Processor {
             false, System.currentTimeMillis());
     private PlayerLocation lastLocation = currentLocation;
 
-    private short groundID = 2469;
-
     @Override
     public void onPacket(PacketEvent event) {
 
@@ -190,17 +188,6 @@ public class MovementProcessor extends Processor {
             case Packet.Client.CLOSE_WINDOW: {
                 inInventory = false;
                 break;
-            }
-
-            case Packet.Client.TRANSACTION: {
-                WrappedInTransactionPacket wrappedInTransactionPacket =
-                        new WrappedInTransactionPacket(event.getPacket(), user.getPlayer());
-
-                if (wrappedInTransactionPacket.getAction() == this.groundID) {
-                    groundTestTicks = 0;
-                } else {
-                    groundTestTicks++;
-                }
             }
 
             case Packet.Client.FLYING:
